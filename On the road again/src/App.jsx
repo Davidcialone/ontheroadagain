@@ -7,6 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
 import './Trip.css'
 
+
+
 function App() {
   return (
       <Router>

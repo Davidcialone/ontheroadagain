@@ -1,5 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { AddVisitButton } from "./buttons/addVisitButton";
+import { DeleteVisitButton } from "./buttons/deleteVisitButton";
+import { UpdateVisitButton } from "./buttons/updateVisitButton";
 
 export function Trip({ photo, title, startDate, endDate, rating }) {
   const renderStars = (rating) => {
@@ -16,6 +19,12 @@ export function Trip({ photo, title, startDate, endDate, rating }) {
 
   return (
     <div className="trip">
+        <div className="modify-visit">
+            <div>Visite</div>
+        <AddVisitButton/>
+        <DeleteVisitButton/>
+        <UpdateVisitButton/>
+        </div>
       <img src={photo} alt={title} className="trip-photo" />
       <h2 className="trip-title">{title}</h2>
       <p className="trip-dates">

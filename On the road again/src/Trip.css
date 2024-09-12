@@ -1,9 +1,14 @@
+.roadbook{
+  display: flex;
+  }
+
 .trip {
     border: 1px solid #ccc;
     padding: 16px;
     border-radius: 8px;
     max-width: 300px;
     text-align: center;
+    margin: 0.5rem;
   }
   
   .trip-photo {
@@ -28,5 +33,10 @@
   
   .trip-rating .star.filled {
     color: #f39c12;
+  }
+
+  .modify-visit{
+    display: flex;
+    box-sizing: border-box;
   }
   
