@@ -1,22 +1,24 @@
 import { useState } from 'react'
-import './App.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Brand } from './components/forms/brand';
+import { Home } from './components/forms/home';
+import { MyTrips } from './components/forms/myTrips';
 import { NavbarSite } from './components/forms/navbar';
-import { TripsCarousel } from './components/forms/tripsCarousel';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './App.css'
+import './Trip.css'
 
 function App() {
   return (
       <Router>
           <div>
-              <Brand className="brand"/>
+             
               <h1>ON THE ROAD AGAIN</h1>
               <NavbarSite/>
+              
               <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route path="/trips" element={<TripsCarousel />} />
-                  {/* Ajoutez d'autres routes ici si nécessaire */}
+                  <Route path="/myTrips" element={<MyTrips />} />
+                   {/* Ajoutez d'autres routes ici si nécessaire */}
               </Routes>
           </div>
       </Router>

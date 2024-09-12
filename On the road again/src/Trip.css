@@ -1,0 +1,32 @@
+.trip {
+    border: 1px solid #ccc;
+    padding: 16px;
+    border-radius: 8px;
+    max-width: 300px;
+    text-align: center;
+  }
+  
+  .trip-photo {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .trip-title {
+    font-size: 1.5em;
+    margin: 8px 0;
+  }
+  
+  .trip-dates {
+    color: #555;
+  }
+  
+  .trip-rating .star {
+    color: #ccc;
+    font-size: 1.2em;
+  }
+  
+  .trip-rating .star.filled {
+    color: #f39c12;
+  }
+  
