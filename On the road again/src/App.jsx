@@ -11,10 +11,9 @@ import './Trip.css'
 
 function App() {
   return (
-      <Router>
+      <Router basename="/ontheroadagain">
           <div>
-             
-              <h1>ON THE ROAD AGAIN</h1>
+             <h1>ON THE ROAD AGAIN</h1>
               <NavbarSite/>
               
               <Routes>
