@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { AddVisitButton } from "./buttons/addVisitButton";
-import { DeleteVisitButton } from "./buttons/deleteVisitButton";
-import { UpdateVisitButton } from "./buttons/updateVisitButton";
-import { StarIcon } from "@chakra-ui/icons"; // Utiliser l'icône de marque-page
+import { AddIcon, StarIcon } from "@chakra-ui/icons";
 import {
+  Button,
+  Flex,
   Card,
   CardHeader,
   CardBody,
@@ -14,9 +13,8 @@ import {
   Stack,
   StackDivider,
   Text,
-  Flex,
-  Textarea,
   IconButton,
+  Textarea,
   useColorModeValue,
 } from "@chakra-ui/react";
 
@@ -24,6 +22,7 @@ import {
 const defaultPhoto =
   "https://media.istockphoto.com/id/539115110/fr/photo/colis%C3%A9e-de-rome-en-italie-et-du-soleil-du-matin.jpg?s=612x612&w=0&k=20&c=-x2jy7JBLHmU6Srs--5kkaW4aiGCcK98bwmRCQpCfZI=";
 
+// Trip Card Component
 export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }) {
   const renderStars = (rating) => {
     const stars = [];
@@ -37,34 +36,28 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
     return stars;
   };
 
-  // Utilisez useColorModeValue pour gérer les couleurs en mode clair/sombre
   const bookmarkColor = useColorModeValue("gray.600", "gray.300");
 
   return (
-    <Card mb={4} boxShadow="md"> {/* Ajoute un espacement vertical entre les cartes */}
-      <CardHeader>
-        <Flex alignItems="center" justifyContent="space-between">
-          <Heading size="md">{title}</Heading>
-          <Flex>
-            <div className="modify-visit">
-              <AddVisitButton />
-              <DeleteVisitButton />
-              <UpdateVisitButton />
-            </div>
-            {/* Icône de marque-page */}
-            <IconButton
-              icon={<StarIcon />} // Icône de marque-page
-              variant="ghost"
-              aria-label="Ajouter aux favoris"
-              color={bookmarkColor}
-              mr={2}
-            />
-          </Flex>
-        </Flex>
-      </CardHeader>
-
+    <Card className="responsive-card" mb={4} boxShadow="md" >
+    <CardHeader>
+      <Heading size="md">{title}</Heading>
+    </CardHeader>
+ 
       <CardBody>
-        <Image src={photo} alt={title} className="trip-photo" borderRadius="md" mb={4} />
+        <Box position="relative" width="100%">
+          <Image src={photo} alt={title} className="trip-photo" borderRadius="md" mb={4} />
+          <IconButton
+            icon={<StarIcon />}
+            variant="ghost"
+            aria-label="Ajouter aux favoris"
+            color={bookmarkColor}
+            position="absolute"
+            top="2"
+            right="2"
+          />
+        </Box>
+
         <Stack divider={<StackDivider />} spacing={4}>
           <Box>
             <Heading size="xs" textTransform="uppercase">
@@ -98,4 +91,49 @@ Trip.propTypes = {
   startDate: PropTypes.string.isRequired,
   endDate: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
+};
+
+// Main Component
+export function TripsList({ trips, onAddTrip }) {
+  return (
+    <Flex wrap="wrap" gap={4} justifyContent="flex-start">
+      {/* Add Trip Button */}
+      <Button
+        onClick={onAddTrip}
+        leftIcon={<AddIcon />}
+        colorScheme="blue"
+        mb={4}
+        width="10%"
+        minWidth="120px" // Minimum width to ensure it displays correctly
+        flex="1 1 10%"
+      >
+        Ajouter
+      </Button>
+
+      {/* Render Trip Cards */}
+      {trips.map((trip, index) => (
+        <Trip
+          key={index}
+          photo={trip.photo}
+          title={trip.title}
+          startDate={trip.startDate}
+          endDate={trip.endDate}
+          rating={trip.rating}
+        />
+      ))}
+    </Flex>
+  );
+}
+
+TripsList.propTypes = {
+  trips: PropTypes.arrayOf(
+    PropTypes.shape({
+      photo: PropTypes.string,
+      title: PropTypes.string.isRequired,
+      startDate: PropTypes.string.isRequired,
+      endDate: PropTypes.string.isRequired,
+      rating: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  onAddTrip: PropTypes.func.isRequired,
 };

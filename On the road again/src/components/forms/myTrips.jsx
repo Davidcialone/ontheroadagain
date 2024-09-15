@@ -10,21 +10,24 @@ export function MyTrips() {
 
     return (
       <ChakraProvider>
-        <div>
+        <h1>Mes voyages</h1>
+          <div className='roadbook'>
+            <div className='addTripButton'>
           {/* Passer la fonction onOpen à AddTripButton pour ouvrir la modale */}
           <AddTripButton onClick={onOpen} /> 
           
           {/* Inclure la modale ici */}
           <ModalAddTrip isOpen={isOpen} onClose={onClose} />
-
-          <div className='roadbook'>
-            <Trip />
-            <Trip />
-            <Trip />
-            <Trip />
-            <Trip />
           </div>
-        </div>
+          <div className='tripsRoadbook'> 
+            <Trip />
+            <Trip />
+            <Trip />
+            <Trip />
+            <Trip />
+            </div>
+          </div>
+      
       </ChakraProvider>
     );
 }
