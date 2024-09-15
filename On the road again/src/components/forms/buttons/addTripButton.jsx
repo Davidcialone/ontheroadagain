@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { ModalAddTrip } from "../modals/modalAddTrip";
+import { AddTripModal } from "../modals/addTripModal";
 
 
 export function AddTripButton({ onClick }) {
@@ -17,7 +17,7 @@ AddTripButton.propTypes = {
 };
 
 
-ModalAddTrip.propTypes = {
+AddTripModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onOpen: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,

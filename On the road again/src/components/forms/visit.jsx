@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {UpdateTripButton} from "../forms/buttons/updateTripButton";
-import {DeleteTripButton} from "../forms/buttons/deleteTripButton";
+import { UpdateVisitButton } from "../forms/buttons/updateVisitButton";
+import { DeleteVisitButton } from "../forms/buttons/deleteVisitButton";
 import { AddIcon, StarIcon } from "@chakra-ui/icons";
 import {
   Button,
@@ -21,11 +21,10 @@ import {
 } from "@chakra-ui/react";
 
 // URL de l'image par défaut
-const defaultPhoto =
-  "https://media.istockphoto.com/id/539115110/fr/photo/colis%C3%A9e-de-rome-en-italie-et-du-soleil-du-matin.jpg?s=612x612&w=0&k=20&c=-x2jy7JBLHmU6Srs--5kkaW4aiGCcK98bwmRCQpCfZI=";
+const defaultPhoto = "https://www.magiclub.com/magiclub/visuals/carroussel-thailande.jpg";
 
 // Trip Card Component
-export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }) {
+export function Visit({ title, photo = defaultPhoto, startDate, endDate, rating, comment }) {
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -41,19 +40,18 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
   const bookmarkColor = useColorModeValue("gray.600", "gray.300");
 
   return (
-    <Card className="responsive-card" mb={4} boxShadow="md" >
-    <CardHeader display="flex" alignItems="center" justifyContent="space-between">
-  <Heading size="md">{title}</Heading>
-  <Box>
-    <UpdateTripButton />
-    <DeleteTripButton />
-  </Box>
-</CardHeader>
+    <Card className="responsive-card" mb={4} boxShadow="md">
+      <CardHeader display="flex" alignItems="center" justifyContent="space-between">
+        <Heading size="md">{title}</Heading>
+        <Box>
+          <UpdateVisitButton />
+          <DeleteVisitButton />
+        </Box>
+      </CardHeader>
 
- 
       <CardBody>
         <Box position="relative" width="100%">
-          <Image src={photo} alt={title} className="trip-photo" borderRadius="md" mb={4} />
+          <Image src={photo} alt={title} className="visit-photo" borderRadius="md" mb={4} />
           <IconButton
             icon={<StarIcon />}
             variant="ghost"
@@ -85,31 +83,30 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
             <Heading size="xs" textTransform="uppercase">
               Commentaire
             </Heading>
-            <Textarea placeholder="Ajoutez un commentaire..." size="sm" />
+            <Textarea value={comment} placeholder="Ajoutez un commentaire..." size="sm" readOnly />
           </Box>
         </Stack>
-        <VisitLink/>
-                
       </CardBody>
     </Card>
   );
 }
 
-Trip.propTypes = {
+Visit.propTypes = {
   photo: PropTypes.string,
   title: PropTypes.string.isRequired,
   startDate: PropTypes.string.isRequired,
   endDate: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
+  comment: PropTypes.string,
 };
 
 // Main Component
-export function TripsList({ trips, onAddTrip }) {
+export function VisitList({ visits, onAddVisit }) {
   return (
     <Flex wrap="wrap" gap={4} justifyContent="flex-start">
       {/* Add Trip Button */}
       <Button
-        onClick={onAddTrip}
+        onClick={onAddVisit}
         leftIcon={<AddIcon />}
         colorScheme="blue"
         mb={4}
@@ -121,44 +118,31 @@ export function TripsList({ trips, onAddTrip }) {
       </Button>
 
       {/* Render Trip Cards */}
-      {trips.map((trip, index) => (
-        <Trip
+      {visits.map((visit, index) => (
+        <Visit
           key={index}
-          photo={trip.photo}
-          title={trip.title}
-          startDate={trip.startDate}
-          endDate={trip.endDate}
-          rating={trip.rating}
+          photo={visit.photo}
+          title={visit.title}
+          startDate={visit.startDate}
+          endDate={visit.endDate}
+          rating={visit.rating}
+          comment={visit.comment}
         />
       ))}
     </Flex>
   );
 }
 
-TripsList.propTypes = {
-  trips: PropTypes.arrayOf(
+VisitList.propTypes = {
+  visits: PropTypes.arrayOf(
     PropTypes.shape({
-      photo: PropTypes.string,
       title: PropTypes.string.isRequired,
+      photo: PropTypes.string,
       startDate: PropTypes.string.isRequired,
       endDate: PropTypes.string.isRequired,
       rating: PropTypes.number.isRequired,
+      comment: PropTypes.string,
     })
   ).isRequired,
-  onAddTrip: PropTypes.func.isRequired,
+  onAddVisit: PropTypes.func.isRequired,
 };
-
-
-import { Link } from 'react-router-dom';
-import { ArrowRightIcon } from '@chakra-ui/icons';
-
-export function VisitLink() {
-    return (
-        <Link to="/tripVisits">
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                Par ici la visite... <ArrowRightIcon />
-            </div>
-        </Link>
-    );
-}
-

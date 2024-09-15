@@ -2,7 +2,7 @@ import React from 'react';
 import { Trip } from './trip';
 import { AddTripButton } from './buttons/addTripButton';
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
-import { ModalAddTrip } from "./modals/modalAddTrip";
+import { AddTripModal } from './modals/addTripModal';
 
 export function MyTrips() {
     // Utiliser useDisclosure pour gérer l'état de la modale
@@ -12,12 +12,12 @@ export function MyTrips() {
       <ChakraProvider>
         <h1>Mes voyages</h1>
           <div className='roadbook'>
-            <div className='addTripButton'>
+            <div className='add-trip-button-layout'>
           {/* Passer la fonction onOpen à AddTripButton pour ouvrir la modale */}
           <AddTripButton onClick={onOpen} /> 
           
           {/* Inclure la modale ici */}
-          <ModalAddTrip isOpen={isOpen} onClose={onClose} />
+          <AddTripModal isOpen={isOpen} onClose={onClose} />
           </div>
           <div className='tripsRoadbook'> 
             <Trip />
