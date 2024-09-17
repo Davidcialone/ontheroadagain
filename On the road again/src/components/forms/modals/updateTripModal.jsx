@@ -43,7 +43,7 @@ export function UpdateTripModal({ isOpen, onClose }) {
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Ajouter un voyage</ModalHeader>
+        <ModalHeader>Modifier un voyage</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <FormControl>
@@ -106,7 +106,7 @@ export function UpdateTripModal({ isOpen, onClose }) {
   );
 }
 
-ModalAddTrip.propTypes = {
+UpdateTripModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
 };

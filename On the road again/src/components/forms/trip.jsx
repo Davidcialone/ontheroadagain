@@ -1,8 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {UpdateTripButton} from "../forms/buttons/updateTripButton";
-import {DeleteTripButton} from "../forms/buttons/deleteTripButton";
+import { UpdateTripButton } from "../forms/buttons/updateTripButton";
+import { DeleteTripButton } from "../forms/buttons/deleteTripButton";
+import { UpdateTripModal } from "./modals/updateTripModal";
+import { DeleteTripModal } from "./modals/deleteTripModal";
 import { AddIcon, StarIcon } from "@chakra-ui/icons";
+import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import {
   Button,
   Flex,
@@ -26,6 +29,18 @@ const defaultPhoto =
 
 // Trip Card Component
 export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }) {
+  const {
+    isOpen: isUpdateOpen,
+    onOpen: onUpdateOpen,
+    onClose: onUpdateClose,
+  } = useDisclosure();
+
+  const {
+    isOpen: isDeleteOpen,
+    onOpen: onDeleteOpen,
+    onClose: onDeleteClose,
+  } = useDisclosure();
+
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -41,16 +56,21 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
   const bookmarkColor = useColorModeValue("gray.600", "gray.300");
 
   return (
-    <Card className="responsive-card" mb={4} boxShadow="md" >
-    <CardHeader display="flex" alignItems="center" justifyContent="space-between">
-  <Heading size="md">{title}</Heading>
-  <Box>
-    <UpdateTripButton />
-    <DeleteTripButton />
-  </Box>
-</CardHeader>
+    <Card className="responsive-card" mb={4} boxShadow="md">
+      <CardHeader display="flex" alignItems="center" justifyContent="space-between">
+        <Heading size="md">{title}</Heading>
+        <Box>
+          <div>
+            <UpdateTripButton onClick={onUpdateOpen} />
+            <UpdateTripModal isOpen={isUpdateOpen} onClose={onUpdateClose} />
+          </div>
+          <div>
+            <DeleteTripButton onClick={onDeleteOpen} />
+            <DeleteTripModal isOpen={isDeleteOpen} onClose={onDeleteClose} />
+          </div>
+        </Box>
+      </CardHeader>
 
- 
       <CardBody>
         <Box position="relative" width="100%">
           <Image src={photo} alt={title} className="trip-photo" borderRadius="md" mb={4} />
@@ -88,8 +108,7 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
             <Textarea placeholder="Ajoutez un commentaire..." size="sm" />
           </Box>
         </Stack>
-        <VisitLink/>
-                
+        <VisitLink />
       </CardBody>
     </Card>
   );
@@ -103,50 +122,6 @@ Trip.propTypes = {
   rating: PropTypes.number.isRequired,
 };
 
-// Main Component
-export function TripsList({ trips, onAddTrip }) {
-  return (
-    <Flex wrap="wrap" gap={4} justifyContent="flex-start">
-      {/* Add Trip Button */}
-      <Button
-        onClick={onAddTrip}
-        leftIcon={<AddIcon />}
-        colorScheme="blue"
-        mb={4}
-        width="10%"
-        minWidth="120px" // Minimum width to ensure it displays correctly
-        flex="1 1 10%"
-      >
-        Ajouter
-      </Button>
-
-      {/* Render Trip Cards */}
-      {trips.map((trip, index) => (
-        <Trip
-          key={index}
-          photo={trip.photo}
-          title={trip.title}
-          startDate={trip.startDate}
-          endDate={trip.endDate}
-          rating={trip.rating}
-        />
-      ))}
-    </Flex>
-  );
-}
-
-TripsList.propTypes = {
-  trips: PropTypes.arrayOf(
-    PropTypes.shape({
-      photo: PropTypes.string,
-      title: PropTypes.string.isRequired,
-      startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-      rating: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-  onAddTrip: PropTypes.func.isRequired,
-};
 
 
 import { Link } from 'react-router-dom';
