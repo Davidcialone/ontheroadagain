@@ -5,7 +5,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import { Button, Flex } from "@chakra-ui/react";
 
 // Composant VisitList
-export function VisitList({ visits, onAddVisit }) {
+export function VisitList({ visits, onAddVisit, onUpdateVisit, onDeleteVisit }) {
   return (
     <Flex wrap="nowrap" gap={4} justifyContent="flex-start" flexDirection="row" overflowX="auto">
       {/* Bouton pour ajouter une visite */}
@@ -30,6 +30,8 @@ export function VisitList({ visits, onAddVisit }) {
           endDate={visit.endDate}
           rating={visit.rating}
           comment={visit.comment}
+          onUpdateVisit={onUpdateVisit}
+          onDeleteVisit={onDeleteVisit}
         />
       ))}
     </Flex>
@@ -48,4 +50,6 @@ VisitList.propTypes = {
     })
   ).isRequired,
   onAddVisit: PropTypes.func.isRequired,
+  onUpdateVisit: PropTypes.func,
+  onDeleteVisit: PropTypes.func,
 };

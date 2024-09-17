@@ -60,15 +60,13 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
       <CardHeader display="flex" alignItems="center" justifyContent="space-between">
         <Heading size="md">{title}</Heading>
         <Box>
-          <div>
+          
             <UpdateTripButton onClick={onUpdateOpen} />
             <UpdateTripModal isOpen={isUpdateOpen} onClose={onUpdateClose} />
-          </div>
-          <div>
+          
             <DeleteTripButton onClick={onDeleteOpen} />
             <DeleteTripModal isOpen={isDeleteOpen} onClose={onDeleteClose} />
-          </div>
-        </Box>
+             </Box>
       </CardHeader>
 
       <CardBody>
@@ -116,10 +114,10 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
 
 Trip.propTypes = {
   photo: PropTypes.string,
-  title: PropTypes.string.isRequired,
-  startDate: PropTypes.string.isRequired,
-  endDate: PropTypes.string.isRequired,
-  rating: PropTypes.number.isRequired,
+  title: PropTypes.string,
+  startDate: PropTypes.string,
+  endDate: PropTypes.string,
+  rating: PropTypes.number,
 };
 
 
@@ -130,8 +128,8 @@ import { ArrowRightIcon } from '@chakra-ui/icons';
 export function VisitLink() {
     return (
         <Link to="/tripVisits">
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                Par ici la visite... <ArrowRightIcon />
+            <div style={{ margin: '0.5rem', display: 'flex', alignItems: 'center', justifyContent:"flex-end" }}>
+                Par ici la visite ...<ArrowRightIcon />
             </div>
         </Link>
     );

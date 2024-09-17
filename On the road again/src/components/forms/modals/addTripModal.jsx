@@ -107,6 +107,6 @@ export function AddTripModal({ isOpen, onClose }) {
 }
 
 AddTripModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
 };

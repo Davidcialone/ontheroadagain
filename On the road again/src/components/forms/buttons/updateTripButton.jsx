@@ -11,5 +11,5 @@ export function UpdateTripButton({ onClick }) {
 }
 
 UpdateTripButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };

@@ -25,7 +25,7 @@ export function DeleteTripModal({ isOpen, onClose, onDelete }) {
         <ModalHeader>Supprimer le voyage</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text>Êtes-vous sûr de vouloir supprimer ce voyage ? Cette action est irréversible.</Text>
+          <Text>Êtes-vous sûr de vouloir supprimer ce voyage ? <br />Cette action est irréversible.</Text>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="red" mr={3} onClick={handleDelete}>
@@ -41,7 +41,7 @@ export function DeleteTripModal({ isOpen, onClose, onDelete }) {
 }
 
 DeleteTripModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  onDelete: PropTypes.func,
 };

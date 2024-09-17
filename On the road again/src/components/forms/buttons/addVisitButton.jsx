@@ -11,5 +11,5 @@ export function AddVisitButton({ onClick }) {
 }
 
 AddVisitButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };

@@ -11,5 +11,5 @@ export function DeleteVisitButton({ onClick }) {
 }
 
 DeleteVisitButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };

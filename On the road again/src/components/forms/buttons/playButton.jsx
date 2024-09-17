@@ -11,5 +11,5 @@ export function PlayButton({ onClick }) {
 }
 
 PlayButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };

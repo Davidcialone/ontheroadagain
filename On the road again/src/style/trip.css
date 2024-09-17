@@ -62,13 +62,17 @@
 }
 
 .add-trip-button {
+  margin: 0.5rem;
+  padding: 0.5rem;
   width: 100%;
   flex: 1 1 10%; 
-  background-color: rgb(177, 233, 243);
+  background-color: rgb(233, 240, 241);
+  border-color: black;
 }
-.responsive-card {
+.roadbook .responsive-card {
   width: 30%;
 }
+
 .visits{
   display: flex;
 }

@@ -11,5 +11,5 @@ export function DeleteTripButton({ onClick }) {
 }
 
 DeleteTripButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func,
 };

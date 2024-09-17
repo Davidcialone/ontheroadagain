@@ -24,7 +24,7 @@ import {
 const defaultPhoto = "https://www.magiclub.com/magiclub/visuals/carroussel-thailande.jpg";
 
 // Trip Card Component
-export function Visit({ title, photo = defaultPhoto, startDate, endDate, rating, comment }) {
+export function Visit({ title, photo = defaultPhoto, startDate, endDate, rating, comment, onUpdate, onDelete }) {
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -44,8 +44,8 @@ export function Visit({ title, photo = defaultPhoto, startDate, endDate, rating,
       <CardHeader display="flex" alignItems="center" justifyContent="space-between">
         <Heading size="md">{title}</Heading>
         <Box>
-          <UpdateVisitButton />
-          <DeleteVisitButton />
+          <UpdateVisitButton onClick={onUpdate}/>
+          <DeleteVisitButton onClick={onDelete}/>
         </Box>
       </CardHeader>
 
@@ -98,6 +98,8 @@ Visit.propTypes = {
   endDate: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
   comment: PropTypes.string,
+  onUpdate: PropTypes.func,
+  onDelete: PropTypes.func,
 };
 
 // Main Component
