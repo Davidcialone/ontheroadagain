@@ -1,21 +1,24 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Visit } from "../forms/visit";
 import { AddIcon } from "@chakra-ui/icons";
-import { Button, Flex } from "@chakra-ui/react";
+import { Visit } from "./visit";
+import {
+  Button,
+  Flex,
+} from "@chakra-ui/react";
 
-// Composant VisitList
-export function VisitList({ visits, onAddVisit, onUpdateVisit, onDeleteVisit }) {
+export function VisitList({ visits, onAddVisit }) {
   return (
-    <Flex wrap="nowrap" gap={4} justifyContent="flex-start" flexDirection="row" overflowX="auto">
+    <Flex wrap="wrap" gap={4} justifyContent="flex-start">
       {/* Bouton pour ajouter une visite */}
       <Button
         onClick={onAddVisit}
         leftIcon={<AddIcon />}
         colorScheme="blue"
         mb={4}
-        minWidth="120px" // Largeur minimale pour assurer un affichage correct
-        flex="0 0 auto"
+        width="10%"
+        minWidth="120px"
+        flex="1 1 10%"
       >
         Ajouter
       </Button>
@@ -24,14 +27,12 @@ export function VisitList({ visits, onAddVisit, onUpdateVisit, onDeleteVisit }) 
       {visits.map((visit, index) => (
         <Visit
           key={index}
-          photo={visit.photo}
+          photos={visit.photos}
           title={visit.title}
           startDate={visit.startDate}
           endDate={visit.endDate}
           rating={visit.rating}
           comment={visit.comment}
-          onUpdateVisit={onUpdateVisit}
-          onDeleteVisit={onDeleteVisit}
         />
       ))}
     </Flex>
@@ -42,7 +43,7 @@ VisitList.propTypes = {
   visits: PropTypes.arrayOf(
     PropTypes.shape({
       title: PropTypes.string.isRequired,
-      photo: PropTypes.string,
+      photos: PropTypes.arrayOf(PropTypes.string).isRequired,
       startDate: PropTypes.string.isRequired,
       endDate: PropTypes.string.isRequired,
       rating: PropTypes.number.isRequired,
@@ -50,6 +51,4 @@ VisitList.propTypes = {
     })
   ).isRequired,
   onAddVisit: PropTypes.func.isRequired,
-  onUpdateVisit: PropTypes.func,
-  onDeleteVisit: PropTypes.func,
 };

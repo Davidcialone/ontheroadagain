@@ -1,5 +1,6 @@
 // modals/addVisitModal.js
 import React, { useState } from 'react';
+import PropTypes from "prop-types";
 import {
   Modal,
   ModalOverlay,
@@ -143,3 +144,9 @@ export function AddVisitModal({ isOpen, onClose }) {
         </Modal>
     );
 }
+
+AddVisitModal.propTypes = {
+    isOpen: PropTypes.bool,
+    onClose: PropTypes.func,
+  };
+  

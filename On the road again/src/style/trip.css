@@ -53,10 +53,6 @@
   box-sizing: border-box;
 }
 
-.visits {
-  display: flex;
-  justify-content: center;
-}
 .add-trip-button-layout {
   width: 100%;
 }
@@ -72,11 +68,6 @@
 .roadbook .responsive-card {
   width: 30%;
 }
-
-.visits{
-  display: flex;
-}
-
 
 @media (max-width: 800px) {
   .roadbook {
