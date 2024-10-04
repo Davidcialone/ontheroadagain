@@ -43,5 +43,4 @@ export function DeleteTripModal({ isOpen, onClose, onDelete }) {
 DeleteTripModal.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  onDelete: PropTypes.func,
 };

@@ -16,10 +16,3 @@ export function AddTripButton({ onClick }) {
 AddTripButton.propTypes = {
   onClick: PropTypes.func,
 };
-
-
-AddTripModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onOpen: PropTypes.func,
-  onClose: PropTypes.func,
-};

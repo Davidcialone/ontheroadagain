@@ -3,6 +3,25 @@ import PropTypes from "prop-types";
 import { VisitPhotos } from "./VisitPhotos"; // Import the VisitPhotos component
 import { Box, Button, Card, CardBody, CardHeader, Heading, Text, Textarea } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
+import { UpdateVisitButton } from "../forms/buttons/updateVisitButton";
+import { DeleteVisitButton } from "../forms/buttons/deleteVisitButton";
+import { AddIcon, StarIcon } from "@chakra-ui/icons";
+import { VisitPhotoCarousel } from "../visitPhotosCarousel";
+import {
+  Button,
+  Flex,
+  Card,
+  CardHeader,
+  CardBody,
+  Heading,
+  Box,
+  Stack,
+  StackDivider,
+  Text,
+  IconButton,
+  Textarea,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 // Trip Card Component
 export function Visit({ title, startDate, endDate, rating, comment }) {
@@ -35,6 +54,7 @@ export function Visit({ title, startDate, endDate, rating, comment }) {
   };
 
   // Render stars based on rating
+export function Visit({ title, photos, startDate, endDate, rating, comment, onUpdate, onDelete }) {
   const renderStars = (rating) => {
     return Array(5).fill("").map((_, i) => (
       <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
@@ -45,6 +65,10 @@ export function Visit({ title, startDate, endDate, rating, comment }) {
     <Card className="responsive-card" mb={4} boxShadow="md">
       <CardHeader display="flex" alignItems="center" justifyContent="space-between">
         <Heading size="md">{title}</Heading>
+        <Box>
+          <UpdateVisitButton onClick={onUpdate} />
+          <DeleteVisitButton onClick={onDelete} />
+        </Box>
       </CardHeader>
 
       <CardBody>
@@ -63,15 +87,47 @@ export function Visit({ title, startDate, endDate, rating, comment }) {
             Ajouter une nouvelle photo
           </Button>
         </Box>
+        <Box position="relative" width="100%">
+          {/* Utilisation du carousel pour les photos */}
+          <VisitPhotoCarousel photos={photos} />
+     
+        </Box>
+
+        <Stack divider={<StackDivider />} spacing={4}>
+          <Box>
+            <Heading size="xs" textTransform="uppercase">
+              Dates
+            </Heading>
+            <Text pt="2" fontSize="sm">
+              Départ : {startDate} - Retour : {endDate}
+            </Text>
+          </Box>
+          <Box>
+            <Heading size="xs" textTransform="uppercase">
+              Évaluation
+            </Heading>
+            <div className="trip-rating">{renderStars(rating)}</div>
+          </Box>
+          <Box>
+            <Heading size="xs" textTransform="uppercase">
+              Commentaire
+            </Heading>
+            <Textarea value={comment} placeholder="Ajoutez un commentaire..." size="sm" readOnly />
+          </Box>
+        </Stack>
       </CardBody>
     </Card>
   );
 }
 
 Visit.propTypes = {
+  photos: PropTypes.arrayOf(PropTypes.string).isRequired, // Modification pour photos
   title: PropTypes.string.isRequired,
   startDate: PropTypes.string.isRequired,
   endDate: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
   comment: PropTypes.string,
+};
+  onUpdate: PropTypes.func,
+  onDelete: PropTypes.func,
 };
