@@ -14,23 +14,24 @@
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
-    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/react": "^2.9.5",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
-    "framer-motion": "^11.5.5",
+    "framer-motion": "^11.11.1",
+    "lorem-ipsum": "^2.0.8",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-datepicker": "^7.3.0",
     "react-dom": "^18.3.1",
-    "react-image-lightbox": "^5.1.4",
     "react-multi-carousel": "^2.8.5",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.26.2",
     "react-slick": "^0.30.2",
     "react-stars": "^2.2.5",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "yet-another-react-lightbox": "^3.21.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

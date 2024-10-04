@@ -17,3 +17,34 @@
     object-fit: cover;
 }
 
+/* Styles pour les visites */
+.visits {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Styles pour le desktop */
+@media screen and (min-width: 768px) {
+    .visits {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .responsive-card {
+        width: calc(50% - 1rem); /* Deux cartes par ligne avec un espace entre elles */
+        margin-bottom: 2rem;
+    }
+}
+
+/* Styles pour le mobile */
+@media screen and (max-width: 767px) {
+    .visits {
+        flex-direction: column;
+    }
+
+    .responsive-card {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+}

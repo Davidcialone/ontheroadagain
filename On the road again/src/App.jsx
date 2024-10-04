@@ -8,22 +8,25 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/style/app.css';
 import '../src/style/trip.css';
 import '../src/style/visit.css';
+import { Box } from "@chakra-ui/react";
 
 function App() {
   return (
-      <Router basename="/ontheroadagain">
-          <div>
-             <h1>ON THE ROAD AGAIN</h1>
-              <NavbarSite/>
-              
-              <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/myTrips" element={<MyTrips />} />
-                  <Route path="/tripVisits" element={<TripVisits />} />
-                   {/* Ajoutez d'autres routes ici si nécessaire */}
-              </Routes>
-          </div>
-      </Router>
+      <Box width="100%" minHeight="100vh">
+          <Router basename="/ontheroadagain">
+              <div>
+                 <h1>ON THE ROAD AGAIN</h1>
+                  <NavbarSite/>
+                  
+                  <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/myTrips" element={<MyTrips />} />
+                      <Route path="/tripVisits" element={<TripVisits />} />
+                       {/* Ajoutez d'autres routes ici si nécessaire */}
+                  </Routes>
+              </div>
+          </Router>
+      </Box>
   );
 }
 
