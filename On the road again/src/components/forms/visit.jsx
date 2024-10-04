@@ -1,150 +1,77 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { UpdateVisitButton } from "../forms/buttons/updateVisitButton";
-import { DeleteVisitButton } from "../forms/buttons/deleteVisitButton";
-import { AddIcon, StarIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  Flex,
-  Card,
-  CardHeader,
-  CardBody,
-  Heading,
-  Image,
-  Box,
-  Stack,
-  StackDivider,
-  Text,
-  IconButton,
-  Textarea,
-  useColorModeValue,
-} from "@chakra-ui/react";
-
-// URL de l'image par défaut
-const defaultPhoto = "https://www.magiclub.com/magiclub/visuals/carroussel-thailande.jpg";
+import { VisitPhotos } from "./VisitPhotos"; // Import the VisitPhotos component
+import { Box, Button, Card, CardBody, CardHeader, Heading, Text, Textarea } from "@chakra-ui/react";
+import { StarIcon } from "@chakra-ui/icons";
 
 // Trip Card Component
-export function Visit({ title, photo = defaultPhoto, startDate, endDate, rating, comment, onUpdate, onDelete }) {
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <span key={i} className={i < rating ? "star filled" : "star"}>
-          ★
-        </span>
-      );
-    }
-    return stars;
+export function Visit({ title, startDate, endDate, rating, comment }) {
+  // Initial state for photos (can be empty or pre-populated)
+  const [photos, setPhotos] = useState([
+    "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0", 
+    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+    "https://images.unsplash.com/photo-1493558103817-58b2924bce98",
+    "https://images.unsplash.com/photo-1530629013299-6cbcfb7d1e86",
+    "https://images.unsplash.com/photo-1535914254981-b5012eebbd15",
+    "https://images.unsplash.com/photo-1558979158-65a1eaa08691",
+    "https://images.unsplash.com/photo-1494475673543-6a15f1c7ff4e",
+    "https://images.unsplash.com/photo-1519821172141-b5d8a4e7a42e",
+    "https://images.unsplash.com/photo-1495567720989-cebdbdd97913",
+    "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
+    "https://images.unsplash.com/photo-1517836357463-d25dfeac3438",
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
+    "https://images.unsplash.com/photo-1493558103817-58b2924bce98",
+    "https://images.unsplash.com/photo-1530629013299-6cbcfb7d1e86",
+    "https://images.unsplash.com/photo-1535914254981-b5012eebbd15",
+    "https://images.unsplash.com/photo-1558979158-65a1eaa08691",
+    "https://images.unsplash.com/photo-1494475673543-6a15f1c7ff4e",
+    "https://images.unsplash.com/photo-1519821172141-b5d8a4e7a42e",
+  ]);
+
+  // Function to handle adding a new photo (could be from user input)
+  const addPhoto = (newPhotoUrl) => {
+    setPhotos((prevPhotos) => [...prevPhotos, newPhotoUrl]);
   };
 
-  const bookmarkColor = useColorModeValue("gray.600", "gray.300");
+  // Render stars based on rating
+  const renderStars = (rating) => {
+    return Array(5).fill("").map((_, i) => (
+      <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
+    ));
+  };
 
   return (
     <Card className="responsive-card" mb={4} boxShadow="md">
       <CardHeader display="flex" alignItems="center" justifyContent="space-between">
         <Heading size="md">{title}</Heading>
-        <Box>
-          <UpdateVisitButton onClick={onUpdate}/>
-          <DeleteVisitButton onClick={onDelete}/>
-        </Box>
       </CardHeader>
 
       <CardBody>
-        <Box position="relative" width="100%">
-          <Image src={photo} alt={title} className="visit-photo" borderRadius="md" mb={4} />
-          <IconButton
-            icon={<StarIcon />}
-            variant="ghost"
-            aria-label="Ajouter aux favoris"
-            color={bookmarkColor}
-            position="absolute"
-            top="-1"
-            right="-1"
-            backgroundColor="rgba(255, 255, 255, 0.5)"
-          />
-        </Box>
+        <Box>
+          <Text>
+            Départ : {startDate} - Retour : {endDate}
+          </Text>
+          <Text fontSize="sm">Évaluation : {renderStars(rating)}</Text>
+          <Textarea value={comment} placeholder="Ajoutez un commentaire..." size="sm" readOnly />
 
-        <Stack divider={<StackDivider />} spacing={4}>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Dates
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              Départ : {startDate} - Retour : {endDate}
-            </Text>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Évaluation
-            </Heading>
-            <div className="trip-rating">{renderStars(rating)}</div>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Commentaire
-            </Heading>
-            <Textarea value={comment} placeholder="Ajoutez un commentaire..." size="sm" readOnly />
-          </Box>
-        </Stack>
+          {/* Display VisitPhotos component with current photos */}
+          <VisitPhotos photos={photos} />
+
+          {/* Example of how to add a new photo */}
+          <Button mt={4} onClick={() => addPhoto("https://via.placeholder.com/700")}>
+            Ajouter une nouvelle photo
+          </Button>
+        </Box>
       </CardBody>
     </Card>
   );
 }
 
 Visit.propTypes = {
-  photo: PropTypes.string,
   title: PropTypes.string.isRequired,
   startDate: PropTypes.string.isRequired,
   endDate: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
   comment: PropTypes.string,
-  onUpdate: PropTypes.func,
-  onDelete: PropTypes.func,
-};
-
-// Main Component
-export function VisitList({ visits, onAddVisit }) {
-  return (
-    <Flex wrap="wrap" gap={4} justifyContent="flex-start">
-      {/* Add Trip Button */}
-      <Button
-        onClick={onAddVisit}
-        leftIcon={<AddIcon />}
-        colorScheme="blue"
-        mb={4}
-        width="10%"
-        minWidth="120px" // Minimum width to ensure it displays correctly
-        flex="1 1 10%"
-      >
-        Ajouter
-      </Button>
-
-      {/* Render Trip Cards */}
-      {visits.map((visit, index) => (
-        <Visit
-          key={index}
-          photo={visit.photo}
-          title={visit.title}
-          startDate={visit.startDate}
-          endDate={visit.endDate}
-          rating={visit.rating}
-          comment={visit.comment}
-        />
-      ))}
-    </Flex>
-  );
-}
-
-VisitList.propTypes = {
-  visits: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      photo: PropTypes.string,
-      startDate: PropTypes.string.isRequired,
-      endDate: PropTypes.string.isRequired,
-      rating: PropTypes.number.isRequired,
-      comment: PropTypes.string,
-    })
-  ).isRequired,
-  onAddVisit: PropTypes.func.isRequired,
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import { AddVisitModal } from './modals/addVisitModal';
-import { VisitList } from './visit';
+import { VisitList } from './visitList';
 
 
 export function TripVisits() {
@@ -16,10 +16,11 @@ export function TripVisits() {
    return (
     <ChakraProvider>
         <h1>Visites du voyage</h1>
+        <button onClick={onOpen}>Ajouter une visite</button>
         <div className='tripVisits'>
             <AddVisitModal isOpen={isOpen} onClose={onClose} />
             <VisitList className='visits' visits={visits} onAddVisit={onOpen} />
-            <button onClick={onOpen}>Ajouter une visite</button>
+            
         </div>
     </ChakraProvider>
 );
