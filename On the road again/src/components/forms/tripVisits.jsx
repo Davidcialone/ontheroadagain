@@ -2,10 +2,6 @@ import React from 'react';
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import { AddVisitModal } from './modals/addVisitModal';
 import { VisitList } from './visitList';
-<<<<<<< HEAD
-
-=======
->>>>>>> 39b1c5d5d105dce86d895a831934c3c5b3313d6c
 
 export function TripVisits() {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,7 +28,6 @@ export function TripVisits() {
         console.log(`Photos for visit ${index + 1}:`, visit.photos);
     });
 
-<<<<<<< HEAD
    return (
     <ChakraProvider>
         <h1>Visites du voyage</h1>
@@ -45,15 +40,4 @@ export function TripVisits() {
     </ChakraProvider>
 );
 
-=======
-    return (
-        <ChakraProvider>
-            <h1>Visites du voyage</h1>
-            <AddVisitModal isOpen={isOpen} onClose={onClose} />
-            <div className='tripVisits'>
-                <VisitList visits={visits} onAddVisit={onOpen} />
-            </div>
-        </ChakraProvider>
-    );
->>>>>>> 39b1c5d5d105dce86d895a831934c3c5b3313d6c
 }
