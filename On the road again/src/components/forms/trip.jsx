@@ -1,34 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { UpdateTripButton } from "../forms/buttons/updateTripButton";
-import { DeleteTripButton } from "../forms/buttons/deleteTripButton";
-import { UpdateTripModal } from "./modals/updateTripModal";
-import { DeleteTripModal } from "./modals/deleteTripModal";
-import { AddIcon, StarIcon } from "@chakra-ui/icons";
-import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import {
-  Button,
-  Flex,
-  Card,
-  CardHeader,
-  CardBody,
-  Heading,
-  Image,
   Box,
-  Stack,
-  StackDivider,
+  Card,
+  CardBody,
+  CardHeader,
+  Heading,
   Text,
-  IconButton,
-  Textarea,
-  useColorModeValue,
+  VStack,
+  Flex,
+  Image,
+  useDisclosure,
+  Link,
+  Button
 } from "@chakra-ui/react";
+import { StarIcon, ViewIcon } from "@chakra-ui/icons";
+import { UpdateTripButton } from "./buttons/updateTripButton";
+import { DeleteTripButton } from "./buttons/deleteTripButton";
+import Lightbox from "yet-another-react-lightbox";
+import "yet-another-react-lightbox/styles.css";
+import { Link as RouterLink } from "react-router-dom";
 
 // URL de l'image par défaut
 const defaultPhoto =
   "https://media.istockphoto.com/id/539115110/fr/photo/colis%C3%A9e-de-rome-en-italie-et-du-soleil-du-matin.jpg?s=612x612&w=0&k=20&c=-x2jy7JBLHmU6Srs--5kkaW4aiGCcK98bwmRCQpCfZI=";
 
 // Trip Card Component
-export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }) {
+export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rating }) {
+  const [photoIndex, setPhotoIndex] = useState(0);
+  
   const {
     isOpen: isUpdateOpen,
     onOpen: onUpdateOpen,
@@ -41,78 +41,66 @@ export function Trip({ photo = defaultPhoto, title, startDate, endDate, rating }
     onClose: onDeleteClose,
   } = useDisclosure();
 
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <span key={i} className={i < rating ? "star filled" : "star"}>
-          ★
-        </span>
-      );
-    }
-    return stars;
-  };
-
-  const bookmarkColor = useColorModeValue("gray.600", "gray.300");
+  function renderStars(rating) {
+    return Array(5).fill("").map((_, i) => (
+      <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
+    ));
+  }
 
   return (
-    <Card className="responsive-card" mb={4} boxShadow="md">
-      <CardHeader display="flex" alignItems="center" justifyContent="space-between">
-        <Heading size="md">{title}</Heading>
-        <Box>
-          
-            <UpdateTripButton onClick={onUpdateOpen} />
-            <UpdateTripModal isOpen={isUpdateOpen} onClose={onUpdateClose} />
-          
-            <DeleteTripButton onClick={onDeleteOpen} />
-            <DeleteTripModal isOpen={isDeleteOpen} onClose={onDeleteClose} />
-             </Box>
+    <Card>
+      <CardHeader>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Link as={RouterLink} to={`/trips/${id}/visits`}>
+            <Heading size="md">{title}</Heading>
+          </Link>
+          <Box>
+            <UpdateTripButton onClick={(e) => { e.preventDefault(); onUpdateOpen(); }} />
+            <DeleteTripButton onClick={(e) => { e.preventDefault(); onDeleteOpen(); }} />
+          </Box>
+        </Flex>
       </CardHeader>
 
       <CardBody>
-        <Box position="relative" width="100%">
-          <Image src={photo} alt={title} className="trip-photo" borderRadius="md" mb={4} />
-          <IconButton
-            icon={<StarIcon />}
-            variant="ghost"
-            aria-label="Ajouter aux favoris"
-            color={bookmarkColor}
-            position="absolute"
-            top="-1"
-            right="-1"
-            backgroundColor="rgba(255, 255, 255, 0.5)"
+        <Box flex={1} minWidth={["100%", "100%", "50%"]}>
+          <Image 
+            src={photo} 
+            alt={title} 
+            objectFit="cover" 
+            width="100%" 
+            height="200px"
+            cursor="pointer"
+            onClick={(e) => { e.preventDefault(); setPhotoIndex(0); onLightboxOpen(); }}
           />
         </Box>
-
-        <Stack divider={<StackDivider />} spacing={4}>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Dates
-            </Heading>
-            <Text pt="2" fontSize="sm">
-              Départ : {startDate} - Retour : {endDate}
-            </Text>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Évaluation
-            </Heading>
-            <div className="trip-rating">{renderStars(rating)}</div>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">
-              Commentaire
-            </Heading>
-            <Textarea placeholder="Ajoutez un commentaire..." size="sm" />
-          </Box>
-        </Stack>
-        <VisitLink />
+        <Flex direction={["column", "column", "row"]} gap={4}>
+          <VStack spacing={4} align="stretch" flex={1}>
+            <Box>
+              <Heading size="xs" textTransform="uppercase">Dates</Heading>
+              <Text pt="2" fontSize="sm">
+                Départ : {startDate} - Retour : {endDate}
+              </Text>
+            </Box>
+            <Box>
+              <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
+              <Box pt="2">{renderStars(rating)}</Box>
+            </Box>
+          </VStack>
+        </Flex>
+        <Flex mt="2" alignItems="center" justifyContent="flex-end">
+            <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
+            <Button leftIcon={<ViewIcon />} colorScheme="teal" variant="outline" size="sm">
+              Voir les visites
+            </Button>
+          </Link>
+        </Flex>
       </CardBody>
     </Card>
   );
 }
 
 Trip.propTypes = {
+  id: PropTypes.string,
   photo: PropTypes.string,
   title: PropTypes.string,
   startDate: PropTypes.string,
@@ -120,9 +108,6 @@ Trip.propTypes = {
   rating: PropTypes.number,
 };
 
-
-
-import { Link } from 'react-router-dom';
 import { ArrowRightIcon } from '@chakra-ui/icons';
 
 export function VisitLink() {

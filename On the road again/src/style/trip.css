@@ -70,7 +70,8 @@
 }
 
 @media (max-width: 800px) {
-  .roadbook {
+  .roadbook .responsive-card{
+    width: 100%;
     flex-direction: column;
     align-items: stretch; 
   }
@@ -91,8 +92,4 @@
     flex: 1 1 100%; 
     margin-bottom: 1rem;
   }
-  .responsive-card {
-    width: 100%; 
-  }
-
-}
+ }
