@@ -55,6 +55,19 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+.nav-link {
+  color: #007bff; /* Couleur par défaut */
+  transition: background-color 0.3s, color 0.3s; /* Transition pour le changement de couleur */
+  padding: 0.5rem 1rem; /* Ajustez le rembourrage selon vos besoins */
+  border-radius: 0.25rem; /* Ajoutez un border-radius par défaut */
+}
+
+.nav-link:hover {
+  background-color: rgba(0, 123, 255, 0.6); /* Couleur de surbrillance */
+  color: #fff !important; /* Couleur du texte au survol */
+  border-radius: 0.30rem; /* Assurez-vous que le border-radius est appliqué au survol */
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -67,3 +80,37 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+html, body {
+  height: 100%; /* Assurez-vous que le corps prend toute la hauteur de l'écran */
+  margin: 0; /* Supprimez les marges par défaut */
+}
+
+#root {
+  height: 100%; /* Assurez-vous que le conteneur racine prend toute la hauteur */
+}
+
+.navbar {
+  height: 60px; /* Ajustez la hauteur de la navbar selon vos besoins */
+}
+
+
+.carousel-container {
+  height: auto; /* Ajustez la hauteur selon vos besoins */
+  width: 70%; /* Ajustez la largeur selon vos besoins */
+  margin: 0 auto; /* Centre la div */
+  overflow: hidden; /* Masque le débordement */
+}
+
+.image-wrapper {
+  border-radius: 2rem; /* Appliquez le border-radius ici */
+  overflow: hidden; /* Masque les parties de l'image qui dépassent */
+  height: 100%; /* Assurez-vous que le wrapper prend toute la hauteur */
+}
+
+.carousel img {
+  width: 100%; /* Assurez-vous que l'image prend toute la largeur */
+  height: 100%; /* Assurez-vous que l'image prend toute la hauteur */
+  object-fit: cover; /* Redimensionne l'image pour couvrir le conteneur */
+}
+

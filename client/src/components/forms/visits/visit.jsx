@@ -14,8 +14,8 @@ import {
   useDisclosure
 } from "@chakra-ui/react";
 import { StarIcon } from "@chakra-ui/icons";
-import { UpdateVisitButton } from "./buttons/updateVisitButton";
-import { DeleteVisitButton } from "./buttons/deleteVisitButton";
+import {UpdateVisitButton} from "../buttons/updateVisitButton";
+import { DeleteVisitButton } from "../buttons/deleteVisitButton";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { Home } from './components/forms/home';
-import { MyTrips } from './components/forms/myTrips';
-import { TripVisits } from '../src/components/forms/tripVisits';
-import { NavbarSite } from './components/forms/navbar';
+import { Home } from './components/forms/home/home';
+import {MyTrips} from './components/forms/trips/myTrips';
+import { TripVisits } from '../src/components/forms/visits/tripVisits';
+import { Login } from './components/forms/auth/login';
+import { Signup } from './components/forms/auth/signup';
+import { NavbarSite } from './components/forms/home/navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../src/style/app.css';
 import '../src/style/trip.css';
@@ -16,13 +18,12 @@ function App() {
           <Router basename="/ontheroadagain">
               <div>
                  <h1>ON THE ROAD AGAIN</h1>
-                  <NavbarSite/>
-                  
+                 <NavbarSite/>             
                   <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/myTrips" element={<MyTrips />} />
-                      <Route path="/tripVisits" element={<TripVisits />} />
-                       {/* Ajoutez d'autres routes ici si nécessaire */}
+                  <Route path="/" element={<Home />} />
+                  <Route path="/me/trips" element={<MyTrips />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
                   </Routes>
               </div>
           </Router>

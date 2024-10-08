@@ -13,35 +13,35 @@ export const router = Router();
 router.use(jwtService);
 
 /**
- * @route GET /me/trips
+ * @route GET /
  * @group Trips - Operations about user trips
  * @returns {Array.<Trip>} 200 - An array of user trips
  * @security JWT
  */
-router.get('/me/trips', cw(tripsController.getMyTrips));
+router.get("/", cw(tripsController.getMyTrips));
 
 /**
- * @route GET /me/trips/:id
+ * @route GET /:id
  * @group Trips - Operations about user trips
  * @param {string} id.path.required - The ID of the trip
  * @returns {Array.<Visit>} 200 - An array of visits for the trip
  * @returns {Error} 404 - Trip not found
  * @security JWT
  */
-router.get("/me/trips/:id", cw(tripsController.getVisitsForTrip));
+router.get("/:id", cw(tripsController.getVisitsForTrip));
 
 /**
- * @route POST /me/trips
+ * @route POST /
  * @group Trips - Operations about user trips
  * @param {Trip.model} trip.body.required - New trip object
  * @returns {Trip} 201 - The created trip object
  * @returns {Error} 400 - Bad request
  * @security JWT
  */
-router.post("/me/trips", cw(tripsController.createTrip));
+router.post("/", cw(tripsController.createTrip));
 
 /**
- * @route PATCH /me/trips/:id
+ * @route PATCH /:id
  * @group Trips - Operations about user trips
  * @param {string} id.path.required - The ID of the trip
  * @param {Trip.model} trip.body.required - Trip object that needs to be updated
@@ -50,16 +50,14 @@ router.post("/me/trips", cw(tripsController.createTrip));
  * @returns {Error} 404 - Trip not found
  * @security JWT
  */
-router.patch("/me/trips/:id", cw(tripsController.updateTrip));
+router.patch("/:id", cw(tripsController.updateTrip));
 
 /**
- * @route DELETE /me/trips/:id
+ * @route DELETE /:id
  * @group Trips - Operations about user trips
  * @param {string} id.path.required - The ID of the trip
  * @returns {Message} 200 - Trip successfully deleted
  * @returns {Error} 404 - Trip not found
  * @security JWT
  */
-router.delete("/me/trips/:id", cw(tripsController.deleteTrip));
-
-
+router.delete("/:id", cw(tripsController.deleteTrip));

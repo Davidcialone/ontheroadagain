@@ -1,6 +1,6 @@
 import React from 'react';
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
-import { AddVisitModal } from './modals/addVisitModal';
+import { AddVisitModal } from '../modals/addVisitModal';
 import { VisitList } from './visitList';
 
 export function TripVisits() {

@@ -1,0 +1,32 @@
+/* client/src/components/Signup.css */
+body, html {
+    height: 100%; /* Assurez-vous que le corps et le HTML prennent toute la hauteur */
+    margin: 0; /* Supprimez les marges par défaut */
+  }
+  
+  .signup-container {
+    width: 60%;
+    margin: auto; /* Centre horizontalement */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #f8f9fa; /* Couleur de fond claire */
+    position: absolute; /* Position absolue pour centrer verticalement */
+    top: 50%; /* Positionne le haut du conteneur à 50% de la hauteur de la page */
+    left: 50%; /* Positionne le côté gauche du conteneur à 50% de la largeur de la page */
+    transform: translate(-50%, -50%); /* Déplace le conteneur vers le haut et vers la gauche de 50% de sa propre taille */
+  }
+  
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .error-message {
+    color: red;
+    margin-bottom: 1rem;
+  }
