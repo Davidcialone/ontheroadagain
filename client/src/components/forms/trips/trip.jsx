@@ -53,6 +53,7 @@ export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rati
   return (
     <div>
       <NavbarSite/>
+    
     <Card>
       <CardHeader>
         <Flex justifyContent="space-between" alignItems="center">
@@ -74,11 +75,11 @@ export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rati
           <Image 
             src={photo} 
             alt={title} 
+            className="trip-image" // Ajoutez une classe pour le style
             objectFit="cover" 
             width="100%" 
             height="200px"
             cursor="pointer"
-            onClick={(e) => { e.preventDefault(); setPhotoIndex(0); onLightboxOpen(); }}
           />
         </Box>
         <Flex direction={["column", "column", "row"]} gap={4}>
