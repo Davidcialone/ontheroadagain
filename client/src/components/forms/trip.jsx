@@ -17,6 +17,8 @@ import {
 import { StarIcon, ViewIcon } from "@chakra-ui/icons";
 import { UpdateTripButton } from "./buttons/updateTripButton";
 import { DeleteTripButton } from "./buttons/deleteTripButton";
+import { UpdateTripModal } from "./modals/updateTripModal";
+import { DeleteTripModal } from "./modals/deleteTripModal";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Link as RouterLink } from "react-router-dom";
@@ -56,7 +58,10 @@ export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rati
           </Link>
           <Box>
             <UpdateTripButton onClick={(e) => { e.preventDefault(); onUpdateOpen(); }} />
+              <UpdateTripModal isOpen={isUpdateOpen} onClose={onUpdateClose} />
+
             <DeleteTripButton onClick={(e) => { e.preventDefault(); onDeleteOpen(); }} />
+              <DeleteTripModal isOpen={isDeleteOpen} onClose={onDeleteClose} />
           </Box>
         </Flex>
       </CardHeader>

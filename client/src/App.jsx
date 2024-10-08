@@ -13,7 +13,7 @@ import { Box } from "@chakra-ui/react";
 function App() {
   return (
       <Box width="100%" minHeight="100vh">
-          <Router>
+          <Router basename="/ontheroadagain">
               <div>
                  <h1>ON THE ROAD AGAIN</h1>
                   <NavbarSite/>
