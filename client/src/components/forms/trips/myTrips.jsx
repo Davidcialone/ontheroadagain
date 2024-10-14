@@ -3,6 +3,7 @@ import { Trip } from './trip';
 import { AddTripButton } from '../buttons/addTripButton';
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import { AddTripModal } from '../modals/addTripModal';
+import { fetchTrips } from '../../../api/tripApi';
 
 export function MyTrips() {
   const [trips, setTrips] = useState([]);
@@ -10,15 +11,16 @@ export function MyTrips() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
-    fetch('/api/me/trips') // Assurez-vous que cette URL est correcte
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erreur lors de la récupération des voyages');
-        }
-        return response.json();
-      })
-      .then(data => setTrips(data))
-      .catch(err => setError(err.message));
+    const loadTrips = async () => {
+      try {
+        const tripsData = await fetchTrips(); // Appel de la fonction pour récupérer les voyages
+        setTrips(tripsData); // Mettre à jour l'état avec les voyages récupérés
+      } catch (err) {
+        setError(err.message); // Gérer les erreurs
+      }
+    };
+
+    loadTrips(); // Charger les voyages lors du montage du composant
   }, []);
 
   if (error) return <div>Erreur: {error}</div>;

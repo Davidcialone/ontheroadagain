@@ -22,7 +22,6 @@ import { DeleteTripModal } from "../modals/deleteTripModal";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Link as RouterLink } from "react-router-dom";
-import { NavbarSite } from "../home/navbar";
 
 // URL de l'image par défaut
 const defaultPhoto =
@@ -52,8 +51,7 @@ export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rati
 
   return (
     <div>
-      <NavbarSite/>
-    
+          
     <Card>
       <CardHeader>
         <Flex justifyContent="space-between" alignItems="center">

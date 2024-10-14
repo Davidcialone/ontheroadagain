@@ -1,0 +1,82 @@
+.carousel-container {
+    height: auto; /* Ajustez la hauteur selon vos besoins */
+    width: 70%; /* Ajustez la largeur selon vos besoins */
+    margin: 0 auto; /* Centre la div */
+    overflow: hidden; /* Masque le débordement */
+  }
+  
+  .image-wrapper {
+    border-radius: 2rem; /* Appliquez le border-radius ici */
+    overflow: hidden; /* Masque les parties de l'image qui dépassent */
+    height: 50%; /* Assurez-vous que le wrapper prend toute la hauteur */
+  }
+  
+  .carousel img {
+    width: 100%; 
+    height: 100%;
+    object-fit: cover; 
+  }
+  .player-wrapper {
+    position: relative;
+    padding-top: 56.25%; 
+  }
+  
+  .home-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .carousel .slide {
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+  
+  .carousel .slide.selected {
+    opacity: 1;
+  }
+  
+
+/* 
+  .home-player{
+    object-fit: fill;
+    aspect-ratio: auto;
+    box-sizing: border-box;
+    width: 1280px!important;
+    height: 700px!important;
+  } */
+
+  @media (max-width: 1000px) {
+    .carousel-container {
+      width: 100%; /* Prend toute la largeur de l'écran */
+      padding: 0; /* Supprimez le rembourrage si nécessaire */
+    }
+  
+    .carousel img {
+      width: 100%; /* Assurez-vous que l'image prend toute la largeur */
+      height: auto; /* Ajuste la hauteur pour maintenir le rapport d'aspect */
+      object-fit: contain; /* Couvre l'espace sans déformer l'image */
+    }
+    .carousel-container {
+        height: auto; /* Ajustez la hauteur selon vos besoins */
+        width: 70%; /* Ajustez la largeur selon vos besoins */
+        margin: 0 auto; /* Centre la div */
+        overflow: hidden; /* Masque le débordement */
+      }
+      .image-wrapper {
+        border-radius: 2rem; /* Appliquez le border-radius ici */
+        overflow: hidden; /* Masque les parties de l'image qui dépassent */
+        height: 100%; /* Assurez-vous que le wrapper prend toute la hauteur */
+      }
+      /* .home-player{
+        
+        width: auto;
+        height: auto
+  } */
+  
+  .responsive-image {
+    width: 100%;
+    height: 100%;
+  }
+}
