@@ -108,7 +108,7 @@ export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rati
 }
 
 Trip.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   photo: PropTypes.string,
   title: PropTypes.string,
   startDate: PropTypes.string,
