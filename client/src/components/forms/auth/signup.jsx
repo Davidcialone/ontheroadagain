@@ -1,40 +1,39 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Remplacez useHistory par useNavigate
+import { useNavigate } from 'react-router-dom';
 import { ChakraProvider, Button, Input, FormControl, FormLabel, Box } from '@chakra-ui/react';
 
 export function Signup() {
-  const [name, setName] = useState('');
+  const [lastname, setName] = useState('');
   const [firstname, setFirstname] = useState('');
+  const [pseudo, setPseudo] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmation, setConfirmation] = useState(''); // Changement ici
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // Utilisez useNavigate pour la redirection
+  const navigate = useNavigate();
 
-  // Fonction pour gérer l'inscription
   const handleSignup = async (e) => {
-    e.preventDefault(); // Empêche le rechargement de la page
+    e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/api/users/signup', {
+      const response = await fetch('http://localhost:5000/ontheroadagain/api/users/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, firstname, email, password, confirmPassword }), // Envoyer les données d'inscription
+        body: JSON.stringify({ lastname, firstname, pseudo, email, password, confirmation }), // Changement ici
       });
 
       if (!response.ok) {
-        const errorText = await response.text(); // Récupérer le texte brut
-        throw new Error(`Erreur: ${response.status} - ${errorText}`);
+        const errorText = await response.json(); // Récupérer le JSON pour afficher l'erreur
+        throw new Error(`Erreur: ${response.status} - ${errorText.error || 'Erreur inconnue'}`);
       }
 
       const data = await response.json();
       console.log('Inscription réussie:', data);
-      // Rediriger l'utilisateur après une inscription réussie
-      navigate('/login'); // Redirige vers la page de connexion ou une autre page
+      navigate('/login'); 
     } catch (err) {
-      setError(err.message); // Gérer les erreurs
+      setError(err.message); 
       console.error('Erreur lors de l\'inscription:', err);
     }
   };
@@ -45,11 +44,11 @@ export function Signup() {
         <h1>Inscription</h1>
         {error && <div style={{ color: 'red' }}>{error}</div>}
         <form onSubmit={handleSignup}>
-          <FormControl id="name" isRequired>
+          <FormControl id="lastname" isRequired>
             <FormLabel>Nom</FormLabel>
             <Input
               type="text"
-              value={name}
+              value={lastname}
               onChange={(e) => setName(e.target.value)}
             />
           </FormControl>
@@ -59,6 +58,14 @@ export function Signup() {
               type="text"
               value={firstname}
               onChange={(e) => setFirstname(e.target.value)}
+            />
+          </FormControl>
+          <FormControl id="pseudo" isRequired>
+            <FormLabel>Pseudo</FormLabel>
+            <Input
+              type="text"
+              value={pseudo}
+              onChange={(e) => setPseudo(e.target.value)}
             />
           </FormControl>
           <FormControl id="email" isRequired>
@@ -77,12 +84,12 @@ export function Signup() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormControl>
-          <FormControl id="confirmPassword" isRequired>
+          <FormControl id="confirmation" isRequired>
             <FormLabel>Confirmer le mot de passe</FormLabel>
             <Input
               type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmation}
+              onChange={(e) => setConfirmation(e.target.value)} // Changement ici
             />
           </FormControl>
           <Button mt={4} colorScheme="teal" type="submit">
@@ -93,3 +100,6 @@ export function Signup() {
     </ChakraProvider>
   );
 }
+
+
+

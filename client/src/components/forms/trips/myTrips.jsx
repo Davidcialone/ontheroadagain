@@ -4,26 +4,37 @@ import { AddTripButton } from '../buttons/addTripButton';
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import { AddTripModal } from '../modals/addTripModal';
 import { fetchTrips } from '../../../api/tripApi';
+import { jwtDecode } from 'jwt-decode'; // Ensure jwt-decode is imported
 
 export function MyTrips() {
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     const loadTrips = async () => {
       try {
-        const tripsData = await fetchTrips(); // Appel de la fonction pour récupérer les voyages
-        setTrips(tripsData); // Mettre à jour l'état avec les voyages récupérés
+        const token = localStorage.getItem('token'); // Retrieve the token from local storage
+        if (!token) throw new Error("Token not found."); // Handle case when token is not found
+        
+        const decodedToken = jwtDecode(token); // Decode the token to get user ID
+        const userId = decodedToken.id; // Assuming 'id' is the property for user ID
+
+        const tripsData = await fetchTrips(userId); // Pass user ID to fetchTrips
+        setTrips(tripsData);
       } catch (err) {
-        setError(err.message); // Gérer les erreurs
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    loadTrips(); // Charger les voyages lors du montage du composant
+    loadTrips(); // Load trips when the component mounts
   }, []);
 
-  if (error) return <div>Erreur: {error}</div>;
+  if (loading) return <div>Chargement des voyages...</div>; // Loading state
+  if (error) return <div>Erreur: {error}</div>; // Error state
 
   return (
     <ChakraProvider>
@@ -40,9 +51,9 @@ export function MyTrips() {
               id={trip.id} 
               photo={trip.photo} 
               title={trip.title} 
-              startDate={trip.startDate} 
-              endDate={trip.endDate} 
-              rating={trip.rating} 
+              startDate={trip.dateStart} 
+              endDate={trip.dateEnd} 
+              rating={trip.note} 
             />
           ))}
         </div>

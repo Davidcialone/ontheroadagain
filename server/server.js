@@ -1,7 +1,7 @@
 import express from "express";
-import pkg from "pg"; // Importer le module pg par défaut
-const { Pool } = pkg; // Extraire Pool du package
 import cors from "cors";
+import sequelize from "./db.js"; // Importer Sequelize en haut du fichier
+import { router } from "./app/routers/index.js"; // Importer les routes
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -10,26 +10,27 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Créer une instance du pool de connexions PostgreSQL
-const pool = new Pool({
-  user: "postgres", // Utilisateur par défaut pour PostgreSQL
-  host: "localhost", // Hôte par défaut pour PostgreSQL
-  database: "otra",
-  password: "Dave1979",
-  port: 5432, // Port par défaut pour PostgreSQL
-});
+// Utiliser les routes
+app.use("/ontheroadagain", router);
 
-// Endpoint pour récupérer les voyages
-app.get("/ontheroadagain/api/me/trips", async (req, res) => {
+// Synchroniser la base de données
+const startServer = async () => {
   try {
-    const result = await pool.query("SELECT * FROM trip"); // Remplacez "trip" par le nom de votre table
-    res.json(result.rows); // Renvoie les lignes de la requête sous forme de JSON
-  } catch (error) {
-    console.error("Erreur lors de la récupération des voyages:", error);
-    res.status(500).send("Erreur lors de la récupération des voyages");
-  }
-});
+    // Synchroniser avec la base de données
+    await sequelize.sync();
+    console.log("Base de données synchronisée avec succès.");
 
-app.listen(port, () => {
-  console.log(`Server is running on port: ${port}`);
-});
+    // Lancer le serveur
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error(
+      "Erreur lors de la synchronisation avec la base de données :",
+      error
+    );
+  }
+};
+
+// Démarrer le serveur
+startServer();

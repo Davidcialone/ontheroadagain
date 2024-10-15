@@ -16,15 +16,38 @@
         "deploy": "gh-pages -d client/dist"
     },
     "devDependencies": {
+        "@types/jwt-decode": "^3.1.0",
+        "@vitejs/plugin-react": "^4.3.2",
         "concurrently": "^6.5.1",
         "gh-pages": "^6.1.1"
     },
     "dependencies": {
+        "@chakra-ui/icons": "^2.2.4",
+        "@chakra-ui/react": "^2.10.2",
+        "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+        "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
+        "bcrypt": "^5.1.1",
         "bootstrap": "^5.3.3",
+        "buffer": "^6.0.3",
         "dotenv": "^16.4.5",
+        "email-validator": "^2.0.4",
         "express": "^4.21.0",
+        "joi": "^17.13.3",
+        "jsonwebtoken": "^9.0.2",
+        "jwt-decode": "^4.0.0",
+        "node-fetch": "^3.3.2",
         "pg": "^8.13.0",
+        "process": "^0.11.10",
+        "prop-types": "^15.8.1",
+        "react-bootstrap": "^2.10.5",
+        "react-datepicker": "^7.4.0",
+        "react-dom": "^18.3.1",
         "react-player": "^2.16.0",
-        "sequelize": "^6.37.4"
+        "react-responsive-carousel": "^3.2.23",
+        "react-router-dom": "^6.27.0",
+        "react-stars": "^2.2.5",
+        "sequelize": "^6.37.4",
+        "vite-plugin-node-polyfills": "^0.22.0",
+        "yet-another-react-lightbox": "^3.21.6"
     }
 }

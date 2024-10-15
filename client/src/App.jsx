@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Home } from './components/forms/home/home';
-import {MyTrips} from './components/forms/trips/myTrips';
+import { MyTrips } from './components/forms/trips/myTrips';
 import { TripVisits } from '../src/components/forms/visits/tripVisits';
 import { Login } from './components/forms/auth/login';
 import { Signup } from './components/forms/auth/signup';
@@ -14,20 +14,20 @@ import { Box } from "@chakra-ui/react";
 
 function App() {
   return (
-      <Box width="100%" minHeight="100vh">
-          <Router basename="/ontheroadagain">
-              <div>
-                 <h1>ON THE ROAD AGAIN</h1>
-                 <NavbarSite/>             
-                  <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/me/trips" element={<MyTrips />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
-                  </Routes>
-              </div>
-          </Router>
-      </Box>
+    <Box width="100%" minHeight="100vh">
+      <Router basename="/ontheroadagain">
+        <div>
+          <h1>ON THE ROAD AGAIN</h1>
+          <NavbarSite />             
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/me/trips" element={<MyTrips />} />
+            <Route path="/login" element={<Login />} /> {/* Corrigé */}
+            <Route path="/signup" element={<Signup />} />
+          </Routes>
+        </div>
+      </Router>
+    </Box>
   );
 }
 

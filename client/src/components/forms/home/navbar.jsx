@@ -13,15 +13,15 @@ export function NavbarSite() {
               <Nav.Link as={Link} to="/">Accueil</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={Link} to="/me/trips">Mes voyages</Nav.Link> {/* Adapté */}
+              <Nav.Link as={Link} to="/me/trips">Mes voyages</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link as={Link} to="/me/trips/projects">Mes projets de voyages</Nav.Link> {/* Adapté */}
+              <Nav.Link as={Link} to="/me/trips/projects">Mes projets de voyages</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav>
             <Nav.Item>
-              <Nav.Link as={Link} to="/login" className="me-2">Connexion</Nav.Link>
+              <Nav.Link as={Link} to="/login" className="me-2">Connexion</Nav.Link> {/* Corrigé */}
             </Nav.Item>
             <Nav.Item>
               <Nav.Link as={Link} to="/signup">Inscription</Nav.Link>

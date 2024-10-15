@@ -1,4 +1,4 @@
-import { Trip, Visit, Place, VisitPhoto, User } from "../models/index.js";
+import { Trip, Visit, Place, User, VisitPhoto } from "../models/index.js";
 import {
   tripIdSchema,
   createTripSchema,
@@ -53,27 +53,6 @@ export async function getMyTrips(req, res) {
  * @param {Object} res - The response object.
  * @returns {Promise<void>} - A promise that resolves to void.
  */
-export async function getVisitsForTrip(req, res) {
-  // const { error } = tripIdSchema.validate({ id: req.params.id });
-  // if (error) {
-  //   return res.status(400).send(error.details[0].message);
-  // }
-
-  const tripId = parseInt(req.params.id);
-
-  const trip = await Trip.findByPk(tripId, {
-    include: [
-      {
-        model: Visit,
-        as: "visits",
-      },
-    ],
-  });
-  if (!trip) {
-    return res.status(404).json({ error: "Le voyage n'a pas été retrouvé" });
-  }
-  res.json(trip);
-}
 
 /**
  * Create a new trip.
