@@ -6,8 +6,15 @@ import { router } from "./app/routers/index.js"; // Importer les routes
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Configurer CORS
-app.use(cors());
+// Configurer CORS pour permettre uniquement les requêtes de ton frontend
+const corsOptions = {
+  origin: "http://localhost:3000", // Remplace par l'URL de ton frontend
+  methods: ["GET", "POST", "PUT", "DELETE"], // Ajoute les méthodes que tu veux autoriser
+  credentials: true, // Permet d'envoyer des cookies avec les requêtes
+};
+
+// Utiliser CORS avec les options définies
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Utiliser les routes
@@ -17,7 +24,7 @@ app.use("/ontheroadagain", router);
 const startServer = async () => {
   try {
     // Synchroniser avec la base de données
-    await sequelize.sync();
+    await sequelize.sync({ alter: true }); // Utilise { alter: true } si tu veux que Sequelize modifie la base de données selon les modèles
     console.log("Base de données synchronisée avec succès.");
 
     // Lancer le serveur

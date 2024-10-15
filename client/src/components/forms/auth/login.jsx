@@ -37,7 +37,7 @@ export function Login() {
       console.log('User ID:', userId);
 
       // Navigation vers la page des voyages de l'utilisateur
-      navigate(`/api/me/trips/${userId}`); 
+      navigate(`/me/trips`); 
     } catch (err) {
       setError(err.message);
     }

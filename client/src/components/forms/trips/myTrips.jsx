@@ -1,40 +1,56 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Pour la redirection
 import { Trip } from './trip';
 import { AddTripButton } from '../buttons/addTripButton';
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import { AddTripModal } from '../modals/addTripModal';
-import { fetchTrips } from '../../../api/tripApi';
-import { jwtDecode } from 'jwt-decode'; // Ensure jwt-decode is imported
+import { fetchTrips } from '../../../../src/api/tripApi'; // API pour récupérer les trips
+import { jwtDecode } from 'jwt-decode'; // Import correct de jwt-decode
 
 export function MyTrips() {
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate(); // Utilisation du hook pour redirection
 
   useEffect(() => {
     const loadTrips = async () => {
       try {
-        const token = localStorage.getItem('token'); // Retrieve the token from local storage
-        if (!token) throw new Error("Token not found."); // Handle case when token is not found
-        
-        const decodedToken = jwtDecode(token); // Decode the token to get user ID
-        const userId = decodedToken.id; // Assuming 'id' is the property for user ID
+        const token = localStorage.getItem('token');
+        if (!token) {
+          // Si pas de token, redirection vers la page de connexion
+          navigate('/login');
+          return;
+        }
 
-        const tripsData = await fetchTrips(userId); // Pass user ID to fetchTrips
+        const decodedToken = jwtDecode(token);
+        const currentTime = Date.now() / 1000; // Assurez-vous que cette ligne est bien ici
+
+        // Vérifier si le token est expiré
+        if (decodedToken.exp < currentTime) {
+          // Si le token est expiré, supprimer le token et rediriger vers la page de login
+          localStorage.removeItem('token');
+          navigate('/login');
+          return;
+        }
+
+        // Sinon, continuer à charger les voyages
+        const tripsData = await fetchTrips(); // Utilisation de fetchTrips sans passer l'ID
         setTrips(tripsData);
       } catch (err) {
+        console.error("Erreur lors du chargement des voyages:", err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    loadTrips(); // Load trips when the component mounts
-  }, []);
+    loadTrips();
+  }, [navigate]); // Ajout de navigate comme dépendance
 
-  if (loading) return <div>Chargement des voyages...</div>; // Loading state
-  if (error) return <div>Erreur: {error}</div>; // Error state
+  if (loading) return <div>Chargement des voyages...</div>;
+  if (error) return <div>Erreur: {error}</div>;
 
   return (
     <ChakraProvider>
@@ -61,3 +77,4 @@ export function MyTrips() {
     </ChakraProvider>
   );
 }
+

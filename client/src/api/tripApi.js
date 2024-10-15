@@ -2,42 +2,38 @@ import jwt from "jsonwebtoken";
 
 export async function fetchTrips() {
   try {
-    // Retrieve JWT token from local storage
     const yourJWTToken = localStorage.getItem("token");
     if (!yourJWTToken) {
-      throw new Error("Token non trouvé"); // Handle missing token
+      throw new Error("Token non trouvé");
     }
 
-    // Decode the JWT token to get user ID
     const decodedToken = jwt.decode(yourJWTToken);
     if (!decodedToken || !decodedToken.id) {
-      throw new Error("ID d'utilisateur non trouvé dans le token"); // Handle missing user ID in token
+      throw new Error("ID d'utilisateur non trouvé dans le token");
     }
 
-    const userId = decodedToken.id; // Extract user ID from the token
-    console.log("Fetching trips for user ID:", userId);
+    console.log("Fetching trips for user ID:", decodedToken.id); // Juste pour vérifier
 
-    // Fetch trips for the specific user ID
+    // Appel à la route /me/trips sans l'ID dans l'URL car l'API peut utiliser le JWT
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${userId}`,
+      `http://localhost:5000/ontheroadagain/api/me/trips`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${yourJWTToken}`, // Use the JWT for authentication
+          Authorization: `Bearer ${yourJWTToken}`, // Utilisez le JWT pour l'authentification
         },
       }
     );
 
-    // Check if the response is okay (status in the range 200-299)
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`); // Handle HTTP errors
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const trips = await response.json(); // Parse the JSON response
-    return trips; // Return the trips data
+    const trips = await response.json();
+    return trips;
   } catch (error) {
-    console.error("Error fetching trips:", error); // Log the error to the console
-    throw error; // Re-throw the error for further handling
+    console.error("Error fetching trips:", error);
+    throw error;
   }
 }
