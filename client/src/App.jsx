@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { Home } from './components/forms/home/home';
 import { MyTrips } from './components/forms/trips/myTrips';
-import { TripVisits } from './components/forms/visits/tripVisits';
 import { Login } from './components/forms/auth/login';
 import { Signup } from './components/forms/auth/signup';
 import { NavbarSite } from './components/forms/home/navbar';

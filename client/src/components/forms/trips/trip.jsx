@@ -28,7 +28,7 @@ const defaultPhoto =
   "https://media.istockphoto.com/id/539115110/fr/photo/colis%C3%A9e-de-rome-en-italie-et-du-soleil-du-matin.jpg?s=612x612&w=0&k=20&c=-x2jy7JBLHmU6Srs--5kkaW4aiGCcK98bwmRCQpCfZI=";
 
 // Trip Card Component
-export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rating }) {
+export function Trip({ id, photo = defaultPhoto, title, dateStart, dateEnd,description, rating }) {
   const [photoIndex, setPhotoIndex] = useState(0);
   
   const {
@@ -85,8 +85,12 @@ export function Trip({ id, photo = defaultPhoto, title, startDate, endDate, rati
             <Box>
               <Heading size="xs" textTransform="uppercase">Dates</Heading>
               <Text pt="2" fontSize="sm">
-                Départ : {startDate} - Retour : {endDate}
+                Départ : {dateStart} - Retour : {dateEnd}
               </Text>
+            </Box>
+            <Box>
+              <Heading size="xs" textTransform="uppercase">Description</Heading>
+              <Text pt="2" fontSize="sm">{description}</Text>
             </Box>
             <Box>
               <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
@@ -113,6 +117,7 @@ Trip.propTypes = {
   title: PropTypes.string,
   startDate: PropTypes.string,
   endDate: PropTypes.string,
+  description: PropTypes.string,
   rating: PropTypes.number,
 };
 

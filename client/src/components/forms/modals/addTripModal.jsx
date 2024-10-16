@@ -9,7 +9,6 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Text,
   Input,
   Textarea,
   FormControl,
@@ -18,87 +17,121 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
+import { uploadImageToCloudinary } from "../../../api/tripApi";
 
-export function AddTripModal({ isOpen, onClose }) {
+export function AddTripModal({ isOpen, onClose, onAddTrip, userId }) {
   const [title, setTitle] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const [photo, setPhoto] = useState(null);
+  const [dateStart, setDateStart] = useState(null);
+  const [dateEnd, setDateEnd] = useState(null);
+  const [note, setNote] = useState(0);
+  const [description, setDescription] = useState("");
+  const [imageFile, setImageFile] = useState(null); // Stocke le fichier image
+  const [error, setError] = useState(null);
 
-  const handleSave = () => {
-    // Logic to handle saving the trip details
-    const tripDetails = {
-      title,
-      startDate,
-      endDate,
-      rating,
-      comment,
-    };
-    console.log(tripDetails);
-    onClose();
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPhoto(URL.createObjectURL(file)); // Pour prévisualiser
+      setImageFile(file); // Stocke le fichier pour l'upload
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setError(null); // Réinitialise l'erreur avant de commencer
+      let imageUrl = "";
+
+      if (imageFile instanceof File || imageFile instanceof Blob) {
+        // Si c'est un fichier, upload via Cloudinary
+        const imageData = await uploadImageToCloudinary(imageFile);
+        imageUrl = imageData.secure_url;
+      }
+
+      // Vérification si l'utilisateur est bien passé en prop
+      if (!userId) {
+        throw new Error("ID utilisateur non disponible");
+      }
+
+      // Sauvegardez le voyage avec l'URL de l'image
+      const tripData = {
+        title,
+        photo: imageUrl,
+        dateStart,
+        dateEnd,
+        note,
+        description,
+        user_id: userId, // Utilisation de l'ID utilisateur passé en prop
+      };
+
+      await onAddTrip(tripData); // Appelle la fonction d'ajout du voyage
+    } catch (error) {
+      console.error("Erreur lors de l'ajout du voyage:", error);
+      setError(error.message || "Une erreur est survenue");
+    }
   };
 
   return (
-    <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Ajouter un voyage</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          {error && <p style={{ color: "red" }}>{error}</p>}
           <FormControl>
             <FormLabel>Titre</FormLabel>
             <Input
-              placeholder="Titre du voyage"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              placeholder="Titre du voyage"
             />
           </FormControl>
-
           <FormControl mt={4}>
-            <FormLabel>Date de départ</FormLabel>
+            <FormLabel>Photo</FormLabel>
+            <Input type="file" onChange={handlePhotoUpload} />
+          </FormControl>
+          <FormControl mt={4}>
+            <FormLabel>Date de début</FormLabel>
             <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              selected={dateStart}
+              onChange={(date) => setDateStart(date)}
               dateFormat="dd/MM/yyyy"
             />
           </FormControl>
-
           <FormControl mt={4}>
             <FormLabel>Date de fin</FormLabel>
             <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
+              selected={dateEnd}
+              onChange={(date) => setDateEnd(date)}
               dateFormat="dd/MM/yyyy"
             />
           </FormControl>
-
           <FormControl mt={4}>
-            <FormLabel>Évaluation</FormLabel>
+            <FormLabel>Note</FormLabel>
             <ReactStars
               count={5}
+              value={note}
+              onChange={(newRating) => setNote(newRating)}
               size={24}
-              value={rating}
-              onChange={(newRating) => setRating(newRating)}
+              color2={"#ffd700"}
             />
           </FormControl>
-
           <FormControl mt={4}>
-            <FormLabel>Commentaire</FormLabel>
+            <FormLabel>Description</FormLabel>
             <Textarea
-              placeholder="Ajoutez un commentaire"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Description du voyage"
             />
           </FormControl>
         </ModalBody>
-
         <ModalFooter>
           <Button colorScheme="blue" mr={3} onClick={handleSave}>
-            Sauvegarder
+            Enregistrer
           </Button>
           <Button variant="ghost" onClick={onClose}>
-            Fermer
+            Annuler
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -107,6 +140,8 @@ export function AddTripModal({ isOpen, onClose }) {
 }
 
 AddTripModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onAddTrip: PropTypes.func.isRequired,
+  userId: PropTypes.number.isRequired, // Déclarez userId comme prop nécessaire
 };
