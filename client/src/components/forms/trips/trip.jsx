@@ -23,12 +23,12 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { Link as RouterLink } from "react-router-dom";
 
-// URL de l'image par défaut
-const defaultPhoto =
-  "https://media.istockphoto.com/id/539115110/fr/photo/colis%C3%A9e-de-rome-en-italie-et-du-soleil-du-matin.jpg?s=612x612&w=0&k=20&c=-x2jy7JBLHmU6Srs--5kkaW4aiGCcK98bwmRCQpCfZI=";
+
+// URL de base pour les images
+const baseUrl = "https://res.cloudinary.com/dn1y58few/image/upload/";
 
 // Trip Card Component
-export function Trip({ id, photo = defaultPhoto, title, dateStart, dateEnd,description, rating }) {
+export function Trip({ id, photo, title, dateStart, dateEnd,description, rating }) {
   const [photoIndex, setPhotoIndex] = useState(0);
   
   const {

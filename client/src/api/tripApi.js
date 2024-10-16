@@ -35,10 +35,10 @@ async function uploadImageToCloudinary(imageFile) {
     throw new Error("Le premier argument doit être un objet File ou Blob.");
   }
 
-  // Compression de l'image
+  // Compresser l'image avant de la télécharger
   const compressedImage = await new Promise((resolve, reject) => {
     new Compressor(imageFile, {
-      quality: 0.6,
+      quality: 0.6, // Ajustez la qualité selon vos besoins
       success(result) {
         resolve(result);
       },
@@ -62,24 +62,20 @@ async function uploadImageToCloudinary(imageFile) {
     );
 
     if (!response.ok) {
+      console.log(`Cloudinary upload error! status: ${response.status}`);
       const errorText = await response.text();
-      console.error(`Erreur d'upload sur Cloudinary : ${errorText}`);
+      console.log(`Cloudinary upload error details: ${errorText}`);
       throw new Error(`Cloudinary upload error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("Image uploadée avec succès:", data);
+    console.log("Image uploaded successfully:", data);
     return data;
   } catch (error) {
-    console.error(
-      "Erreur lors du téléchargement de l'image sur Cloudinary:",
-      error
-    );
+    console.error("Error uploading image to Cloudinary:", error);
     throw new Error("Échec du téléchargement de l'image sur Cloudinary");
   }
 }
-
-export { uploadImageToCloudinary };
 
 export async function fetchTrips() {
   console.log("Fetching trips...");
@@ -100,17 +96,16 @@ export async function fetchTrips() {
     );
 
     if (!response.ok) {
-      const errorMessage = await response.text();
       throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorMessage}`
+        `Erreur lors de la récupération des voyages: ${response.statusText}`
       );
     }
 
-    const trips = await response.json();
-    console.log("Trips fetched:", trips);
-    return trips;
+    const data = await response.json();
+    console.log("Trips fetched successfully:", data);
+    return data;
   } catch (error) {
-    console.error("Error fetching trips:", error);
+    console.error("Erreur lors de la récupération des voyages:", error);
     throw error;
   }
 }
@@ -120,42 +115,18 @@ export async function addTrip(newTrip, imageFile) {
     const userId = getUserIdFromToken();
     console.log("Adding trip for user ID:", userId);
 
-    // Uploader l'image sur Cloudinary
-    const uploadedImageUrl = await uploadImageToCloudinary(imageFile);
-
-    // Préparer les données du voyage avec l'URL de l'image
-    const tripWithUserId = {
-      ...newTrip,
-      user_id: userId,
-      image_url: uploadedImageUrl, // Ajout de l'URL de l'image
-    };
-
-    console.log("Trip data to be sent:", JSON.stringify(tripWithUserId));
-
-    const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(tripWithUserId),
-      }
-    );
-
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      console.error(`Error details: ${errorMessage}`);
-      throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorMessage}`
-      );
+    if (!imageFile) {
+      console.error("Image fournie :", imageFile);
+      throw new Error("Aucune image fournie pour le téléchargement");
     }
 
-    const addedTrip = await response.json();
-    return addedTrip;
+    const imageData = await uploadImageToCloudinary(imageFile);
+    newTrip.photo = imageData.secure_url;
+
+    // Ajoutez ici le code pour sauvegarder le voyage avec les données de l'image
+    console.log("Trip added successfully:", newTrip);
   } catch (error) {
-    console.error("Error adding trip:", error);
+    console.error("Erreur lors de l'ajout du voyage:", error);
     throw error;
   }
 }

@@ -17,57 +17,46 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
-import { uploadImageToCloudinary } from "../../../api/tripApi";
+import { addTrip } from "../../../api/tripApi";
 
-export function AddTripModal({ isOpen, onClose, onAddTrip, userId }) {
+export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
   const [dateStart, setDateStart] = useState(null);
   const [dateEnd, setDateEnd] = useState(null);
   const [note, setNote] = useState(0);
   const [description, setDescription] = useState("");
-  const [imageFile, setImageFile] = useState(null); // Stocke le fichier image
+  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setPhoto(URL.createObjectURL(file)); // Pour prévisualiser
-      setImageFile(file); // Stocke le fichier pour l'upload
+      setPhoto(URL.createObjectURL(file));
+      setImageFile(file);
     }
   };
 
   const handleSave = async () => {
     try {
-      setError(null); // Réinitialise l'erreur avant de commencer
-      let imageUrl = "";
-
-      if (imageFile instanceof File || imageFile instanceof Blob) {
-        // Si c'est un fichier, upload via Cloudinary
-        const imageData = await uploadImageToCloudinary(imageFile);
-        imageUrl = imageData.secure_url;
+      if (imageFile) {
+        const newTrip = {
+          title,
+          photo,
+          dateStart,
+          dateEnd,
+          note,
+          description,
+        };
+        await addTrip(newTrip, imageFile);
+        onAddTrip(newTrip);
+      } else {
+        console.log("No image file selected");
+        setError("Aucune image valide fournie pour le téléchargement");
       }
-
-      // Vérification si l'utilisateur est bien passé en prop
-      if (!userId) {
-        throw new Error("ID utilisateur non disponible");
-      }
-
-      // Sauvegardez le voyage avec l'URL de l'image
-      const tripData = {
-        title,
-        photo: imageUrl,
-        dateStart,
-        dateEnd,
-        note,
-        description,
-        user_id: userId, // Utilisation de l'ID utilisateur passé en prop
-      };
-
-      await onAddTrip(tripData); // Appelle la fonction d'ajout du voyage
     } catch (error) {
       console.error("Erreur lors de l'ajout du voyage:", error);
-      setError(error.message || "Une erreur est survenue");
+      setError(error.message);
     }
   };
 
@@ -143,5 +132,4 @@ AddTripModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onAddTrip: PropTypes.func.isRequired,
-  userId: PropTypes.number.isRequired, // Déclarez userId comme prop nécessaire
 };
