@@ -111,15 +111,11 @@ export async function fetchTrips() {
 }
 
 export async function addTrip(newTrip) {
-  const { title, photo, dateStart, dateEnd, note, description, user_id } =
-    newTrip;
+  const { title, photo, dateStart, dateEnd, note, description } = newTrip;
 
   try {
-    const userId = getUserIdFromToken();
+    const userId = getUserIdFromToken(); // Obtenez l'ID utilisateur
     console.log("Adding trip for user ID:", userId);
-
-    // Assurez-vous que photo a une valeur correcte
-    console.log("Image fournie :", photo); // Log de l'image pour déboguer
 
     if (!photo) {
       throw new Error("Aucune image fournie pour le téléchargement.");
@@ -133,10 +129,9 @@ export async function addTrip(newTrip) {
       dateEnd,
       note,
       description,
-      user_id: userId, // Assurez-vous d'utiliser l'ID utilisateur correct
+      user_id: userId, // Incluez l'ID utilisateur ici
     };
 
-    // Ajoutez la logique pour envoyer les données du voyage à votre API
     const response = await fetch(
       "http://localhost:5000/ontheroadagain/api/me/trips",
       {
@@ -145,7 +140,7 @@ export async function addTrip(newTrip) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(tripData), // Ici, vous devez vous assurer que les données sont bien formatées
+        body: JSON.stringify(tripData), // Envoyez les données au format JSON
       }
     );
 
@@ -154,8 +149,8 @@ export async function addTrip(newTrip) {
     }
 
     const result = await response.json(); // Récupérez la réponse JSON
-    console.log("Voyage ajouté avec succès:", result); // Log pour confirmer l'ajout du voyage
-    return result; // Renvoie le résultat si besoin
+    console.log("Voyage ajouté avec succès:", result);
+    return result; // Renvoie le résultat
   } catch (error) {
     console.error("Erreur lors de l'ajout du voyage:", error);
     throw error; // Relancez l'erreur pour le gérer plus haut dans la chaîne
