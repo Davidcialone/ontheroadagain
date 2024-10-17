@@ -27,8 +27,7 @@ import { Link as RouterLink } from "react-router-dom";
 // URL de base pour les images
 const baseUrl = "https://res.cloudinary.com/dn1y58few/image/upload/";
 
-// Trip Card Component
-export function Trip({ id, photo, title, dateStart, dateEnd,description, rating }) {
+export function Trip({ id, photo, title, dateStart, dateEnd, description, rating }) {
   const [photoIndex, setPhotoIndex] = useState(0);
   
   const {
@@ -51,85 +50,61 @@ export function Trip({ id, photo, title, dateStart, dateEnd,description, rating 
 
   return (
     <div>
-          
-    <Card>
-      <CardHeader>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Link as={RouterLink} to={`/trips/${id}/visits`}>
-            <Heading size="md">{title}</Heading>
-          </Link>
-          <Box>
-            <UpdateTripButton onClick={(e) => { e.preventDefault(); onUpdateOpen(); }} />
+      <Card data-set-id={id}>
+        <CardHeader>
+          <Flex justifyContent="space-between" alignItems="center">
+            <Link as={RouterLink} to={`/trips/${id}/visits`}>
+              <Heading size="md">{title}</Heading>
+            </Link>
+            <Box>
+              <UpdateTripButton onClick={(e) => { e.preventDefault(); onUpdateOpen(); }} />
               <UpdateTripModal isOpen={isUpdateOpen} onClose={onUpdateClose} />
-
-            <DeleteTripButton onClick={(e) => { e.preventDefault(); onDeleteOpen(); }} />
+              <DeleteTripButton onClick={(e) => { e.preventDefault(); onDeleteOpen(); }} />
               <DeleteTripModal isOpen={isDeleteOpen} onClose={onDeleteClose} />
-          </Box>
-        </Flex>
-      </CardHeader>
+            </Box>
+          </Flex>
+        </CardHeader>
 
-      <CardBody>
-        <Box flex={1} minWidth={["100%", "100%", "50%"]}>
-          <Image 
-            src={photo} 
-            alt={title} 
-            className="trip-image" // Ajoutez une classe pour le style
-            objectFit="cover" 
-            width="100%" 
-            height="200px"
-            cursor="pointer"
-          />
-        </Box>
-        <Flex direction={["column", "column", "row"]} gap={4}>
-          <VStack spacing={4} align="stretch" flex={1}>
-            <Box>
-              <Heading size="xs" textTransform="uppercase">Dates</Heading>
-              <Text pt="2" fontSize="sm">
-                Départ : {dateStart} - Retour : {dateEnd}
-              </Text>
-            </Box>
-            <Box>
-              <Heading size="xs" textTransform="uppercase">Description</Heading>
-              <Text pt="2" fontSize="sm">{description}</Text>
-            </Box>
-            <Box>
-              <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
-              <Box pt="2">{renderStars(rating)}</Box>
-            </Box>
-          </VStack>
-        </Flex>
-        <Flex mt="2" alignItems="center" justifyContent="flex-end">
+        <CardBody>
+          <Box flex={1} minWidth={["100%", "100%", "50%"]}>
+            <Image 
+              src={photo} 
+              alt={title} 
+              className="trip-image" // Ajoutez une classe pour le style
+              objectFit="cover" 
+              width="100%" 
+              height="200px"
+              cursor="pointer"
+              data-trip-id={id} // Ajout de l'ID du voyage dans le dataset
+            />
+          </Box>
+          <Flex direction={["column", "column", "row"]} gap={4}>
+            <VStack spacing={4} align="stretch" flex={1}>
+              <Box>
+                <Heading size="xs" textTransform="uppercase">Dates</Heading>
+                <Text pt="2" fontSize="sm">
+                  Départ : {dateStart} - Retour : {dateEnd}
+                </Text>
+              </Box>
+              <Box>
+                <Heading size="xs" textTransform="uppercase">Description</Heading>
+                <Text pt="2" fontSize="sm">{description}</Text>
+              </Box>
+              <Box>
+                <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
+                <Box pt="2">{renderStars(rating)}</Box>
+              </Box>
+            </VStack>
+          </Flex>
+          <Flex mt="2" alignItems="center" justifyContent="flex-end">
             <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
-            <Button leftIcon={<ViewIcon />} colorScheme="teal" variant="outline" size="sm">
-              Voir les visites
-            </Button>
-          </Link>
-        </Flex>
-      </CardBody>
-    </Card>
+              <Button leftIcon={<ViewIcon />} colorScheme="teal" variant="outline" size="sm">
+                Voir les visites
+              </Button>
+            </Link>
+          </Flex>
+        </CardBody>
+      </Card>
     </div>
   );
 }
-
-Trip.propTypes = {
-  id: PropTypes.number,
-  photo: PropTypes.string,
-  title: PropTypes.string,
-  startDate: PropTypes.string,
-  endDate: PropTypes.string,
-  description: PropTypes.string,
-  rating: PropTypes.number,
-};
-
-import { ArrowRightIcon } from '@chakra-ui/icons';
-
-export function VisitLink() {
-    return (
-        <Link to="/tripVisits">
-            <div style={{ margin: '0.5rem', display: 'flex', alignItems: 'center', justifyContent:"flex-end" }}>
-                Par ici la visite ...<ArrowRightIcon />
-            </div>
-        </Link>
-    );
-}
-
