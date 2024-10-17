@@ -30,7 +30,7 @@ export function getUserIdFromToken() {
   return userId;
 }
 
-async function uploadImageToCloudinary(imageFile) {
+export async function uploadImageToCloudinary(imageFile) {
   if (!(imageFile instanceof File)) {
     throw new Error("Le premier argument doit être un objet File ou Blob.");
   }
@@ -110,24 +110,55 @@ export async function fetchTrips() {
   }
 }
 
-export async function addTrip(newTrip, imageFile) {
+export async function addTrip(newTrip) {
+  const { title, photo, dateStart, dateEnd, note, description, user_id } =
+    newTrip;
+
   try {
     const userId = getUserIdFromToken();
     console.log("Adding trip for user ID:", userId);
 
-    if (!imageFile) {
-      console.error("Image fournie :", imageFile);
-      throw new Error("Aucune image fournie pour le téléchargement");
+    // Assurez-vous que photo a une valeur correcte
+    console.log("Image fournie :", photo); // Log de l'image pour déboguer
+
+    if (!photo) {
+      throw new Error("Aucune image fournie pour le téléchargement.");
     }
 
-    const imageData = await uploadImageToCloudinary(imageFile);
-    newTrip.photo = imageData.secure_url;
+    // Préparez l'objet avec les données du voyage
+    const tripData = {
+      title,
+      photo,
+      dateStart,
+      dateEnd,
+      note,
+      description,
+      user_id: userId, // Assurez-vous d'utiliser l'ID utilisateur correct
+    };
 
-    // Ajoutez ici le code pour sauvegarder le voyage avec les données de l'image
-    console.log("Trip added successfully:", newTrip);
+    // Ajoutez la logique pour envoyer les données du voyage à votre API
+    const response = await fetch(
+      "http://localhost:5000/ontheroadagain/api/me/trips",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(tripData), // Ici, vous devez vous assurer que les données sont bien formatées
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de l'ajout du voyage.");
+    }
+
+    const result = await response.json(); // Récupérez la réponse JSON
+    console.log("Voyage ajouté avec succès:", result); // Log pour confirmer l'ajout du voyage
+    return result; // Renvoie le résultat si besoin
   } catch (error) {
     console.error("Erreur lors de l'ajout du voyage:", error);
-    throw error;
+    throw error; // Relancez l'erreur pour le gérer plus haut dans la chaîne
   }
 }
 

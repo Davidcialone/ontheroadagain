@@ -18,6 +18,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
 import { addTrip } from "../../../api/tripApi";
+import { uploadImageToCloudinary } from "../../../api/tripApi";
 
 export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const [title, setTitle] = useState("");
@@ -32,33 +33,57 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!validTypes.includes(file.type)) {
+        console.error("Type de fichier non valide:", file.type);
+        setError("Veuillez télécharger une image (JPEG, PNG, GIF).");
+        return;
+      }
       setPhoto(URL.createObjectURL(file));
       setImageFile(file);
+      setError(null);
+      console.log("Fichier image sélectionné:", file); // Log pour vérifier le fichier sélectionné
+    } else {
+      setError("Aucun fichier sélectionné");
     }
   };
+  
+
 
   const handleSave = async () => {
+    setError(null);
+
+    if (!title || !dateStart || !dateEnd || !description || !imageFile) {
+      setError("Veuillez remplir tous les champs requis.");
+      return;
+    }
+
+    console.log("Image File avant l'ajout:", imageFile); // Vérification si le fichier image existe
+
     try {
-      if (imageFile) {
-        const newTrip = {
-          title,
-          photo,
-          dateStart,
-          dateEnd,
-          note,
-          description,
-        };
-        await addTrip(newTrip, imageFile);
-        onAddTrip(newTrip);
-      } else {
-        console.log("No image file selected");
-        setError("Aucune image valide fournie pour le téléchargement");
-      }
+      // Upload de l'image d'abord
+      const imageData = await uploadImageToCloudinary(imageFile);
+
+      const newTrip = {
+        title,
+        photo: imageData.secure_url,  // Utilisez l'URL sécurisée obtenue après l'upload de l'image
+        dateStart,
+        dateEnd,
+        note,
+        description,
+      };
+
+      // Ajoutez les données du voyage dans l'appel API
+      await addTrip(newTrip);
+      onAddTrip(newTrip);  // Appelez le callback pour mettre à jour la liste des voyages
+      onClose();  // Fermez la modal ou le formulaire après le succès
     } catch (error) {
       console.error("Erreur lors de l'ajout du voyage:", error);
-      setError(error.message);
+      setError("Une erreur est survenue lors de l'ajout du voyage.");
     }
-  };
+};
+
+  
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
