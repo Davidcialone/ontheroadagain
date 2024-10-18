@@ -65,6 +65,14 @@
   background-color: rgb(233, 240, 241);
   border-color: black;
 }
+.trip-image {
+  transition: transform 0.3s ease; /* Transition douce pour le zoom */
+}
+
+.trip-image:hover {
+  transform: scale(1.05); /* Zoom à 105% lors du survol */
+}
+
 .roadbook .responsive-card {
   width: 30%;
 }

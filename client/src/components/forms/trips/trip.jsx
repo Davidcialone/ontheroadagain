@@ -19,17 +19,11 @@ import { UpdateTripButton } from "../buttons/updateTripButton";
 import { DeleteTripButton } from "../buttons/deleteTripButton";
 import { UpdateTripModal } from "../modals/updateTripModal";
 import { DeleteTripModal } from "../modals/deleteTripModal";
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
 import { Link as RouterLink } from "react-router-dom";
 
-
-// URL de base pour les images
-const baseUrl = "https://res.cloudinary.com/dn1y58few/image/upload/";
-
-export function Trip({ id, photo, title, dateStart, dateEnd, description, rating }) {
+export function Trip({ id, photo, title, dateStart, dateEnd, description, note }) {
   const [photoIndex, setPhotoIndex] = useState(0);
-  
+
   const {
     isOpen: isUpdateOpen,
     onOpen: onUpdateOpen,
@@ -48,63 +42,92 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
     ));
   }
 
+  const handleUpdateClick = () => {
+    console.log("Update trip ID:", id);
+    onUpdateOpen(); // Ouvre le modal de mise à jour
+  };
+
+  const handleDeleteClick = () => {
+    console.log("Delete trip ID:", id);
+    onDeleteOpen(); // Ouvre le modal de suppression
+  };
+
   return (
     <div>
-      <Card data-set-id={id}>
-        <CardHeader>
-          <Flex justifyContent="space-between" alignItems="center">
-            <Link as={RouterLink} to={`/trips/${id}/visits`}>
-              <Heading size="md">{title}</Heading>
-            </Link>
-            <Box>
-              <UpdateTripButton onClick={(e) => { e.preventDefault(); onUpdateOpen(); }} />
-              <UpdateTripModal isOpen={isUpdateOpen} onClose={onUpdateClose} />
-              <DeleteTripButton onClick={(e) => { e.preventDefault(); onDeleteOpen(); }} />
-              <DeleteTripModal isOpen={isDeleteOpen} onClose={onDeleteClose} />
-            </Box>
-          </Flex>
-        </CardHeader>
+  <Card data-set-id={id} borderTopRadius="lg" overflow="hidden">
+    <CardHeader p={0} borderTopRadius="lg">
+      <Box flex={1} minWidth={["100%", "100%", "50%"]}>
+      <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
+        <Image
+          src={photo}
+          alt={title}
+          className="trip-image"
+          objectFit="cover"
+          width="100%"
+          height="400px" // Augmenter la hauteur ici
+          cursor="pointer"
+          data-trip-id={id}
+        />
+       </Link>
+      </Box>
+      <Flex justifyContent="space-between" alignItems="center" padding={4}>
+        <Heading size="md">{title}</Heading>
+        <Box>
+          <UpdateTripButton onClick={handleUpdateClick} />
+          <UpdateTripModal isOpen={isUpdateOpen} onClose={onUpdateClose} tripId={id} />
+          <DeleteTripButton onClick={handleDeleteClick} />
+          <DeleteTripModal
+            isOpen={isDeleteOpen}
+            onClose={onDeleteClose}
+            tripId={id}
+            onDelete={() => {
+              console.log("Deleting trip ID:", id);
+            }}
+          />
+        </Box>
+      </Flex>
+    </CardHeader>
 
-        <CardBody>
-          <Box flex={1} minWidth={["100%", "100%", "50%"]}>
-            <Image 
-              src={photo} 
-              alt={title} 
-              className="trip-image" // Ajoutez une classe pour le style
-              objectFit="cover" 
-              width="100%" 
-              height="200px"
-              cursor="pointer"
-              data-trip-id={id} // Ajout de l'ID du voyage dans le dataset
-            />
+    <CardBody>
+      <Flex direction={["column", "column", "row"]} gap={4}>
+        <VStack spacing={4} align="stretch" flex={1}>
+          <Box>
+            <Heading size="xs" textTransform="uppercase">Dates</Heading>
+            <Text pt="2" fontSize="sm">
+              Départ : {dateStart} - Retour : {dateEnd}
+            </Text>
           </Box>
-          <Flex direction={["column", "column", "row"]} gap={4}>
-            <VStack spacing={4} align="stretch" flex={1}>
-              <Box>
-                <Heading size="xs" textTransform="uppercase">Dates</Heading>
-                <Text pt="2" fontSize="sm">
-                  Départ : {dateStart} - Retour : {dateEnd}
-                </Text>
-              </Box>
-              <Box>
-                <Heading size="xs" textTransform="uppercase">Description</Heading>
-                <Text pt="2" fontSize="sm">{description}</Text>
-              </Box>
-              <Box>
-                <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
-                <Box pt="2">{renderStars(rating)}</Box>
-              </Box>
-            </VStack>
-          </Flex>
-          <Flex mt="2" alignItems="center" justifyContent="flex-end">
-            <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
-              <Button leftIcon={<ViewIcon />} colorScheme="teal" variant="outline" size="sm">
-                Voir les visites
-              </Button>
-            </Link>
-          </Flex>
-        </CardBody>
-      </Card>
-    </div>
+          <Box>
+            <Heading size="xs" textTransform="uppercase">Description</Heading>
+            <Text pt="2" fontSize="sm">{description}</Text>
+          </Box>
+          <Box>
+            <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
+            <Box pt="2">{renderStars(note)}</Box>
+          </Box>
+        </VStack>
+      </Flex>
+      <Flex mt="2" alignItems="center" justifyContent="flex-end">
+        <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
+          <Button leftIcon={<ViewIcon />} colorScheme="teal" variant="outline" size="sm">
+            Voir les visites
+          </Button>
+        </Link>
+      </Flex>
+    </CardBody>
+  </Card>
+</div>
+
   );
 }
+
+// Définir les types de props
+Trip.propTypes = {
+  id: PropTypes.number.isRequired,
+  photo: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  dateStart: PropTypes.string.isRequired,
+  dateEnd: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  note: PropTypes.number,
+};

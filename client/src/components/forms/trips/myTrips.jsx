@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trip } from './trip';
 import { AddTripButton } from '../buttons/addTripButton';
-import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
+import { ChakraProvider, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import { AddTripModal } from '../modals/addTripModal';
 import { fetchTrips, addTrip } from '../../../../src/api/tripApi';
 import {jwtDecode} from 'jwt-decode';
@@ -101,36 +101,39 @@ export function MyTrips() {
 
   return (
     <ChakraProvider>
-      <h1>Mes voyages</h1>
-      <div className='roadbook'>
-        <div className='add-trip-button-layout'>
-          <AddTripButton onClick={onOpen} />
-          {error && <div className="error-message">{error}</div>}
-          <AddTripModal
-            isOpen={isOpen}
-            onClose={onClose}
-            onAddTrip={handleAddTrip}
-          />
-        </div>
-        <div className='tripsRoadbook'>
-          {loading ? (
-            <p>Chargement des voyages...</p>
-          ) : (
-            trips.map(trip => (
-              <Trip
-                key={trip.id}
-                id={trip.id}
-                photo={trip.photo}
-                title={trip.title}
-                dateStart={trip.dateStart}
-                dateEnd={trip.dateEnd}
-                description={trip.description}
-                note={trip.note}
-              />
-            ))
-          )}
-        </div>
+    <h1>Mes voyages</h1>
+    <div className='roadbook'>
+      <div className='add-trip-button-layout'>
+        <AddTripButton onClick={onOpen} />
+        {error && <div className="error-message">{error}</div>}
+        <AddTripModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onAddTrip={handleAddTrip}
+        />
       </div>
-    </ChakraProvider>
+  
+      {/* Grid layout for trips */}
+      <SimpleGrid columns={[1, 1, 1,2,3]} spacing={5} className='tripsRoadbook'>
+        {loading ? (
+          <p>Chargement des voyages...</p>
+        ) : (
+          trips.map(trip => (
+            <Trip
+              key={trip.id}
+              id={trip.id}
+              photo={trip.photo}
+              title={trip.title}
+              dateStart={trip.dateStart}
+              dateEnd={trip.dateEnd}
+              description={trip.description}
+              note={trip.note}
+            />
+          ))
+        )}
+      </SimpleGrid>
+    </div>
+  </ChakraProvider>
+  
   );
 }

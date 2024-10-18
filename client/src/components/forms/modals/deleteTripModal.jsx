@@ -12,10 +12,12 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-export function DeleteTripModal({ isOpen, onClose, onDelete }) {
+export function DeleteTripModal({ isOpen, onClose, onDelete, tripId }) {
   const handleDelete = () => {
-    onDelete();
-    onClose();
+    if (tripId) {
+      onDelete(tripId); // Passer l'ID du voyage à la fonction onDelete
+    }
+    onClose(); // Fermer la modal après l'appel à onDelete
   };
 
   return (
@@ -25,7 +27,10 @@ export function DeleteTripModal({ isOpen, onClose, onDelete }) {
         <ModalHeader>Supprimer le voyage</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text>Êtes-vous sûr de vouloir supprimer ce voyage ? <br />Cette action est irréversible.</Text>
+          <Text>
+            Êtes-vous sûr de vouloir supprimer ce voyage ? <br />
+            Cette action est irréversible.
+          </Text>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="red" mr={3} onClick={handleDelete}>
@@ -43,4 +48,6 @@ export function DeleteTripModal({ isOpen, onClose, onDelete }) {
 DeleteTripModal.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
+  onDelete: PropTypes.func, // Assurez-vous que la fonction onDelete est une prop
+  tripId: PropTypes.number, // Ajoutez la prop pour l'ID du voyage
 };
