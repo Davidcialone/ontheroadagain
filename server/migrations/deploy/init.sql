@@ -36,8 +36,8 @@ CREATE TABLE "place"(
 
 CREATE TABLE "trip"(
    "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-   "dateStart"  DATE NOT NULL,
-   "dateEnd"  DATE NOT NULL,
+   "dateStart"  DATE NOT NULL TIMESTAMPTZ,
+   "dateEnd"  DATE NOT NULL TIMESTAMPTZ,
    "photo" TEXT ,
    "title" TEXT NOT NULL,
    "description" TEXT,

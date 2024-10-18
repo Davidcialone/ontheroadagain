@@ -18,8 +18,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
-import { updateTrip } from "../../../api/tripApi";
-import { uploadImageToCloudinary } from "../../../api/tripApi";
+import { updateTrip, uploadImageToCloudinary } from "../../../api/tripApi";
 
 export function UpdateTripModal({
   isOpen,
@@ -42,7 +41,7 @@ export function UpdateTripModal({
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
 
-  // Réinitialiser les champs lorsque le modal s'ouvre
+  // Réinitialiser les champs lorsque la modale s'ouvre
   useEffect(() => {
     if (isOpen) {
       setTitle(initialTitle || "");
@@ -77,32 +76,43 @@ export function UpdateTripModal({
   const handleSave = async () => {
     setError(null);
 
+    // Vérification si tous les champs requis sont remplis
     if (!title || !startDate || !endDate || !description || !imageFile) {
-      setError("Veuillez remplir tous les champs requis.");
-      return;
+        setError("Veuillez remplir tous les champs requis.");
+        return;
     }
 
     try {
-      const imageUrl = await uploadImageToCloudinary(imageFile);
-      
-      const tripUpdateDetails = {
-        title,
-        photo: imageUrl,
-        dateStart: startDate,
-        dateEnd: endDate,
-        note: note,
-        description,
-      };
+        // Conversion des dates au format ISO avant de les envoyer
+        const isoStartDate = new Date(startDate).toISOString();
+        const isoEndDate = new Date(endDate).toISOString();
 
-      // Passer tripId à updateTrip
-      await updateTrip(tripId, tripUpdateDetails);
-      onUpdateTrip(); // Appeler la fonction de mise à jour
-      onClose(); // Fermer le modal
+        // Upload de l'image vers Cloudinary
+        const imageUrl = await uploadImageToCloudinary(imageFile);
+
+        // Créer les détails de mise à jour du voyage
+        const tripUpdateDetails = {
+            title,
+            photo: imageUrl, // URL de l'image uploadée
+            dateStart: isoStartDate,
+            dateEnd: isoEndDate,
+            note: note,
+            description,
+        };
+
+        // Envoi de la mise à jour à l'API
+        await updateTrip(tripId, tripUpdateDetails);
+
+        // Appeler la fonction de mise à jour pour récupérer les voyages
+        onUpdateTrip(); // Assurez-vous que cette fonction actualise la liste des voyages
+
+        onClose(); // Fermer la modale
     } catch (error) {
-      console.error("Erreur lors de la modification du voyage:", error);
-      setError("Une erreur s'est produite lors de la modification du voyage.");
+        console.error("Erreur lors de la modification du voyage:", error);
+        setError("Une erreur s'est produite lors de la modification du voyage.");
     }
-  };
+};
+
 
   return (
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>

@@ -1,4 +1,3 @@
-// Trip.jsx
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
@@ -25,7 +24,8 @@ import { Link as RouterLink } from "react-router-dom";
 import { deleteTrip } from "../../../api/tripApi";
 
 export function Trip({ id, photo, title, dateStart, dateEnd, description, note, onTripDeleted }) {
-  const [photoIndex, setPhotoIndex] = useState(0);
+  const [tripId, setTripId] = useState(id); // Utilisation de l'id directement
+  const [updatedTrip, setUpdatedTrip] = useState({});
 
   const {
     isOpen: isUpdateOpen,
@@ -39,40 +39,47 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
     onClose: onDeleteClose,
   } = useDisclosure();
 
-  const [tripId, setTripId] = useState(null);
-
   const handleUpdateClick = (id) => {
-    console.log("Update trip ID:", id);
-    setTripId(id); // Définit l'ID du voyage à mettre à jour
-    onUpdateOpen(); // Ouvre le modal de mise à jour
+    setTripId(id); // Assigner l'ID du voyage
+    onUpdateOpen(); // Ouvrir la modale de mise à jour
   };
+
+  const handleUpdateTrip = (updatedTripData) => {
+    // Vérifiez si updatedTripData est défini avant d'essayer d'accéder à ses propriétés
+    if (updatedTripData) {
+        // Exclure le champ `userId` des données mises à jour
+        const tripDataWithoutUserId = { ...updatedTripData }; // Copiez les données pour éviter de muter l'original
+        delete tripDataWithoutUserId.userId; // Supprimez userId du nouvel objet
+
+        setUpdatedTrip(tripDataWithoutUserId); // Enregistrer les nouvelles données du voyage
+        onUpdateClose(); // Fermer la modale
+    } else {
+        console.error("updatedTripData is undefined");
+    }
+};
+
 
   const handleDeleteClick = () => {
-    console.log("Delete trip ID:", id);
-    onDeleteOpen(); // Ouvre le modal de suppression
-  };
-
-  const handleUpdateTrip = (updatedTrip) => {
-    console.log("Updating trip ID:", tripId);
-    console.log("Updated trip:", updatedTrip);
-    onUpdateClose(); // Ferme le modal de mise à jour
+    onDeleteOpen(); // Ouvrir la modale de suppression
   };
 
   const handleDeleteTrip = async () => {
     try {
-      await deleteTrip(id); // Fonction pour supprimer le voyage
-      onTripDeleted(id); // Appelle la fonction pour mettre à jour la liste dans MyTrips
-      onDeleteClose(); // Ferme le modal de suppression
+      await deleteTrip(id); // Suppression via l'API
+      onTripDeleted(id); // Notifie le composant parent que le trip a été supprimé
+      onDeleteClose(); // Fermer la modale de suppression
     } catch (error) {
       console.error("Erreur lors de la suppression du voyage:", error);
     }
   };
 
-  function renderStars(rating) {
-    return Array(5).fill("").map((_, i) => (
-      <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
-    ));
-  }
+  const renderStars = (rating) => {
+    return Array(5)
+      .fill("")
+      .map((_, i) => (
+        <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
+      ));
+  };
 
   const colorTheme = "gray";
 
@@ -81,10 +88,14 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
       <Card data-set-id={id} borderTopRadius="lg" overflow="hidden">
         <CardHeader p={0} borderTopRadius="lg">
           <Box flex={1} minWidth={["100%", "100%", "50%"]}>
-            <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
+            <Link
+              as={RouterLink}
+              to={`/trips/${id}/visits`}
+              style={{ textDecoration: "none" }}
+            >
               <Image
-                src={photo}
-                alt={title}
+                src={photo || updatedTrip.photo} // Utiliser la photo mise à jour si elle existe
+                alt={title || updatedTrip.title}
                 className="trip-image"
                 objectFit="cover"
                 width="100%"
@@ -95,14 +106,20 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
             </Link>
           </Box>
           <Flex justifyContent="space-between" alignItems="center" padding={4}>
-            <Heading size="md">{title}</Heading>
+            <Heading size="md">{title || updatedTrip.title}</Heading>
             <Box>
               <UpdateTripButton onClick={() => handleUpdateClick(id)} />
               <UpdateTripModal
                 isOpen={isUpdateOpen}
                 onClose={onUpdateClose}
-                onUpdateTrip={handleUpdateTrip}
-                tripId={tripId} // Passe l'ID du voyage ici
+                onUpdateTrip={handleUpdateTrip} // Utilisation de la fonction de mise à jour
+                tripId={tripId}
+                title={title}
+                photo={photo}
+                startDate={new Date(dateStart)}
+                endDate={new Date(dateEnd)}
+                note={note}
+                description={description}
               />
               <DeleteTripButton onClick={handleDeleteClick} />
               <DeleteTripModal
@@ -119,31 +136,71 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
           <Flex direction={["column", "column", "row"]} gap={4}>
             <VStack spacing={4} align="stretch" flex={1}>
               <Box>
-                <Badge colorScheme={colorTheme} rounded="full" textTransform="uppercase" px="2" mb={2}>
+                <Badge
+                  colorScheme={colorTheme}
+                  rounded="full"
+                  textTransform="uppercase"
+                  px="2"
+                  mb={2}
+                >
                   Dates
                 </Badge>
                 <Text pt="2" fontSize="sm">
-                  Du {new Date(dateStart).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })} au {new Date(dateEnd).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  Du{" "}
+                  {new Date(dateStart).toLocaleDateString("fr-FR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}{" "}
+                  au{" "}
+                  {new Date(dateEnd).toLocaleDateString("fr-FR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </Text>
               </Box>
 
               <Box>
-                <Badge colorScheme={colorTheme} rounded="full" textTransform="uppercase" px="2" mb={2}>
+                <Badge
+                  colorScheme={colorTheme}
+                  rounded="full"
+                  textTransform="uppercase"
+                  px="2"
+                  mb={2}
+                >
                   Description
                 </Badge>
-                <Text pt="2" fontSize="sm">{description}</Text>
+                <Text pt="2" fontSize="sm">
+                  {description || updatedTrip.description}
+                </Text>
               </Box>
               <Box>
-                <Badge colorScheme={colorTheme} rounded="full" textTransform="uppercase" px="2" mb={2}>
+                <Badge
+                  colorScheme={colorTheme}
+                  rounded="full"
+                  textTransform="uppercase"
+                  px="2"
+                  mb={2}
+                >
                   Évaluation
                 </Badge>
-                <Box pt="2">{renderStars(note)}</Box>
+                <Box pt="2">{renderStars(note || updatedTrip.note)}</Box>
               </Box>
             </VStack>
           </Flex>
           <Flex mt="2" alignItems="center" justifyContent="flex-end">
-            <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
-              <Button leftIcon={<ViewIcon />} colorScheme={colorTheme} variant="outline" size="sm">
+            <Link
+              as={RouterLink}
+              to={`/trips/${id}/visits`}
+              style={{ textDecoration: "none" }}
+            >
+              <Button
+                leftIcon={<ViewIcon />}
+                colorScheme={colorTheme}
+                variant="outline"
+                size="sm"
+              >
                 Voir les visites
               </Button>
             </Link>

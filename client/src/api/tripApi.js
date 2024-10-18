@@ -196,21 +196,26 @@ export async function updateTrip(tripId, updatedTrip) {
     console.log("Updating trip for user ID:", userId);
     console.log("Trip ID:", tripId); // Vérifie si le tripId est bien récupéré
 
-    // Créer l'objet à envoyer, qui inclut les détails du voyage et l'ID utilisateur
+    // Créer l'objet à envoyer, en incluant l'ID utilisateur
     const tripData = {
       ...updatedTrip,
-      userId, // Ajouter l'ID utilisateur, si nécessaire pour le backend
+      photo: updatedTrip.photo.public_id
+        ? `https://res.cloudinary.com/dn1y58few/image/upload/${updatedTrip.photo.public_id}.jpeg`
+        : updatedTrip.photo.endsWith(".jpeg")
+        ? updatedTrip.photo // Utiliser l'URL existante si elle se termine par .jpeg
+        : `${updatedTrip.photo}.jpeg`, // Ajouter .jpeg si ce n'est pas le cas
     };
+    console.log("Updated trip data:", tripData);
 
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`, // tripId est dans l'URL
+      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`, // Vérifiez l'URL ici
       {
-        method: "PUT",
+        method: "PATCH", // Utilisez PATCH pour mettre à jour
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
         },
-        body: JSON.stringify(tripData), // Envoyer l'objet avec l'ID utilisateur
+        body: JSON.stringify(tripData), // Envoyer l'objet avec les données du voyage
       }
     );
 
