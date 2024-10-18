@@ -107,6 +107,12 @@ export function MyTrips() {
     setTrips((prevTrips) => prevTrips.filter(trip => trip.id !== id)); // Met à jour l'état en excluant le voyage supprimé
   };
 
+  const handleTripUpdated = (updatedTripData) => {
+    setTrips((prevTrips) =>
+      prevTrips.map(trip => (trip.id === updatedTripData.id ? updatedTripData : trip))
+    );
+  };
+
   return (
     <ChakraProvider>
       <h1>Mes voyages</h1>
@@ -136,6 +142,7 @@ export function MyTrips() {
                 description={trip.description}
                 note={trip.note}
                 onTripDeleted={handleTripDeleted} // Passe la fonction pour mettre à jour l'état
+                onTripUpdated={handleTripUpdated} // Passe la fonction pour mettre à jour l'état
               />
             ))
           )}

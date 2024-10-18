@@ -76,7 +76,6 @@ export function UpdateTripModal({
   const handleSave = async () => {
     setError(null);
 
-    // Vérification si tous les champs requis sont remplis
     if (!title || !startDate || !endDate || !description || !imageFile) {
         setError("Veuillez remplir tous les champs requis.");
         return;
@@ -84,13 +83,12 @@ export function UpdateTripModal({
 
     try {
         // Conversion des dates au format ISO avant de les envoyer
-        const isoStartDate = new Date(startDate).toISOString();
-        const isoEndDate = new Date(endDate).toISOString();
+        const isoStartDate = startDate ? new Date(startDate).toISOString() : null;
+        const isoEndDate = endDate ? new Date(endDate).toISOString() : null;
 
         // Upload de l'image vers Cloudinary
         const imageUrl = await uploadImageToCloudinary(imageFile);
 
-        // Créer les détails de mise à jour du voyage
         const tripUpdateDetails = {
             title,
             photo: imageUrl, // URL de l'image uploadée
@@ -101,17 +99,21 @@ export function UpdateTripModal({
         };
 
         // Envoi de la mise à jour à l'API
-        await updateTrip(tripId, tripUpdateDetails);
+        const updatedTripData = await updateTrip(tripId, tripUpdateDetails);
 
-        // Appeler la fonction de mise à jour pour récupérer les voyages
-        onUpdateTrip(); // Assurez-vous que cette fonction actualise la liste des voyages
-
-        onClose(); // Fermer la modale
+        // Vérifiez si les données mises à jour sont définies
+        if (updatedTripData) {
+            onUpdateTrip(updatedTripData); // Assurez-vous que cette fonction reçoit les bonnes données
+            onClose(); // Fermer la modale
+        } else {
+            console.error("Données mises à jour non disponibles après la mise à jour.");
+        }
     } catch (error) {
         console.error("Erreur lors de la modification du voyage:", error);
         setError("Une erreur s'est produite lors de la modification du voyage.");
     }
 };
+
 
 
   return (

@@ -23,8 +23,7 @@ import { DeleteTripModal } from "../modals/deleteTripModal";
 import { Link as RouterLink } from "react-router-dom";
 import { deleteTrip } from "../../../api/tripApi";
 
-export function Trip({ id, photo, title, dateStart, dateEnd, description, note, onTripDeleted }) {
-  const [tripId, setTripId] = useState(id); // Utilisation de l'id directement
+export function Trip({ id, photo, title, dateStart, dateEnd, description, note, onTripDeleted, onTripUpdated }) {
   const [updatedTrip, setUpdatedTrip] = useState({});
 
   const {
@@ -39,25 +38,23 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
     onClose: onDeleteClose,
   } = useDisclosure();
 
-  const handleUpdateClick = (id) => {
-    setTripId(id); // Assigner l'ID du voyage
+  const handleUpdateClick = () => {
     onUpdateOpen(); // Ouvrir la modale de mise à jour
   };
 
   const handleUpdateTrip = (updatedTripData) => {
     // Vérifiez si updatedTripData est défini avant d'essayer d'accéder à ses propriétés
     if (updatedTripData) {
-        // Exclure le champ `userId` des données mises à jour
-        const tripDataWithoutUserId = { ...updatedTripData }; // Copiez les données pour éviter de muter l'original
-        delete tripDataWithoutUserId.userId; // Supprimez userId du nouvel objet
+        // Copier les données mises à jour
+        const { userId, ...tripDataWithoutUserId } = updatedTripData;
 
         setUpdatedTrip(tripDataWithoutUserId); // Enregistrer les nouvelles données du voyage
+        onTripUpdated(tripDataWithoutUserId); // Appeler la fonction pour mettre à jour le voyage dans le parent
         onUpdateClose(); // Fermer la modale
     } else {
         console.error("updatedTripData is undefined");
     }
 };
-
 
   const handleDeleteClick = () => {
     onDeleteOpen(); // Ouvrir la modale de suppression
@@ -108,12 +105,12 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
           <Flex justifyContent="space-between" alignItems="center" padding={4}>
             <Heading size="md">{title || updatedTrip.title}</Heading>
             <Box>
-              <UpdateTripButton onClick={() => handleUpdateClick(id)} />
+              <UpdateTripButton onClick={handleUpdateClick} />
               <UpdateTripModal
                 isOpen={isUpdateOpen}
                 onClose={onUpdateClose}
                 onUpdateTrip={handleUpdateTrip} // Utilisation de la fonction de mise à jour
-                tripId={tripId}
+                tripId={id}
                 title={title}
                 photo={photo}
                 startDate={new Date(dateStart)}
@@ -221,4 +218,5 @@ Trip.propTypes = {
   description: PropTypes.string.isRequired,
   note: PropTypes.number,
   onTripDeleted: PropTypes.func.isRequired, // Ajout de la prop pour la gestion de la suppression
+  onTripUpdated: PropTypes.func.isRequired, // Ajout de la prop pour la gestion de la mise à jour
 };
