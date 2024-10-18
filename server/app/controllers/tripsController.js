@@ -1,4 +1,4 @@
-import { Trip, Visit, Place, User } from "../models/index.js";
+import { Trip, Visit, Place, User, VisitPhoto } from "../models/index.js";
 import {
   tripIdSchema,
   createTripSchema,
@@ -100,10 +100,41 @@ export async function updateTrip(req, res) {
 export async function deleteTrip(req, res) {
   const tripId = parseInt(req.params.id);
   const trip = await Trip.findByPk(tripId);
+
   if (!trip) {
     return res.status(404).json({ error: "Trip not found." });
   }
 
-  await trip.destroy();
-  res.status(204).send();
+  try {
+    // Supprimer toutes les visites associées au voyage
+    const visits = await Visit.findAll({
+      where: {
+        trip_id: tripId, // Utiliser 'trip_id'
+      },
+    });
+
+    // Supprimer les photos associées à chaque visite
+    for (const visit of visits) {
+      await VisitPhoto.destroy({
+        where: {
+          visit_id: visit.id, // Utiliser 'visit_id'
+        },
+      });
+    }
+
+    // Supprimer toutes les visites associées
+    await Visit.destroy({
+      where: {
+        trip_id: tripId,
+      },
+    });
+
+    // Supprimer le voyage lui-même
+    await trip.destroy();
+
+    return res.status(204).json(); // 204 No Content pour indiquer que la suppression a réussi
+  } catch (error) {
+    console.error("Erreur lors de la suppression du voyage:", error);
+    return res.status(500).json({ error: "Internal server error." });
+  }
 }

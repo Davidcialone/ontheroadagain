@@ -52,7 +52,7 @@
         "react-stars": "^2.2.5",
         "sequelize": "^6.37.4",
         "slick-carousel": "^1.8.1",
-        "vite-plugin-node-polyfills": "^0.22.0",
+        "vite-plugin-node-polyfills": "^0.2.0",
         "yet-another-react-lightbox": "^3.21.6"
     },
     "proxy": "http://localhost:5000"

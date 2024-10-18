@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -21,15 +21,40 @@ import ReactStars from "react-stars";
 import { updateTrip } from "../../../api/tripApi";
 import { uploadImageToCloudinary } from "../../../api/tripApi";
 
-export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
-  const [title, setTitle] = useState("");
-  const [photo, setPhoto] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [rating, setRating] = useState(3);
-  const [description, setDescription] = useState("");
+export function UpdateTripModal({
+  isOpen,
+  onClose,
+  onUpdateTrip,
+  tripId,
+  title: initialTitle,
+  photo: initialPhoto,
+  startDate: initialStartDate,
+  endDate: initialEndDate,
+  note: initialNote,
+  description: initialDescription,
+}) {
+  const [title, setTitle] = useState(initialTitle || "");
+  const [photo, setPhoto] = useState(initialPhoto || null);
+  const [startDate, setStartDate] = useState(initialStartDate || null);
+  const [endDate, setEndDate] = useState(initialEndDate || null);
+  const [note, setNote] = useState(initialNote || 3);
+  const [description, setDescription] = useState(initialDescription || "");
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
+
+  // Réinitialiser les champs lorsque le modal s'ouvre
+  useEffect(() => {
+    if (isOpen) {
+      setTitle(initialTitle || "");
+      setPhoto(initialPhoto || null);
+      setStartDate(initialStartDate || null);
+      setEndDate(initialEndDate || null);
+      setNote(initialNote || 3);
+      setDescription(initialDescription || "");
+      setImageFile(null);
+      setError(null);
+    }
+  }, [isOpen, initialTitle, initialPhoto, initialStartDate, initialEndDate, initialNote, initialDescription]);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
@@ -57,27 +82,25 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
       return;
     }
 
-    console.log("Image File avant l'ajout:", imageFile);
-
     try {
       const imageUrl = await uploadImageToCloudinary(imageFile);
-      console.log("Image URL après l'ajout:", imageUrl);
+      
       const tripUpdateDetails = {
         title,
         photo: imageUrl,
         dateStart: startDate,
         dateEnd: endDate,
-        note: rating,
+        note: note,
         description,
       };
-      console.log(tripUpdateDetails);
-      
-      await updateTrip(tripUpdateDetails);
-      onUpdateTrip();
-      onClose();
+
+      // Passer tripId à updateTrip
+      await updateTrip(tripId, tripUpdateDetails);
+      onUpdateTrip(); // Appeler la fonction de mise à jour
+      onClose(); // Fermer le modal
     } catch (error) {
-      console.error("Erreur lors de l'ajout du voyage:", error);
-      setError("Une erreur s'est produite lors de l'ajout du voyage.");
+      console.error("Erreur lors de la modification du voyage:", error);
+      setError("Une erreur s'est produite lors de la modification du voyage.");
     }
   };
 
@@ -133,8 +156,8 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
             <ReactStars
               count={5}
               size={24}
-              value={rating}
-              onChange={(newRating) => setRating(newRating)}
+              value={note}
+              onChange={(newNote) => setNote(newNote)}
             />
           </FormControl>
 
@@ -164,5 +187,12 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
 UpdateTripModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onUpdateTrip: PropTypes.func, // Ajoutez cette prop pour la mise à jour
+  onUpdateTrip: PropTypes.func,
+  tripId: PropTypes.number,
+  title: PropTypes.string, // Ajout de la prop pour le titre
+  photo: PropTypes.string, // Ajout de la prop pour la photo
+  startDate: PropTypes.instanceOf(Date), // Ajout de la prop pour la date de début
+  endDate: PropTypes.instanceOf(Date), // Ajout de la prop pour la date de fin
+  note: PropTypes.number, // Ajout de la prop pour la note
+  description: PropTypes.string, // Ajout de la prop pour la description
 };

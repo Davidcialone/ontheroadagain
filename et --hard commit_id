@@ -1,0 +1,204 @@
+[33mcommit 7a1397924516d22321f02f30da636024832ee3a8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Oct 18 14:33:46 2024 +0200
+
+    feat cokkies: doesn't work
+
+[33mcommit 18ac7acfa2fbc28e3c669bed34019c1a8397aa11[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Oct 18 09:46:18 2024 +0200
+
+    feat trip: adjust trip display
+
+[33mcommit 64c756d4b0e6e2de166fec3e72c48d3bb94042ce[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Oct 17 19:10:16 2024 +0200
+
+    feat trip: add data set to trip
+
+[33mcommit 8380072633880d076ece895acd601d85160ceb09[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Oct 17 19:02:09 2024 +0200
+
+    feat addTrip: ok
+
+[33mcommit 3582274eed6675579b245b806da8591fde5eeebf[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Oct 17 08:52:20 2024 +0200
+
+    feat photo: photo with cloudinary ok
+
+[33mcommit 76ed580f6a9acd66892aa2b781d0f5ccdaf2cbdf[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Wed Oct 16 20:53:40 2024 +0200
+
+    feat photos: image undefined
+
+[33mcommit da68e8b23febd07fd5bda08b289d41f42aa1d451[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Wed Oct 16 17:34:38 2024 +0200
+
+    feat photos: config cloudinary
+
+[33mcommit 9ebfff873a54717f997cdb1d181b41ebd957f266[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Oct 15 18:44:50 2024 +0200
+
+    fix db.js
+
+[33mcommit 5b0ffc6839920b7ca11732c74530cbb5f7cc7c6f[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Oct 15 18:27:01 2024 +0200
+
+    feat trip: display trips
+
+[33mcommit dfc628bcef7face33cffad0830f71eb817fb412a[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Oct 15 15:16:40 2024 +0200
+
+    feat: auth/login: token and connexion ok
+
+[33mcommit 2721bc87503911ce88800adc752cecf6bbb6d33d[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Mon Oct 14 13:45:12 2024 +0200
+
+    feat trips: fetch trips
+
+[33mcommit 141fb01f6eb57a52cc9b13f3d764076ea53fef90[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Oct 8 17:29:42 2024 +0200
+
+    feat homePgae: fix photos for responsive
+
+[33mcommit 5dbe336d5c0f1cba563b0db3d167c9fbd9b670a6[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Oct 8 16:56:43 2024 +0200
+
+    feat homePage: ok, buttons connexion and inscription: ok
+
+[33mcommit 9e3f13e35af91e9c60595c6156ea66e8196e3882[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Oct 8 09:55:34 2024 +0200
+
+    add back to project
+
+[33mcommit e04547ee36327fe4d49ccdb7441dd4e87e344189[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Mon Oct 7 15:05:17 2024 +0200
+
+    mono repo structure init
+
+[33mcommit 1b9fb2aa1a365c29a8afcd146b2d88e2b1ef54d6[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Mon Oct 7 14:17:34 2024 +0200
+
+    save before mono repo
+
+[33mcommit cb85b1281f0682e6be79214288cb0213f8559388[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Oct 4 17:16:16 2024 +0200
+
+    feat: visitPhotos, add photos carousel and add button photo
+
+[33mcommit 89e4a7a8e92d1e0c122fc4b2ce68bc4cce6d135a[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Oct 4 15:45:07 2024 +0200
+
+    feat: visitPhotos: fix error
+
+[33mcommit 760fe346fc2ac47bb4a81d886e4a9677d04c70b8[m
+Merge: dd3d72e 39b1c5d
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Oct 4 15:15:43 2024 +0200
+
+    feat: visitPhotos. add photo carousel
+
+[33mcommit dd3d72ee9b7bcf2d8dfa11049f005476bebc5e4d[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Oct 4 12:26:39 2024 +0200
+
+    feat : visitPhotos: add carousel
+
+[33mcommit 39b1c5d5d105dce86d895a831934c3c5b3313d6c[m
+Author: David Cialone <cialonedavid@gmail.com>
+Date:   Thu Sep 19 16:20:35 2024 +0200
+
+    feat visit: add photos carousel
+
+[33mcommit d58cc7e9afc6e8b9b54a56b6ff31638ede07d2d1[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Sep 17 13:59:41 2024 +0200
+
+    feat tripVisits on progress
+
+[33mcommit 7d107b9941c3eca753341940c0776519dcf6b85a[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Tue Sep 17 10:44:38 2024 +0200
+
+    feat trip: add update and delete modals
+
+[33mcommit da82ee95f3201cf16369d489a35f7f70703251bc[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Sun Sep 15 18:44:02 2024 +0200
+
+    feat visit
+
+[33mcommit 686503be8c6b718f1147491b3f41aac212add931[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Sun Sep 15 10:57:13 2024 +0200
+
+    responsive trip cards
+
+[33mcommit 73566f61955999696de2b1fed22077760eacbb0f[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Sat Sep 14 10:29:09 2024 +0200
+
+    chakra icons added
+
+[33mcommit bf1bfe8a987cb843f1a0283d509456daaa799cdb[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Sep 13 17:57:38 2024 +0200
+
+    new try for photos
+
+[33mcommit 930934c66d8c00649440c378e3992686f0a79476[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Fri Sep 13 17:47:13 2024 +0200
+
+    photos addes in home page
+
+[33mcommit 4b61f7ef7effebfd1d42279d436161f9e3791406[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Sep 12 16:02:17 2024 +0200
+
+    github pages deployement
+
+[33mcommit 89a4999177856d92cff22d89e0c18275006126ce[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Sep 12 15:38:05 2024 +0200
+
+    deploy config
+
+[33mcommit 9f64b36006a6e39585fa916ee9580ab63564164a[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Sep 12 12:05:03 2024 +0200
+
+    feat home page
+
+[33mcommit f92e762757b7b3c0ca6c574ebbb7540dd637bfe8[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Sep 12 09:46:01 2024 +0200
+
+    first commit
+
+[33mcommit 54fdbc520f391e5e035436458ef9a023c44ad0d3[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Sep 12 09:44:02 2024 +0200
+
+    first commit
+
+[33mcommit 027955a584362bf256461fe25181bd626e051bba[m
+Author: Davidcialone <cialonedavid@gmail.com>
+Date:   Thu Sep 12 09:38:53 2024 +0200
+
+    init app

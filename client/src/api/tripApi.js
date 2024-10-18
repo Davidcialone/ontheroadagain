@@ -183,8 +183,7 @@ export async function deleteTrip(tripId) {
       );
     }
 
-    const deletedTrip = await response.json();
-    return deletedTrip;
+    return;
   } catch (error) {
     console.error("Error deleting trip:", error);
     throw error;
@@ -193,18 +192,25 @@ export async function deleteTrip(tripId) {
 
 export async function updateTrip(tripId, updatedTrip) {
   try {
-    const userId = getUserIdFromToken();
+    const userId = getUserIdFromToken(); // Récupérer l'ID de l'utilisateur
     console.log("Updating trip for user ID:", userId);
+    console.log("Trip ID:", tripId); // Vérifie si le tripId est bien récupéré
+
+    // Créer l'objet à envoyer, qui inclut les détails du voyage et l'ID utilisateur
+    const tripData = {
+      ...updatedTrip,
+      userId, // Ajouter l'ID utilisateur, si nécessaire pour le backend
+    };
 
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`,
+      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`, // tripId est dans l'URL
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
         },
-        body: JSON.stringify(updatedTrip),
+        body: JSON.stringify(tripData), // Envoyer l'objet avec l'ID utilisateur
       }
     );
 
