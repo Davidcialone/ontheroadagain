@@ -26,7 +26,7 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
   const [photo, setPhoto] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [rating, setRating] = useState(3); // correction du nom de variable
+  const [rating, setRating] = useState(3);
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
@@ -49,7 +49,7 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
     }
   };
 
-  const handleSave = async () => { // Ajout de async ici
+  const handleSave = async () => {
     setError(null);
 
     if (!title || !startDate || !endDate || !description || !imageFile) {
@@ -65,15 +65,15 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
       const tripUpdateDetails = {
         title,
         photo: imageUrl,
-        dateStart: startDate, // correction de la variable
-        dateEnd: endDate, // correction de la variable
-        note: rating, // correction de la variable
+        dateStart: startDate,
+        dateEnd: endDate,
+        note: rating,
         description,
       };
       console.log(tripUpdateDetails);
       
       await updateTrip(tripUpdateDetails);
-      onUpdateTrip(); // Assurez-vous que cette fonction est passée en prop
+      onUpdateTrip();
       onClose();
     } catch (error) {
       console.error("Erreur lors de l'ajout du voyage:", error);
@@ -88,7 +88,7 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
         <ModalHeader>Modifier un voyage</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          {error && <Text color="red.500">{error}</Text>} {/* Affichage de l'erreur */}
+          {error && <Text color="red.500">{error}</Text>}
           <FormControl>
             <FormLabel>Titre</FormLabel>
             <Input
@@ -106,8 +106,14 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
             <FormLabel>Date de départ</FormLabel>
             <DatePicker
               selected={startDate}
-              onChange={(date) => setStartDate(date)}
+              onChange={(date) => {
+                setStartDate(date);
+                if (endDate && date > endDate) {
+                  setEndDate(null); // Réinitialiser endDate si startDate est modifiée
+                }
+              }}
               dateFormat="dd/MM/yyyy"
+              placeholderText="Sélectionnez une date de départ"
             />
           </FormControl>
 
@@ -117,6 +123,8 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
               selected={endDate}
               onChange={(date) => setEndDate(date)}
               dateFormat="dd/MM/yyyy"
+              placeholderText="Sélectionnez une date de fin"
+              minDate={startDate} // Empêche la sélection de dates antérieures à startDate
             />
           </FormControl>
 
@@ -134,8 +142,8 @@ export function UpdateTripModal({ isOpen, onClose, onUpdateTrip }) {
             <FormLabel>Commentaire</FormLabel>
             <Textarea
               placeholder="Ajoutez un commentaire"
-              value={description} // Correction ici
-              onChange={(e) => setDescription(e.target.value)} // Correction ici
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </FormControl>
         </ModalBody>
@@ -158,5 +166,3 @@ UpdateTripModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onUpdateTrip: PropTypes.func, // Ajoutez cette prop pour la mise à jour
 };
-
-

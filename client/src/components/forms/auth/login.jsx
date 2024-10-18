@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import '../../../style/signup.css';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode'; // Assurez-vous que c'est bien la bonne importation
+import Cookies from 'js-cookie'; // Bibliothèque pour gérer les cookies
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,17 +29,27 @@ export function Login() {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token);
-      
-      // Decode the token to get userId
-      const decodedToken = jwtDecode(data.token); 
-      console.log('Decoded token:', decodedToken);
-      const userId = decodedToken.id; // Utilisez 'id' si c'est la clé correcte dans le token
-      console.log('User ID:', userId);
 
-      // Navigation vers la page des voyages de l'utilisateur
-      navigate(`/me/trips`); 
+      // Vérifie si le token est présent avant de le stocker
+      if (data.token) {
+        // Stocker le token dans un cookie sécurisé
+        Cookies.set('token', data.token, { expires: 7, sameSite: 'Lax' });
+        console.log("Token stocké dans le cookie:", data.token);
+
+        // Décodez le token pour obtenir l'id de l'utilisateur
+        const decodedToken = jwtDecode(data.token);
+        console.log('Decoded token:', decodedToken);
+        const userId = decodedToken.id; // Utilisez 'id' si c'est la clé correcte dans le token
+        console.log('User ID:', userId);
+
+        navigate(`/me/trips`); 
+        // Navigation vers la page des voyages de l'utilisateur
+      } else {
+        throw new Error("Token non reçu dans la réponse.");
+      }
     } catch (err) {
+      // Affiche le message d'erreur dans le console et met à jour l'état de l'erreur
+      console.error(err);
       setError(err.message);
     }
   };

@@ -25,7 +25,7 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const [photo, setPhoto] = useState(null);
   const [dateStart, setDateStart] = useState(null);
   const [dateEnd, setDateEnd] = useState(null);
-  const [note, setNote] = useState(0);
+  const [note, setNote] = useState(3);
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
@@ -42,13 +42,11 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
       setPhoto(URL.createObjectURL(file));
       setImageFile(file);
       setError(null);
-      console.log("Fichier image sélectionné:", file); // Log pour vérifier le fichier sélectionné
+      console.log("Fichier image sélectionné:", file);
     } else {
       setError("Aucun fichier sélectionné");
     }
   };
-  
-
 
   const handleSave = async () => {
     setError(null);
@@ -58,32 +56,28 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
       return;
     }
 
-    console.log("Image File avant l'ajout:", imageFile); // Vérification si le fichier image existe
+    console.log("Image File avant l'ajout:", imageFile);
 
     try {
-      // Upload de l'image d'abord
       const imageData = await uploadImageToCloudinary(imageFile);
 
       const newTrip = {
         title,
-        photo: imageData.secure_url,  // Utilisez l'URL sécurisée obtenue après l'upload de l'image
+        photo: imageData.secure_url,
         dateStart,
         dateEnd,
         note,
         description,
       };
 
-      // Ajoutez les données du voyage dans l'appel API
       await addTrip(newTrip);
-      onAddTrip(newTrip);  // Appelez le callback pour mettre à jour la liste des voyages
-      onClose();  // Fermez la modal ou le formulaire après le succès
+      onAddTrip(newTrip);
+      onClose();
     } catch (error) {
       console.error("Erreur lors de l'ajout du voyage:", error);
       setError("Une erreur est survenue lors de l'ajout du voyage.");
     }
-};
-
-  
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -109,8 +103,14 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
             <FormLabel>Date de début</FormLabel>
             <DatePicker
               selected={dateStart}
-              onChange={(date) => setDateStart(date)}
+              onChange={(date) => {
+                setDateStart(date);
+                if (dateEnd && date < dateEnd) {
+                  setDateEnd(null); // Réinitialiser dateEnd si dateStart est modifiée
+                }
+              }}
               dateFormat="dd/MM/yyyy"
+              placeholderText="Sélectionnez une date de début"
             />
           </FormControl>
           <FormControl mt={4}>
@@ -119,6 +119,8 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
               selected={dateEnd}
               onChange={(date) => setDateEnd(date)}
               dateFormat="dd/MM/yyyy"
+              placeholderText="Sélectionnez une date de fin"
+              minDate={dateStart} // Empêche la sélection de dates antérieures à dateStart
             />
           </FormControl>
           <FormControl mt={4}>

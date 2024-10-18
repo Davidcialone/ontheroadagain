@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Cookies from 'js-cookie';
 
 export function LoginForm({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -23,7 +24,9 @@ export function LoginForm({ onLogin }) {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token); // Stockez le token dans localStorage
+      // Stocker le token dans un cookie
+      Cookies.set('token', data.token, { expires: 7, sameSite: 'Lax' });
+
       onLogin(); // Appel de la fonction de rappel pour mettre à jour l'état de connexion
     } catch (err) {
       setError(err.message);

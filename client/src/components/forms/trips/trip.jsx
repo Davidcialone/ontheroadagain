@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
+  Badge,
   Box,
   Card,
   CardBody,
@@ -52,6 +53,8 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note }
     onDeleteOpen(); // Ouvre le modal de suppression
   };
 
+  const colorTheme = "gray";
+
   return (
     <div>
   <Card data-set-id={id} borderTopRadius="lg" overflow="hidden">
@@ -91,25 +94,32 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note }
     <CardBody>
       <Flex direction={["column", "column", "row"]} gap={4}>
         <VStack spacing={4} align="stretch" flex={1}>
+        <Box>
+          <Badge colorScheme={colorTheme} rounded="full" textTransform="uppercase" px="2" mb={2}>
+            Dates
+          </Badge>
+          <Text pt="2" fontSize="sm">
+            Du {new Date(dateStart).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })} au {new Date(dateEnd).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </Text>
+        </Box>
+
           <Box>
-            <Heading size="xs" textTransform="uppercase">Dates</Heading>
-            <Text pt="2" fontSize="sm">
-              Départ : {dateStart} - Retour : {dateEnd}
-            </Text>
+          <Badge colorScheme={colorTheme} rounded="full"textTransform="uppercase" px="2"  mb={2}>
+            Description
+          </Badge>
+          <Text pt="2" fontSize="sm">{description}</Text>
           </Box>
           <Box>
-            <Heading size="xs" textTransform="uppercase">Description</Heading>
-            <Text pt="2" fontSize="sm">{description}</Text>
-          </Box>
-          <Box>
-            <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
-            <Box pt="2">{renderStars(note)}</Box>
+          <Badge colorScheme={colorTheme} rounded="full"textTransform="uppercase" px="2"  mb={2}>
+          Évaluation
+          </Badge>
+           <Box pt="2">{renderStars(note)}</Box>
           </Box>
         </VStack>
       </Flex>
       <Flex mt="2" alignItems="center" justifyContent="flex-end">
         <Link as={RouterLink} to={`/trips/${id}/visits`} style={{ textDecoration: 'none' }}>
-          <Button leftIcon={<ViewIcon />} colorScheme="teal" variant="outline" size="sm">
+          <Button leftIcon={<ViewIcon />} colorScheme={colorTheme} variant="outline" size="sm">
             Voir les visites
           </Button>
         </Link>

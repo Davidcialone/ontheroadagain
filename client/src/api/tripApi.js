@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
+import Cookies from "js-cookie"; // Importation de la bibliothèque js-cookie
 
 // Informations Cloudinary directement intégrées
 const CLOUDINARY_CLOUD_NAME = "dn1y58few"; // Remplacez par votre Cloudinary Cloud Name
@@ -11,7 +12,8 @@ function isTokenExpired(decodedToken) {
 }
 
 export function getUserIdFromToken() {
-  const yourJWTToken = localStorage.getItem("token");
+  // Récupérer le token depuis les cookies
+  const yourJWTToken = Cookies.get("token");
   if (!yourJWTToken) {
     throw new Error("Token non trouvé");
   }
@@ -90,7 +92,8 @@ export async function fetchTrips() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          // Utilisation du token stocké dans les cookies
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
       }
     );
@@ -138,7 +141,7 @@ export async function addTrip(newTrip) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
         },
         body: JSON.stringify(tripData), // Envoyez les données au format JSON
       }
@@ -168,7 +171,7 @@ export async function deleteTrip(tripId) {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
         },
       }
     );
@@ -199,7 +202,7 @@ export async function updateTrip(tripId, updatedTrip) {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
         },
         body: JSON.stringify(updatedTrip),
       }
