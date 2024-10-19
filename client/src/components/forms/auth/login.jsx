@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../../style/signup.css';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Assurez-vous que c'est bien la bonne importation
+import {jwtDecode} from 'jwt-decode'; // Assurez-vous que c'est bien la bonne importation
 import Cookies from 'js-cookie'; // Bibliothèque pour gérer les cookies
 
 export function Login() {
@@ -9,6 +9,25 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  // Utiliser useEffect pour vérifier si un token est présent dans les cookies
+  useEffect(() => {
+    const token = Cookies.get('token'); // Récupère le token dans les cookies
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token); // Décoder le token
+        console.log('Token déjà présent:', decodedToken);
+        const userId = decodedToken.id; // Utilisez 'id' si c'est la clé correcte dans le token
+        console.log('User ID:', userId);
+
+        // Si le token est valide, redirige l'utilisateur directement vers la page protégée
+        navigate(`/me/trips`);
+      } catch (err) {
+        console.error("Erreur lors du décodage du token:", err);
+        Cookies.remove('token'); // Si le token est invalide, on le supprime
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,8 +61,8 @@ export function Login() {
         const userId = decodedToken.id; // Utilisez 'id' si c'est la clé correcte dans le token
         console.log('User ID:', userId);
 
-        navigate(`/me/trips`); 
-        // Navigation vers la page des voyages de l'utilisateur
+        // Rediriger l'utilisateur vers sa page de voyages
+        navigate(`/me/trips`);
       } else {
         throw new Error("Token non reçu dans la réponse.");
       }
