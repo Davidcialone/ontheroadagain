@@ -1,13 +1,13 @@
-// MyTrips.jsx
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react'; // <-- Ajoute `useState`, `useEffect`, `useRef`, `useContext`
 import { useNavigate } from 'react-router-dom';
 import { Trip } from './trip';
 import { AddTripButton } from '../buttons/addTripButton';
 import { ChakraProvider, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import { AddTripModal } from '../modals/addTripModal';
 import { fetchTrips, addTrip } from '../../../../src/api/tripApi';
-import { jwtDecode } from 'jwt-decode';
+import { AuthContext } from '../auth/authContext';
 import Cookies from 'js-cookie';
+import {jwtDecode} from 'jwt-decode';
 
 export function MyTrips() {
   const [trips, setTrips] = useState([]);
@@ -16,6 +16,8 @@ export function MyTrips() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const tripsFetched = useRef(false);
+
+  const { isAuthenticated, logout } = useContext(AuthContext); // Utiliser le contexte d'authentification
 
   const [newTripData, setNewTripData] = useState({
     title: '',
@@ -32,23 +34,9 @@ export function MyTrips() {
       tripsFetched.current = true;
 
       try {
-        const token = Cookies.get('token');
-        console.log("Token récupéré depuis le cookie:", token);
-
-        if (!token) {
-          console.log("Aucun token trouvé, redirection vers la page de connexion.");
+        if (!isAuthenticated) { // Vérifie si l'utilisateur est authentifié
+          console.log("Utilisateur non authentifié, redirection vers la page de connexion.");
           navigate('/login'); 
-          return;
-        }
-
-        const decodedToken = jwtDecode(token);
-        console.log("Token décodé:", decodedToken);
-
-        const currentTime = Date.now() / 1000;
-        if (decodedToken.exp < currentTime) {
-          Cookies.remove('token'); 
-          console.log("Token expiré, suppression du cookie et redirection vers la page de connexion.");
-          navigate('/login');
           return;
         }
 
@@ -64,15 +52,16 @@ export function MyTrips() {
     };
 
     loadTrips();
-  }, [navigate]);
+  }, [isAuthenticated, navigate]); // Si l'état d'authentification change, recharge les voyages
 
   const handleAddTrip = async (tripData) => {
     try {
+      if (!isAuthenticated) { // Vérifie si l'utilisateur est authentifié avant d'ajouter un voyage
+        throw new Error("Vous devez être connecté pour ajouter un voyage.");
+      }
+
       const token = Cookies.get('token');
       console.log("Token pour ajouter un voyage:", token);
-      if (!token) {
-        throw new Error("Token non trouvé, veuillez vous connecter.");
-      }
 
       const decodedToken = jwtDecode(token);
       console.log("Token décodé pour ajout de voyage:", decodedToken);

@@ -1,34 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../../../style/signup.css';
 import { useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // Assurez-vous que c'est bien la bonne importation
-import Cookies from 'js-cookie'; // Bibliothèque pour gérer les cookies
+import {jwtDecode} from 'jwt-decode'; // Corriger l'import si nécessaire
+import Cookies from 'js-cookie';
+import { AuthContext } from '../auth/authContext'; // Import du contexte d'authentification
 
 export function Login() {
+  const { login } = useContext(AuthContext); // Récupérer la fonction de login du contexte
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  // Utiliser useEffect pour vérifier si un token est présent dans les cookies
+  // Vérifier si un token est déjà présent
   useEffect(() => {
-    const token = Cookies.get('token'); // Récupère le token dans les cookies
+    const token = Cookies.get('token');
     if (token) {
       try {
-        const decodedToken = jwtDecode(token); // Décoder le token
+        const decodedToken = jwtDecode(token);
         console.log('Token déjà présent:', decodedToken);
-        const userId = decodedToken.id; // Utilisez 'id' si c'est la clé correcte dans le token
-        console.log('User ID:', userId);
-
-        // Si le token est valide, redirige l'utilisateur directement vers la page protégée
-        navigate(`/me/trips`);
+        navigate(`/me/trips`); // Redirige l'utilisateur si déjà connecté
       } catch (err) {
         console.error("Erreur lors du décodage du token:", err);
-        Cookies.remove('token'); // Si le token est invalide, on le supprime
+        Cookies.remove('token'); // Supprimer le token si invalide
       }
     }
   }, [navigate]);
 
+  // Fonction pour gérer la soumission du formulaire de connexion
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -49,25 +48,22 @@ export function Login() {
 
       const data = await response.json();
 
-      // Vérifie si le token est présent avant de le stocker
       if (data.token) {
-        // Stocker le token dans un cookie sécurisé
+        // Stocker le token dans les cookies
         Cookies.set('token', data.token, { expires: 7, sameSite: 'Lax' });
-        console.log("Token stocké dans le cookie:", data.token);
-
-        // Décodez le token pour obtenir l'id de l'utilisateur
         const decodedToken = jwtDecode(data.token);
-        console.log('Decoded token:', decodedToken);
-        const userId = decodedToken.id; // Utilisez 'id' si c'est la clé correcte dans le token
-        console.log('User ID:', userId);
 
-        // Rediriger l'utilisateur vers sa page de voyages
+        console.log('Decoded token:', decodedToken);
+
+        // Mettre à jour l'état global d'authentification via le contexte
+        login(data.token);
+
+        // Rediriger l'utilisateur
         navigate(`/me/trips`);
       } else {
         throw new Error("Token non reçu dans la réponse.");
       }
     } catch (err) {
-      // Affiche le message d'erreur dans le console et met à jour l'état de l'erreur
       console.error(err);
       setError(err.message);
     }

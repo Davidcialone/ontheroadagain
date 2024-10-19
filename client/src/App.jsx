@@ -10,6 +10,7 @@ import '../src/style/app.css';
 import '../src/style/trip.css';
 import '../src/style/visit.css';
 import { Box } from "@chakra-ui/react";
+import { AuthProvider } from './components/forms/auth/authContext';
 
 function App() {
   // État pour gérer l'authentification de l'utilisateur
@@ -24,6 +25,7 @@ function App() {
   }, []);
 
   return (
+    <AuthProvider>
     <Box width="100%" minHeight="100vh">
       <Router basename="/ontheroadagain">
         <div>
@@ -39,6 +41,7 @@ function App() {
         </div>
       </Router>
     </Box>
+  </AuthProvider>
   );
 }
 
