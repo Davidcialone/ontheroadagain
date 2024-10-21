@@ -1,137 +1,160 @@
-import { convertFileToBase64, uploadImage } from "./apiPhotos.js";
+import jwt from "jsonwebtoken";
+import Compressor from "compressorjs";
+import Cookies from "js-cookie";
 
-const getToken = () => {
-  return localStorage.getItem("token");
-};
-getToken();
-
-// fonction pour récupérer le tripId depuis le local storage
-function getTripIdFromLocalStorage() {
-  return localStorage.getItem("tripId");
+// Fonction pour vérifier si le token est expiré
+function isTokenExpired(decodedToken) {
+  const currentTime = Date.now() / 1000;
+  return decodedToken.exp < currentTime;
 }
 
-// fonction  pour récupérer visitId depuis le local storage
-function getVisitIdFromLocalStorage() {
-  return localStorage.getItem("visitId");
+// Fonction pour récupérer l'ID utilisateur à partir du token
+export function getUserIdFromToken() {
+  const yourJWTToken = Cookies.get("token");
+  if (!yourJWTToken) {
+    throw new Error("Token non trouvé");
+  }
+
+  const decodedToken = jwt.decode(yourJWTToken);
+
+  if (!decodedToken || isTokenExpired(decodedToken)) {
+    throw new Error("Le token a expiré ou est invalide");
+  }
+
+  const userId = decodedToken.user_id || decodedToken.sub || decodedToken.id;
+  if (!userId) {
+    throw new Error("ID d'utilisateur non trouvé dans le token");
+  }
+
+  return userId;
 }
 
-// fonction pour récupérer les visites d'un voyage
-export async function getVisits(tripId) {
-  getTripIdFromLocalStorage();
+// Fonction pour télécharger une image compressée sur Cloudinary
+export async function uploadImageToCloudinary(imageFile) {
+  if (!(imageFile instanceof File)) {
+    throw new Error("Le premier argument doit être un objet File ou Blob.");
+  }
+
+  const compressedImage = await new Promise((resolve, reject) => {
+    new Compressor(imageFile, {
+      quality: 0.6,
+      success(result) {
+        resolve(result);
+      },
+      error(err) {
+        reject(err);
+      },
+    });
+  });
+
+  const formData = new FormData();
+  formData.append("file", compressedImage);
+  formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
   try {
     const response = await fetch(
-      `http://localhost:3000/api/me/trips/${tripId}`,
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
       {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      console.log(`Cloudinary upload error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.log(`Cloudinary upload error details: ${errorText}`);
+      throw new Error(`Cloudinary upload error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Image uploaded successfully:", data);
+    return data;
+  } catch (error) {
+    console.error("Error uploading image to Cloudinary:", error);
+    throw new Error("Échec du téléchargement de l'image sur Cloudinary");
+  }
+}
+
+export async function getVisitsForTrip(tripId) {
+  console.log("Fetching visits...");
+
+  try {
+    const userId = getUserIdFromToken();
+    console.log("Fetching trips for user ID:", userId);
+
+    if (!tripId) {
+      throw new Error("tripId est manquant.");
+    }
+
+    const response = await fetch(
+      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`,
+      {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
       }
     );
-    getTripIdFromLocalStorage(), console.log(response);
+
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw new Error(
+        `Erreur lors de la récupération des visites: ${response.statusText}`
+      );
     }
+
     const tripData = await response.json();
-    if (Array.isArray(tripData.visits)) {
-      console.log("Visits:", tripData.visits);
-      return tripData.visits;
-    } else {
-      console.error("Visits is not an array");
-      return [];
+    console.log(
+      "Trip details fetched successfully:",
+      JSON.stringify(tripData, null, 2)
+    );
+
+    // Ici, nous avons les visites directement dans tripData
+    const visits = tripData || []; // Utilise tripData directement
+    console.log("Visits fetched successfully:", visits);
+
+    if (visits.length === 0) {
+      console.warn("Aucune visite trouvée pour ce voyage.");
     }
+
+    return visits;
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error fetching visits:", error);
+    throw new Error("Échec de la récupération des visites");
   }
 }
 
-// fonction pour créer des nouvelles visites d'un voyage
-export async function createVisit(visitData, tripId) {
-  // CHECK PHOTO
-  if (visitData.photo) {
-    const file = visitData.photo;
-    if (file instanceof Blob) {
-      const base64String = await convertFileToBase64(file);
-      visitData.photo = base64String;
-      await uploadImage(visitData);
-    } else {
-      console.error("The selected file is not valid.");
-    }
-  }
-  // END CHECK PHOTO
-  tripId = localStorage.getItem("tripId");
-  console.log("Youpi", visitData);
+// Fonction pour ajouter une nouvelle visite
+export async function addVisit(visitData, tripId) {
   try {
+    if (!tripId) {
+      throw new Error("tripId est manquant.");
+    }
+
     const response = await fetch(
-      `http://localhost:3000/api/me/trips/${tripId}/visit`,
+      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
         body: JSON.stringify(visitData),
       }
-    )
-      .then((response) => response.json())
-      .then(function (response) {
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("visitId", response.visitId);
-      });
-  } catch (error) {
-    console.error("Failed to create visit:", error);
-  }
-}
-
-// fonction pour modifier une visite
-export async function updateVisit(tripId, visitId, updatedVisitData) {
-  getTripIdFromLocalStorage();
-  getVisitIdFromLocalStorage();
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/me/trips/${tripId}/visit/${visitId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${getToken()}`,
-        },
-        body: JSON.stringify(updatedVisitData),
-      }
     );
+
     if (!response.ok) {
-      throw new Error("Failed to update visit");
+      throw new Error(
+        `Erreur lors de l'ajout de la visite: ${response.statusText}`
+      );
     }
-    const updatedVisit = await response.json();
-    console.log("Success:", updatedVisit);
-    return updatedVisit;
-  } catch (error) {
-    console.error("Failed to update visit:", error);
-  }
-}
 
-// fonction pour supprimer une visite
-export async function deleteVisit(tripId, visitId) {
-  getTripIdFromLocalStorage();
-  getVisitIdFromLocalStorage();
-  try {
-    const response = await fetch(
-      `http://localhost:3000/api/me/trips/${tripId}/visit/${visitId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${getToken()}`,
-        },
-      }
-    );
-    if (response.status === 204) {
-      console.log("Success: Visit deleted");
-    } else {
-      const errorData = await response.json();
-      throw new Error(`Error: ${response.status} - ${errorData.message}`);
-    }
+    const result = await response.json();
+    console.log("Visite ajoutée avec succès:", result);
+    return result;
   } catch (error) {
-    console.error("Failed to delete visit:", error);
+    console.error("Erreur lors de l'ajout de la visite:", error);
+    throw new Error("Échec de l'ajout de la visite");
   }
 }

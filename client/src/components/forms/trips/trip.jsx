@@ -189,7 +189,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
           <Flex mt="2" alignItems="center" justifyContent="flex-end">
             <Link
               as={RouterLink}
-              to={`/trips/${id}/visits`}
+              to={`/me/trips/${id}/visits`}
               style={{ textDecoration: "none" }}
             >
               <Button

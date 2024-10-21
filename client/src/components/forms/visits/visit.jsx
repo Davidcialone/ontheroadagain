@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -13,15 +14,15 @@ import {
   Image,
   useDisclosure
 } from "@chakra-ui/react";
-import { StarIcon } from "@chakra-ui/icons";
-import {UpdateVisitButton} from "../buttons/updateVisitButton";
+import { StarIcon, AddIcon } from "@chakra-ui/icons"; 
+import { UpdateVisitButton } from "../buttons/updateVisitButton";
 import { DeleteVisitButton } from "../buttons/deleteVisitButton";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
-export function Visit({ title, photos = [], startDate, endDate, rating, comment, onUpdate, onDelete }) {
+export function Visit({ title, photos = [], startDate, endDate, note, comment, onUpdate, onDelete }) {
   const [photoIndex, setPhotoIndex] = useState(0);
-  
+
   const {
     isOpen: isUpdateOpen,
     onOpen: onUpdateOpen,
@@ -40,10 +41,12 @@ export function Visit({ title, photos = [], startDate, endDate, rating, comment,
     onClose: onLightboxClose,
   } = useDisclosure();
 
-  function renderStars(rating) {
-    return Array(5).fill("").map((_, i) => (
-      <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
-    ));
+  function renderStars(note) {
+    return Array(5)
+      .fill("")
+      .map((_, i) => (
+        <StarIcon key={i} color={i < note ? "yellow.400" : "gray.300"} />
+      ));
   }
 
   return (
@@ -60,17 +63,23 @@ export function Visit({ title, photos = [], startDate, endDate, rating, comment,
         <Flex direction={["column", "column", "row"]} gap={4}>
           <VStack spacing={4} align="stretch" flex={1}>
             <Box>
-              <Heading size="xs" textTransform="uppercase">Dates</Heading>
+              <Heading size="xs" textTransform="uppercase">
+                Dates
+              </Heading>
               <Text pt="2" fontSize="sm">
                 Départ : {startDate} - Retour : {endDate}
               </Text>
             </Box>
             <Box>
-              <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
-              <Box pt="2">{renderStars(rating)}</Box>
+              <Heading size="xs" textTransform="uppercase">
+                Évaluation
+              </Heading>
+              <Box pt="2">{renderStars(note)}</Box>
             </Box>
             <Box>
-              <Heading size="xs" textTransform="uppercase">Commentaire</Heading>
+              <Heading size="xs" textTransform="uppercase">
+                Commentaire
+              </Heading>
               <Textarea value={comment} placeholder="Ajoutez un commentaire..." size="sm" readOnly />
             </Box>
           </VStack>

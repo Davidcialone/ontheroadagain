@@ -1,43 +1,99 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { AuthContext } from '../auth/authContext';
+import { getVisitsForTrip } from '../../../api/visitApi'; // Utilisez la nouvelle fonction    
 import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import { AddVisitModal } from '../modals/addVisitModal';
-import { VisitList } from './visitList';
+import { Visit } from './Visit';
+import { SimpleGrid } from "@chakra-ui/react";
+import { AddVisitButton } from '../buttons/addVisitButton';
 
 export function TripVisits() {
+    const { tripId } = useParams();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [visits, setVisits] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const visitsFetched = useRef(false);
+    const navigate = useNavigate();
 
-    const visits = [
-        {
-            title: 'Visite du musée',
-            photos: [
-                'https://media.istockphoto.com/id/1096035138/fr/photo/beau-jeune-couple-d%C3%A9tente-apr%C3%A8s-la-randonn%C3%A9e-et-de-prendre-une-pause.webp?a=1&b=1&s=612x612&w=0&k=20&c=16uGRWfxUYrex0tYkXCB-HI298yfBPiNR45NzIe3ZeI=',
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjYz2LWxjpNoHuc-jfn837uJGiQPyktJqECQ&s',
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEZny_32N4LkYTLshSE_qCI1WxdQcEl2r9RQ&s',
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0suklXx5gEjFIWt_vLTZFuo2nNAsaRDdbWQ&s',
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-8cQrm3oVN-0OYAN0Y6Jc6p5wbby4iB8_VA&s'
-            ],
-            startDate: '2024-09-20',
-            endDate: '2024-09-21',
-            rating: 4,
-            comment: 'C\'était une expérience incroyable!',
-        },
-        // Autres visites...
-    ];
+    const { isAuthenticated } = useContext(AuthContext);
+
+    useEffect(() => {
+        const loadVisits = async () => {
+            if (visitsFetched.current) return;
+            visitsFetched.current = true;
     
-    visits.forEach((visit, index) => {
-        console.log(`Photos for visit ${index + 1}:`, visit.photos);
-    });
+            try {
+                if (!isAuthenticated) {
+                    console.log("Utilisateur non authentifié, redirection vers la page de connexion.");
+                    navigate('/login');
+                    return;
+                }
+    
+                // Vérifie si le tripId est correct
+                console.log("Chargement des visites pour le voyage avec l'ID:", tripId);
+                const visitsData = await getVisitsForTrip(tripId);
+                console.log("Visits loaded:", visitsData);
+                setVisits(visitsData);
+            } catch (err) {
+                console.error("Error loading visits:", err);
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        loadVisits();
+    }, [tripId, isAuthenticated, navigate]);
+    
+    
 
-   return (
-    <ChakraProvider>
-        <h1>Visites du voyage</h1>
-        <button onClick={onOpen}>Ajouter une visite</button>
-        <div className='tripVisits'>
-            <AddVisitModal isOpen={isOpen} onClose={onClose} />
-            <VisitList className='visits' visits={visits} onAddVisit={onOpen} />
-            
-        </div>
-    </ChakraProvider>
-);
+    const handleAddVisit = async (visitData) => {
+        // Logique pour ajouter une visite
+    };
 
+    const handleVisitUpdated = (updatedVisit) => {
+        // Logique pour mettre à jour une visite
+    };
+
+    const handleVisitDeleted = (visitId) => {
+        // Logique pour supprimer une visite
+    };
+
+    return (
+        <ChakraProvider>
+            <h1>Visites du voyage</h1>
+            <div className='tripVisits'>
+                <div className='add-visit-button-layout'>
+                    <AddVisitButton onClick={onOpen} />
+                    {error && <div className="error-message">{error}</div>}
+                    <AddVisitModal 
+                        isOpen={isOpen} 
+                        onClose={onClose}
+                        onAddVisit={handleAddVisit} 
+                    />
+                </div>
+                <SimpleGrid columns={[1, 1, 1, 2, 3]} spacing={5} className='tripsRoadbook'>
+                    {loading ? (
+                        <p>Chargement des visites...</p>
+                    ) : (
+                        visits.map(visit => (
+                            <Visit
+                                key={visit.id}
+                                title={visit.title}
+                                photos={visit.photo ? [visit.photo] : []} // Utilisez les photos comme tableau
+                                startDate={visit.dateStart}
+                                endDate={visit.dateEnd}
+                                note={visit.note}
+                                comment={visit.comment}
+                                onUpdate={handleVisitUpdated}
+                                onDelete={handleVisitDeleted}
+                            />
+                        ))
+                    )}
+                </SimpleGrid>
+            </div>
+        </ChakraProvider>
+    );
 }
