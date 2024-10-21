@@ -8,7 +8,6 @@ import {
   CardHeader,
   Heading,
   Text,
-  Textarea,
   VStack,
   Flex,
   Image,
@@ -20,7 +19,7 @@ import { DeleteVisitButton } from "../buttons/deleteVisitButton";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
-export function Visit({ title, photos = [], startDate, endDate, note, comment, onUpdate, onDelete }) {
+export function Visit({ title, photos = [], startDate, endDate, rating, comment, onUpdate, onDelete }) {
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const {
@@ -41,11 +40,11 @@ export function Visit({ title, photos = [], startDate, endDate, note, comment, o
     onClose: onLightboxClose,
   } = useDisclosure();
 
-  function renderStars(note) {
+  function renderStars(rating) {
     return Array(5)
       .fill("")
       .map((_, i) => (
-        <StarIcon key={i} color={i < note ? "yellow.400" : "gray.300"} />
+        <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
       ));
   }
 
@@ -74,13 +73,15 @@ export function Visit({ title, photos = [], startDate, endDate, note, comment, o
               <Heading size="xs" textTransform="uppercase">
                 Évaluation
               </Heading>
-              <Box pt="2">{renderStars(note)}</Box>
+              <Box pt="2">{renderStars(rating)}</Box>
             </Box>
             <Box>
               <Heading size="xs" textTransform="uppercase">
                 Commentaire
               </Heading>
-              <Textarea value={comment} placeholder="Ajoutez un commentaire..." size="sm" readOnly />
+              <Text size="sm">
+                {comment || "Aucun commentaire disponible"} {/* Affiche le commentaire ou un message par défaut */}
+              </Text>
             </Box>
           </VStack>
 
@@ -125,3 +126,6 @@ Visit.propTypes = {
   onUpdate: PropTypes.func,
   onDelete: PropTypes.func,
 };
+
+// Assurez-vous d'exporter le composant
+export default Visit;

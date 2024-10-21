@@ -26,7 +26,7 @@ INSERT INTO "place" ("city", "cityLatitude", "cityLongitude", "country", "countr
 ('Lille', 50.6292, 3.0573, 'France', 46.6034, 1.8883, 'Europe');
 
 -- Insérer des voyages
-INSERT INTO "trip" ("dateStart", "dateEnd", "photo", "title", "description", "note", "user_id") VALUES
+INSERT INTO "trip" ("dateStart", "dateEnd", "photo", "title", "description", "rating", "user_id") VALUES
 ('2023-06-01', '2023-06-10', 'voyage_paris.jpg', 'Voyage à Paris', 'Un voyage merveilleux dans la ville lumière.', 5, 1),
 ('2023-07-15', '2023-07-20', 'voyage_lyon.jpg', 'Aventure à Lyon', 'Découverte de la gastronomie lyonnaise.', 4, 2),
 ('2023-08-05', '2023-08-12', 'voyage_marseille.jpg', 'Séjour à Marseille', 'Profiter du soleil et de la mer.', 5, 1),
@@ -39,7 +39,7 @@ INSERT INTO "trip" ("dateStart", "dateEnd", "photo", "title", "description", "no
 ('2024-03-01', '2024-03-05', 'voyage_lille.jpg', 'Voyage à Lille', 'Culture et gastronomie dans le Nord.', 4, 2);
 
 -- Insérer des visites
-INSERT INTO "visit" ("title", "dateStart", "dateEnd", "comment", "photo", "note", "geo", "trip_id") VALUES
+INSERT INTO "visit" ("title", "dateStart", "dateEnd", "comment", "photo", "rating", "geo", "trip_id") VALUES
 ('Tour Eiffel', '2023-06-02', '2023-06-02', 'Vue incroyable du sommet !', 'tour_eiffel.jpg', 5, '48.8584, 2.2941', 1),
 ('Vieux Lyon', '2023-07-16', '2023-07-16', 'Quartier historique charmant.', 'vieux_lyon.jpg', 4, '45.7597, 4.8272', 2),
 ('Calanques de Marseille', '2023-08-07', '2023-08-07', 'Randonnée magnifique.', 'calanques.jpg', 5, '43.2151, 5.4395', 3),

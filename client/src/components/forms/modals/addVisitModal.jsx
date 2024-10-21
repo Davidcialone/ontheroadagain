@@ -17,67 +17,70 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
-import { uploadImageToCloudinary } from "../../../api/tripApi";
 import { addVisit } from "../../../api/visitApi"; // Assurez-vous que cette fonction existe dans l'API visit
 
-export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId, placeId }) {
+export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
   const [title, setTitle] = useState("");
-  const [photo, setPhoto] = useState(null);
   const [dateStart, setDateStart] = useState(null);
   const [dateEnd, setDateEnd] = useState(null);
   const [comment, setComment] = useState("");
-  const [note, setNote] = useState(3);
+  const [rating, setRating] = useState(3);
   const [geo, setGeo] = useState("");
-  const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
-
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const validTypes = ["image/jpeg", "image/png", "image/gif"];
-      if (!validTypes.includes(file.type)) {
-        console.error("Type de fichier non valide:", file.type);
-        setError("Veuillez télécharger une image (JPEG, PNG, GIF).");
-        return;
-      }
-      setPhoto(URL.createObjectURL(file));
-      setImageFile(file);
-      setError(null);
-    } else {
-      setError("Aucun fichier sélectionné");
-    }
-  };
 
   const handleSave = async () => {
     setError(null);
+    console.log("Tentative d'enregistrement de la visite...");
 
-    if (!title || !dateStart || !dateEnd || !comment || !imageFile) {
+    // Vérifie que tous les champs requis sont remplis
+    if (!title || !dateStart || !dateEnd || !comment) {
       setError("Veuillez remplir tous les champs requis.");
+      console.warn("Champs requis manquants:", { title, dateStart, dateEnd, comment });
+      return;
+    }
+
+    // Vérifie que la date de fin est après la date de début
+    if (dateEnd <= dateStart) {
+      setError("La date de fin doit être après la date de début.");
+      console.warn("Validation des dates échouée:", { dateStart, dateEnd });
+      return;
+    }
+
+    // Vérifie que tripId est valide
+    if (!tripId) {
+      setError("Le tripId est manquant. Veuillez sélectionner un voyage.");
+      console.warn("tripId est manquant");
       return;
     }
 
     try {
-      const imageData = await uploadImageToCloudinary(imageFile);
-
       const newVisit = {
         title,
-        photo: imageData.secure_url,
         dateStart,
         dateEnd,
         comment,
-        note,
+        rating,
         geo,
-        trip_id: tripId,  // ID du voyage associé
-        place_id: placeId, // ID du lieu associé
+        tripId, // Assurez-vous que tripId est inclus
       };
 
-      await addVisit(newVisit); // Fonction API pour ajouter une visite
-      onAddVisit(newVisit);
+      console.log("Données de la nouvelle visite:", newVisit);
+      const response = await addVisit(newVisit);
+      console.log("Nouvelle visite ajoutée:", response);
+      onAddVisit(response); // Passe la nouvelle visite ajoutée
       onClose();
     } catch (error) {
       console.error("Erreur lors de l'ajout de la visite:", error);
       setError("Une erreur est survenue lors de l'ajout de la visite.");
+      console.error("Détails de l'erreur:", error);
     }
+  };
+
+  // Met à jour le commentaire lorsque le titre change
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+    setComment(newTitle); // Met à jour le commentaire avec le titre
   };
 
   return (
@@ -92,13 +95,9 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId, placeId }) 
             <FormLabel>Titre</FormLabel>
             <Input
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={handleTitleChange}
               placeholder="Titre de la visite"
             />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Photo</FormLabel>
-            <Input type="file" onChange={handlePhotoUpload} />
           </FormControl>
           <FormControl mt={4}>
             <FormLabel>Date de début</FormLabel>
@@ -112,6 +111,7 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId, placeId }) 
               }}
               dateFormat="dd/MM/yyyy"
               placeholderText="Sélectionnez une date de début"
+              isClearable // Ajoute une option pour effacer la sélection
             />
           </FormControl>
           <FormControl mt={4}>
@@ -122,14 +122,15 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId, placeId }) 
               dateFormat="dd/MM/yyyy"
               placeholderText="Sélectionnez une date de fin"
               minDate={dateStart} // Empêche la sélection de dates antérieures à dateStart
+              isClearable // Ajoute une option pour effacer la sélection
             />
           </FormControl>
           <FormControl mt={4}>
             <FormLabel>Note</FormLabel>
             <ReactStars
               count={5}
-              value={note}
-              onChange={(newRating) => setNote(newRating)}
+              value={rating}
+              onChange={(newRating) => setRating(newRating)}
               size={24}
               color2={"#ffd700"}
             />
@@ -140,14 +141,6 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId, placeId }) 
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Commentaire de la visite"
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Géolocalisation (optionnel)</FormLabel>
-            <Input
-              value={geo}
-              onChange={(e) => setGeo(e.target.value)}
-              placeholder="Coordonnées GPS"
             />
           </FormControl>
         </ModalBody>
@@ -167,7 +160,6 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId, placeId }) 
 AddVisitModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onAddVisit: PropTypes.func.isRequired,
-  tripId: PropTypes.number,  // Le tripId est nécessaire
-  placeId: PropTypes.number, // Le placeId est optionnel
+  onAddVisit: PropTypes.func,
+  tripId: PropTypes.number, // Le tripId est maintenant requis
 };

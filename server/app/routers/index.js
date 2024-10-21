@@ -11,7 +11,7 @@ export const router = Router();
 router.use("/api/users", userRouter);
 router.use("/api/uploads", uploadRouter);
 router.use("/api/me/trips", tripRouter); // Assurez-vous que les routes de trips sont bien préfixées
-router.use("/api/visits", visitRouter);
+router.use("/api/me/trips", visitRouter);
 
 // Middleware 404 (API)
 router.use((req, res) => {

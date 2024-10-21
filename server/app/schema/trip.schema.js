@@ -1,4 +1,4 @@
-import Joi from 'joi';
+import Joi from "joi";
 
 export const tripIdSchema = Joi.object({
   id: Joi.number().integer().required(),
@@ -10,7 +10,7 @@ export const createTripSchema = Joi.object({
   photo: Joi.string(),
   title: Joi.string().max(255).required(),
   description: Joi.string().max(2048),
-  note: Joi.number().min(0).max(5),
+  rating: Joi.number().min(0).max(5),
   user_id: Joi.number().integer().required(),
 });
 
@@ -20,5 +20,5 @@ export const updateTripSchema = Joi.object({
   photo: Joi.string(),
   title: Joi.string().max(255),
   description: Joi.string().max(2048),
-  note: Joi.number().min(0).max(5),
+  rating: Joi.number().min(0).max(5),
 });

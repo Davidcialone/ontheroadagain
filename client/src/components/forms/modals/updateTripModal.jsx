@@ -29,14 +29,14 @@ export function UpdateTripModal({
   photo: initialPhoto,
   startDate: initialStartDate,
   endDate: initialEndDate,
-  note: initialNote,
+  rating: initialRating,
   description: initialDescription,
 }) {
   const [title, setTitle] = useState(initialTitle || "");
   const [photo, setPhoto] = useState(initialPhoto || null);
   const [startDate, setStartDate] = useState(initialStartDate || null);
   const [endDate, setEndDate] = useState(initialEndDate || null);
-  const [note, setNote] = useState(initialNote || 3);
+  const [rating, setRating] = useState(initialRating || 3);
   const [description, setDescription] = useState(initialDescription || "");
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
@@ -48,12 +48,12 @@ export function UpdateTripModal({
       setPhoto(initialPhoto || null);
       setStartDate(initialStartDate || null);
       setEndDate(initialEndDate || null);
-      setNote(initialNote || 3);
+      setRating(initialRating || 3);
       setDescription(initialDescription || "");
       setImageFile(null);
       setError(null);
     }
-  }, [isOpen, initialTitle, initialPhoto, initialStartDate, initialEndDate, initialNote, initialDescription]);
+  }, [isOpen, initialTitle, initialPhoto, initialStartDate, initialEndDate, initialRating, initialDescription]);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
@@ -77,44 +77,42 @@ export function UpdateTripModal({
     setError(null);
 
     if (!title || !startDate || !endDate || !description || !imageFile) {
-        setError("Veuillez remplir tous les champs requis.");
-        return;
+      setError("Veuillez remplir tous les champs requis.");
+      return;
     }
 
     try {
-        // Conversion des dates au format ISO avant de les envoyer
-        const isoStartDate = startDate ? new Date(startDate).toISOString() : null;
-        const isoEndDate = endDate ? new Date(endDate).toISOString() : null;
+      // Conversion des dates au format ISO avant de les envoyer
+      const isoStartDate = startDate ? new Date(startDate).toISOString() : null;
+      const isoEndDate = endDate ? new Date(endDate).toISOString() : null;
 
-        // Upload de l'image vers Cloudinary
-        const imageUrl = await uploadImageToCloudinary(imageFile);
+      // Upload de l'image vers Cloudinary
+      const imageUrl = await uploadImageToCloudinary(imageFile);
 
-        const tripUpdateDetails = {
-            title,
-            photo: imageUrl, // URL de l'image uploadée
-            dateStart: isoStartDate,
-            dateEnd: isoEndDate,
-            note: note,
-            description,
-        };
+      const tripUpdateDetails = {
+        title,
+        photo: imageUrl, // URL de l'image uploadée
+        dateStart: isoStartDate,
+        dateEnd: isoEndDate,
+        rating: Number(rating), // Conversion en nombre
+        description,
+      };
 
-        // Envoi de la mise à jour à l'API
-        const updatedTripData = await updateTrip(tripId, tripUpdateDetails);
+      // Envoi de la mise à jour à l'API
+      const updatedTripData = await updateTrip(tripId, tripUpdateDetails);
 
-        // Vérifiez si les données mises à jour sont définies
-        if (updatedTripData) {
-            onUpdateTrip(updatedTripData); // Assurez-vous que cette fonction reçoit les bonnes données
-            onClose(); // Fermer la modale
-        } else {
-            console.error("Données mises à jour non disponibles après la mise à jour.");
-        }
+      // Vérifiez si les données mises à jour sont définies
+      if (updatedTripData) {
+        onUpdateTrip(updatedTripData); // Assurez-vous que cette fonction reçoit les bonnes données
+        onClose(); // Fermer la modale
+      } else {
+        console.error("Données mises à jour non disponibles après la mise à jour.");
+      }
     } catch (error) {
-        console.error("Erreur lors de la modification du voyage:", error);
-        setError("Une erreur s'est produite lors de la modification du voyage.");
+      console.error("Erreur lors de la modification du voyage:", error);
+      setError("Une erreur s'est produite lors de la modification du voyage.");
     }
-};
-
-
+  };
 
   return (
     <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
@@ -168,8 +166,8 @@ export function UpdateTripModal({
             <ReactStars
               count={5}
               size={24}
-              value={note}
-              onChange={(newNote) => setNote(newNote)}
+              value={rating}
+              onChange={(newRating) => setRating(newRating)} // Assurez-vous que `newRating` est un nombre
             />
           </FormControl>
 
@@ -199,12 +197,12 @@ export function UpdateTripModal({
 UpdateTripModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onUpdateTrip: PropTypes.func,
-  tripId: PropTypes.number,
-  title: PropTypes.string, // Ajout de la prop pour le titre
-  photo: PropTypes.string, // Ajout de la prop pour la photo
-  startDate: PropTypes.instanceOf(Date), // Ajout de la prop pour la date de début
-  endDate: PropTypes.instanceOf(Date), // Ajout de la prop pour la date de fin
-  note: PropTypes.number, // Ajout de la prop pour la note
-  description: PropTypes.string, // Ajout de la prop pour la description
+  onUpdateTrip: PropTypes.func.isRequired,
+  tripId: PropTypes.number.isRequired,
+  title: PropTypes.string, // Titre du voyage
+  photo: PropTypes.string, // URL de la photo
+  startDate: PropTypes.instanceOf(Date), // Date de début
+  endDate: PropTypes.instanceOf(Date), // Date de fin
+  rating: PropTypes.number, // Note du voyage
+  description: PropTypes.string, // Description du voyage
 };

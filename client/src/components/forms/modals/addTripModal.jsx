@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -25,59 +25,88 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const [photo, setPhoto] = useState(null);
   const [dateStart, setDateStart] = useState(null);
   const [dateEnd, setDateEnd] = useState(null);
-  const [note, setNote] = useState(3);
+  const [rating, setRating] = useState(3);
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      resetForm();
+    }
+  }, [isOpen]);
+
+  const resetForm = () => {
+    console.log("Form reset");
+    setTitle("");
+    setPhoto(null);
+    setDateStart(null);
+    setDateEnd(null);
+    setRating(3);
+    setDescription("");
+    setImageFile(null);
+    setError(null);
+    setIsSubmitting(false);
+  };
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validTypes.includes(file.type)) {
-        console.error("Type de fichier non valide:", file.type);
         setError("Veuillez télécharger une image (JPEG, PNG, GIF).");
         return;
       }
+      console.log("Photo uploaded: ", file);
       setPhoto(URL.createObjectURL(file));
       setImageFile(file);
       setError(null);
-      console.log("Fichier image sélectionné:", file);
-    } else {
-      setError("Aucun fichier sélectionné");
     }
   };
 
   const handleSave = async () => {
     setError(null);
-
+  
     if (!title || !dateStart || !dateEnd || !description || !imageFile) {
       setError("Veuillez remplir tous les champs requis.");
       return;
     }
-
-    console.log("Image File avant l'ajout:", imageFile);
-
+  
+    if (isSubmitting) {
+      return; // Empêche une double soumission
+    }
+  
+    setIsSubmitting(true);
+  
     try {
       const imageData = await uploadImageToCloudinary(imageFile);
-
+  
       const newTrip = {
         title,
         photo: imageData.secure_url,
         dateStart,
         dateEnd,
-        note,
+        rating: Number(rating),
         description,
       };
-
-      await addTrip(newTrip);
-      onAddTrip(newTrip);
-      onClose();
+  
+      const addedTrip = await addTrip(newTrip);
+      onAddTrip(addedTrip); // Met à jour la liste des voyages localement
+      onClose(); // Ferme le modal sans double fetch
+      resetForm();
     } catch (error) {
-      console.error("Erreur lors de l'ajout du voyage:", error);
-      setError("Une erreur est survenue lors de l'ajout du voyage.");
+      if (error.message.includes("Un voyage avec le même titre et les mêmes dates existe déjà")) {
+        setError("Un voyage avec le même titre et les mêmes dates existe déjà.");
+      } else {
+        console.error("Erreur lors de l'ajout du voyage:", error);
+        setError("Une erreur est survenue lors de l'ajout du voyage.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
+  
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -87,7 +116,7 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         <ModalCloseButton />
         <ModalBody>
           {error && <p style={{ color: "red" }}>{error}</p>}
-          <FormControl>
+          <FormControl isRequired>
             <FormLabel>Titre</FormLabel>
             <Input
               value={title}
@@ -95,45 +124,57 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
               placeholder="Titre du voyage"
             />
           </FormControl>
-          <FormControl mt={4}>
+          <FormControl mt={4} isRequired>
             <FormLabel>Photo</FormLabel>
             <Input type="file" onChange={handlePhotoUpload} />
+            {photo && (
+              <img
+                src={photo}
+                alt="Aperçu"
+                style={{
+                  marginTop: "10px",
+                  width: "100%",
+                  maxHeight: "200px",
+                  objectFit: "cover",
+                }}
+              />
+            )}
           </FormControl>
-          <FormControl mt={4}>
+          <FormControl mt={4} isRequired>
             <FormLabel>Date de début</FormLabel>
             <DatePicker
               selected={dateStart}
               onChange={(date) => {
                 setDateStart(date);
                 if (dateEnd && date < dateEnd) {
-                  setDateEnd(null); // Réinitialiser dateEnd si dateStart est modifiée
+                  setDateEnd(null); // Réinitialiser la date de fin si elle devient invalide
                 }
               }}
               dateFormat="dd/MM/yyyy"
               placeholderText="Sélectionnez une date de début"
             />
           </FormControl>
-          <FormControl mt={4}>
+          <FormControl mt={4} isRequired>
             <FormLabel>Date de fin</FormLabel>
             <DatePicker
               selected={dateEnd}
               onChange={(date) => setDateEnd(date)}
               dateFormat="dd/MM/yyyy"
               placeholderText="Sélectionnez une date de fin"
-              minDate={dateStart} // Empêche la sélection de dates antérieures à dateStart
+              minDate={dateStart} // Empêche de sélectionner une date antérieure à la date de début
             />
           </FormControl>
           <FormControl mt={4}>
-            <FormLabel>Note</FormLabel>
+            <FormLabel>Évaluation</FormLabel>
             <ReactStars
               count={5}
-              value={note}
-              onChange={(newRating) => setNote(newRating)}
+              value={rating}
+              onChange={(newRating) => setRating(newRating)}
               size={24}
               color2={"#ffd700"}
             />
           </FormControl>
-          <FormControl mt={4}>
+          <FormControl mt={4} isRequired>
             <FormLabel>Description</FormLabel>
             <Textarea
               value={description}
@@ -143,7 +184,12 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
           </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleSave}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={handleSave}
+            isLoading={isSubmitting}
+          >
             Enregistrer
           </Button>
           <Button variant="ghost" onClick={onClose}>

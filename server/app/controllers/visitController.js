@@ -29,13 +29,15 @@ export async function getVisit(req, res) {
 
 // POST /api/me/trips/:tripId/visit
 export async function createVisit(req, res) {
-  const { title, dateStart, dateEnd, comment, note, photo, geo, place_id } =
-    req.body;
+  const { tripId } = req.params; // Extraire tripId de req.params
+  const { title, dateStart, dateEnd, comment, rating, photo, geo } = req.body; // Extraire tripId de req.body
 
-  const tripId = parseInt(req.params.tripId); // trip_id doit venir des paramètres de la route
-  if (isNaN(tripId)) {
+  // Vérifiez si tripId est présent
+  if (!tripId || isNaN(tripId)) {
     return res.status(400).json({ error: "Paramètre tripId invalide." });
   }
+
+  console.log("tripId reçu:", tripId); // Log pour vérifier la valeur du tripId
 
   try {
     const visit = await Visit.create({
@@ -43,11 +45,9 @@ export async function createVisit(req, res) {
       dateStart,
       dateEnd,
       comment,
-      note,
-      photo,
+      rating,
       geo,
-      place_id,
-      trip_id: tripId, // Utilise le tripId extrait des paramètres
+      trip_id: tripId, // Utiliser le tripId extrait de visitData
     });
     res.status(201).json(visit);
   } catch (err) {
@@ -67,7 +67,7 @@ export async function updateVisit(req, res) {
     return res.status(400).json({ error: "Paramètres invalides." });
   }
 
-  const { title, dateStart, dateEnd, comment, note, photo, geo, place_id } =
+  const { title, dateStart, dateEnd, comment, rating, geo, place_id } =
     req.body;
 
   try {
@@ -83,8 +83,7 @@ export async function updateVisit(req, res) {
     visit.dateStart = dateStart !== undefined ? dateStart : visit.dateStart;
     visit.dateEnd = dateEnd !== undefined ? dateEnd : visit.dateEnd;
     visit.comment = comment !== undefined ? comment : visit.comment;
-    visit.note = note !== undefined ? note : visit.note;
-    visit.photo = photo !== undefined ? photo : visit.photo;
+    visit.rating = rating !== undefined ? rating : visit.rating;
     visit.geo = geo !== undefined ? geo : visit.geo;
     visit.place_id = place_id !== undefined ? place_id : visit.place_id;
 

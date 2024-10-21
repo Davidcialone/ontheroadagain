@@ -23,7 +23,7 @@ import { DeleteTripModal } from "../modals/deleteTripModal";
 import { Link as RouterLink } from "react-router-dom";
 import { deleteTrip } from "../../../api/tripApi";
 
-export function Trip({ id, photo, title, dateStart, dateEnd, description, note, onTripDeleted, onTripUpdated }) {
+export function Trip({ id, photo, title, dateStart, dateEnd, description, rating, onTripDeleted, onTripUpdated }) {
   const [updatedTrip, setUpdatedTrip] = useState({});
 
   const {
@@ -115,7 +115,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
                 photo={photo}
                 startDate={new Date(dateStart)}
                 endDate={new Date(dateEnd)}
-                note={note}
+                rating={rating}
                 description={description}
               />
               <DeleteTripButton onClick={handleDeleteClick} />
@@ -182,7 +182,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, note, 
                 >
                   Évaluation
                 </Badge>
-                <Box pt="2">{renderStars(note || updatedTrip.note)}</Box>
+                <Box pt="2">{renderStars(rating || updatedTrip.rating)}</Box>
               </Box>
             </VStack>
           </Flex>
@@ -216,7 +216,7 @@ Trip.propTypes = {
   dateStart: PropTypes.string.isRequired,
   dateEnd: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  note: PropTypes.number,
+  rating: PropTypes.number, // Note du voyage
   onTripDeleted: PropTypes.func.isRequired, // Ajout de la prop pour la gestion de la suppression
   onTripUpdated: PropTypes.func.isRequired, // Ajout de la prop pour la gestion de la mise à jour
 };

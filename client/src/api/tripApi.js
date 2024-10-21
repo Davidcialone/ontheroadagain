@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
-import Cookies from "js-cookie"; // Importation de la bibliothèque js-cookie
+import Cookies from "js-cookie";
 
 // Informations Cloudinary directement intégrées
-const CLOUDINARY_CLOUD_NAME = "dn1y58few"; // Remplacez par votre Cloudinary Cloud Name
-const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain"; // Remplacez par votre Cloudinary Upload Preset
+const CLOUDINARY_CLOUD_NAME = "dn1y58few";
+const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain";
 
 function isTokenExpired(decodedToken) {
   const currentTime = Date.now() / 1000;
@@ -12,14 +12,12 @@ function isTokenExpired(decodedToken) {
 }
 
 export function getUserIdFromToken() {
-  // Récupérer le token depuis les cookies
-  const yourJWTToken = Cookies.get("token");
-  if (!yourJWTToken) {
+  const token = Cookies.get("token");
+  if (!token) {
     throw new Error("Token non trouvé");
   }
 
-  const decodedToken = jwt.decode(yourJWTToken);
-
+  const decodedToken = jwt.decode(token);
   if (!decodedToken || isTokenExpired(decodedToken)) {
     throw new Error("Le token a expiré ou est invalide");
   }
@@ -40,7 +38,7 @@ export async function uploadImageToCloudinary(imageFile) {
   // Compresser l'image avant de la télécharger
   const compressedImage = await new Promise((resolve, reject) => {
     new Compressor(imageFile, {
-      quality: 0.6, // Ajustez la qualité selon vos besoins
+      quality: 0.6,
       success(result) {
         resolve(result);
       },
@@ -64,15 +62,13 @@ export async function uploadImageToCloudinary(imageFile) {
     );
 
     if (!response.ok) {
-      console.log(`Cloudinary upload error! status: ${response.status}`);
       const errorText = await response.text();
-      console.log(`Cloudinary upload error details: ${errorText}`);
-      throw new Error(`Cloudinary upload error! status: ${response.status}`);
+      throw new Error(
+        `Cloudinary upload error! Status: ${response.status}, Details: ${errorText}`
+      );
     }
 
-    const data = await response.json();
-    console.log("Image uploaded successfully:", data);
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Error uploading image to Cloudinary:", error);
     throw new Error("Échec du téléchargement de l'image sur Cloudinary");
@@ -84,29 +80,25 @@ export async function fetchTrips() {
 
   try {
     const userId = getUserIdFromToken();
-    console.log("Fetching trips for user ID:", userId);
-
     const response = await fetch(
       `http://localhost:5000/ontheroadagain/api/me/trips`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          // Utilisation du token stocké dans les cookies
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
       }
     );
 
     if (!response.ok) {
+      const errorText = await response.text();
       throw new Error(
-        `Erreur lors de la récupération des voyages: ${response.statusText}`
+        `Erreur lors de la récupération des voyages: ${errorText}`
       );
     }
 
-    const data = await response.json();
-    console.log("Trips fetched successfully:", data);
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Erreur lors de la récupération des voyages:", error);
     throw error;
@@ -114,25 +106,42 @@ export async function fetchTrips() {
 }
 
 export async function addTrip(newTrip) {
-  const { title, photo, dateStart, dateEnd, note, description } = newTrip;
+  const { title, photo, dateStart, dateEnd, rating, description } = newTrip;
+
+  if (!title || !dateStart || !dateEnd) {
+    throw new Error("Titre, date de début et date de fin sont obligatoires.");
+  }
+
+  if (!photo) {
+    throw new Error("Aucune image fournie pour le téléchargement.");
+  }
 
   try {
-    const userId = getUserIdFromToken(); // Obtenez l'ID utilisateur
-    console.log("Adding trip for user ID:", userId);
+    const userId = getUserIdFromToken();
 
-    if (!photo) {
-      throw new Error("Aucune image fournie pour le téléchargement.");
+    // Vérification des doublons : récupérer les voyages pertinents
+    const existingTrips = await fetchTrips(); // Optionnel : ajouter des filtres côté API
+    const tripExists = existingTrips.some(
+      (trip) =>
+        trip.title === title &&
+        trip.dateStart === dateStart &&
+        trip.dateEnd === dateEnd
+    );
+
+    if (tripExists) {
+      throw new Error(
+        "Un voyage avec le même titre et les mêmes dates existe déjà."
+      );
     }
 
-    // Préparez l'objet avec les données du voyage
     const tripData = {
       title,
       photo,
       dateStart,
       dateEnd,
-      note,
+      rating: Number(rating), // S'assurer que le rating est un nombre
       description,
-      user_id: userId, // Incluez l'ID utilisateur ici
+      user_id: userId,
     };
 
     const response = await fetch(
@@ -141,37 +150,38 @@ export async function addTrip(newTrip) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
-        body: JSON.stringify(tripData), // Envoyez les données au format JSON
+        body: JSON.stringify(tripData),
       }
     );
 
     if (!response.ok) {
-      throw new Error("Erreur lors de l'ajout du voyage.");
+      const errorText = await response.text();
+      throw new Error(`Erreur lors de l'ajout du voyage: ${errorText}`);
     }
 
-    const result = await response.json(); // Récupérez la réponse JSON
-    console.log("Voyage ajouté avec succès:", result);
-    return result; // Renvoie le résultat
+    try {
+      return await response.json(); // Tentative de conversion en JSON
+    } catch (jsonError) {
+      throw new Error("Réponse de l'API non valide.");
+    }
   } catch (error) {
     console.error("Erreur lors de l'ajout du voyage:", error);
-    throw error; // Relancez l'erreur pour le gérer plus haut dans la chaîne
+    throw error;
   }
 }
 
 export async function deleteTrip(tripId) {
   try {
     const userId = getUserIdFromToken();
-    console.log("Deleting trip for user ID:", userId);
-
     const response = await fetch(
       `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`,
       {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
       }
     );
@@ -179,11 +189,9 @@ export async function deleteTrip(tripId) {
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorMessage}`
+        `Erreur lors de la suppression du voyage: ${errorMessage}`
       );
     }
-
-    return;
   } catch (error) {
     console.error("Error deleting trip:", error);
     throw error;
@@ -192,42 +200,37 @@ export async function deleteTrip(tripId) {
 
 export async function updateTrip(tripId, updatedTrip) {
   try {
-    const userId = getUserIdFromToken(); // Récupérer l'ID de l'utilisateur
-    console.log("Updating trip for user ID:", userId);
-    console.log("Trip ID:", tripId); // Vérifie si le tripId est bien récupéré
+    const userId = getUserIdFromToken();
 
-    // Créer l'objet à envoyer, en incluant l'ID utilisateur
     const tripData = {
       ...updatedTrip,
       photo: updatedTrip.photo.public_id
-        ? `https://res.cloudinary.com/dn1y58few/image/upload/${updatedTrip.photo.public_id}.jpeg`
+        ? `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${updatedTrip.photo.public_id}.jpeg`
         : updatedTrip.photo.endsWith(".jpeg")
-        ? updatedTrip.photo // Utiliser l'URL existante si elle se termine par .jpeg
-        : `${updatedTrip.photo}.jpeg`, // Ajouter .jpeg si ce n'est pas le cas
+        ? updatedTrip.photo
+        : `${updatedTrip.photo}.jpeg`,
     };
-    console.log("Updated trip data:", tripData);
 
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`, // Vérifiez l'URL ici
+      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`,
       {
-        method: "PATCH", // Utilisez PATCH pour mettre à jour
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`, // Utilisation du token du cookie
+          Authorization: `Bearer ${Cookies.get("token")}`,
         },
-        body: JSON.stringify(tripData), // Envoyer l'objet avec les données du voyage
+        body: JSON.stringify(tripData),
       }
     );
 
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(
-        `HTTP error! status: ${response.status}, message: ${errorMessage}`
+        `Erreur lors de la mise à jour du voyage: ${errorMessage}`
       );
     }
 
-    const updatedTripData = await response.json();
-    return updatedTripData;
+    return await response.json();
   } catch (error) {
     console.error("Error updating trip:", error);
     throw error;
