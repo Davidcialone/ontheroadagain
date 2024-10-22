@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trip } from './trip'; // Assurez-vous que le chemin est correct
-import { AddTripButton } from '../buttons/AddTripButton'; // Assurez-vous que le chemin est correct
+import { AddTripButton } from '../buttons/addTripButton'; // Assurez-vous que le chemin est correct
 import { ChakraProvider, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import { AddTripModal } from '../modals/addTripModal'; // Assurez-vous que le chemin est correct
 import { fetchTrips, addTrip } from '../../../../src/api/tripApi'; // Assurez-vous que le chemin est correct
@@ -9,6 +9,7 @@ import { AuthContext } from '../auth/authContext';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { AddVisitModal } from '../modals/addVisitModal';
+
 
 export function MyTrips() {
   const [trips, setTrips] = useState([]);
