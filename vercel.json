@@ -1,10 +1,10 @@
 {
   "builds": [
     {
-      "src": "src/main.jsx",
+      "src": "client/src/main.jsx",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "distDir": "client/dist"  // Chemin correct vers le dossier de sortie
       }
     }
   ],
@@ -14,6 +14,5 @@
       "dest": "/index.html"
     }
   ],
-  "outputDirectory": "build",
   "public": true
 }
