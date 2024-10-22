@@ -6,7 +6,7 @@ import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
 import { AddVisitModal } from '../modals/addVisitModal';
 import { UpdateVisitModal } from '../modals/updateVisitModal'; 
 import { DeleteVisitModal } from '../modals/deleteVisitModal'; 
-import { Visit } from './Visit';
+import { Visit } from './visit';
 import { SimpleGrid } from "@chakra-ui/react";
 import { AddVisitButton } from '../buttons/addVisitButton';
 import { UpdateVisitButton } from '../buttons/updateVisitButton';

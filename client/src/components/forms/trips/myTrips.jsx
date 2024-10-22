@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Trip } from '../trips/Trip'; // Assurez-vous que le chemin est correct
+import { Trip } from './trip'; // Assurez-vous que le chemin est correct
 import { AddTripButton } from '../buttons/AddTripButton'; // Assurez-vous que le chemin est correct
 import { ChakraProvider, SimpleGrid, useDisclosure } from "@chakra-ui/react";
 import { AddTripModal } from '../modals/addTripModal'; // Assurez-vous que le chemin est correct
