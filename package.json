@@ -3,17 +3,15 @@
     "private": true,
     "version": "0.0.0",
     "type": "module",
-    "homepage": "https://Davidcialone.github.io/ontheroadagain",
-    "scripts": {
+       "scripts": {
         "client": "cd client && npm run dev",
         "server": "cd server && node server.js",
         "dev": "concurrently \"npm run server\" \"npm run client\"",
         "install-all": "npm install && cd client && npm install && cd ../server && npm install",
         "build": "cd client && npm run build",
         "lint": "cd client && npm run lint",
-        "preview": "cd client && npm run preview",
-        "predeploy": "npm run build",
-        "deploy": "gh-pages -d client/dist"
+        "preview": "cd client && npm run preview"
+  
     },
     "devDependencies": {
         "@types/jwt-decode": "^3.1.0",

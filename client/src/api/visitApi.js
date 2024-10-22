@@ -131,10 +131,10 @@ export async function getVisitsForTrip(tripId) {
     }
 
     const tripData = await response.json();
-    console.log(
-      "Détails du voyage récupérés avec succès:",
-      JSON.stringify(tripData, null, 2)
-    );
+    // console.log(
+    //   "Détails du voyage récupérés avec succès:",
+    //   JSON.stringify(tripData, null, 2)
+    // );
 
     const visits = tripData || [];
     console.log("Visites récupérées avec succès:", visits);

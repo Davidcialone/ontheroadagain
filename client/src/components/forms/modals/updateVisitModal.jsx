@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Button,
@@ -19,15 +19,25 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
 
-export function UpdateVisitModal({ isOpen, onClose }) {
+export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
 
+  // Utilisez useEffect pour pré-remplir le formulaire avec les données de la visite existante
+  useEffect(() => {
+    if (visit) {
+      setTitle(visit.title);
+      setStartDate(new Date(visit.startDate));
+      setEndDate(new Date(visit.endDate));
+      setRating(visit.rating);
+      setComment(visit.comment);
+    }
+  }, [visit]);
+
   const handleSave = () => {
-    // Logic to handle saving the trip details
     const visitDetails = {
       title,
       startDate,
@@ -36,7 +46,8 @@ export function UpdateVisitModal({ isOpen, onClose }) {
       comment,
     };
     console.log(visitDetails);
-    onClose();
+    onUpdateVisit(visitDetails); // Appel de la fonction de mise à jour
+    onClose(); // Fermer le modal après la mise à jour
   };
 
   return (
@@ -94,7 +105,7 @@ export function UpdateVisitModal({ isOpen, onClose }) {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onUpdateOpen}>
+          <Button colorScheme="blue" mr={3} onClick={handleSave}>
             Sauvegarder
           </Button>
           <Button variant="ghost" onClick={onClose}>
@@ -107,6 +118,8 @@ export function UpdateVisitModal({ isOpen, onClose }) {
 }
 
 UpdateVisitModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  visit: PropTypes.object, // Un objet représentant la visite à mettre à jour
+  onUpdateVisit: PropTypes.func.isRequired, // Fonction pour mettre à jour la visite
 };
