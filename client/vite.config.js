@@ -9,7 +9,7 @@ export default defineConfig({
   base: "/ontheroadagain/",
   root: path.resolve(__dirname, ""),
   build: {
-    outDir: "dist",
+    outDir: "public",
   },
   server: {
     port: 3000,
