@@ -13,5 +13,7 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "outputDirectory": "build",
+  "public": true
 }
