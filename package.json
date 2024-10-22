@@ -8,7 +8,7 @@
         "server": "cd server && node server.js",
         "dev": "concurrently \"npm run server\" \"npm run client\"",
         "install-all": "npm install && cd client && npm install && cd ../server && npm install",
-        "build": "cd client && npm run build",
+        "build": "cd client && vite build",
         "lint": "cd client && npm run lint",
         "preview": "cd client && npm run preview"
   
