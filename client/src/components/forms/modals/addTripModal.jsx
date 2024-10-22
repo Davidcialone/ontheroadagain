@@ -17,15 +17,14 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
-import { addTrip } from "../../../api/tripApi";
-import { uploadImageToCloudinary } from "../../../api/tripApi";
+import { addTrip, uploadImageToCloudinary } from "../../../api/tripApi";
 
 export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [dateStart, setDateStart] = useState(null);
-  const [dateEnd, setDateEnd] = useState(null);
-  const [rating, setRating] = useState(3);
+  const [dateStart, setDateStart] = useState(new Date()); // Aujourd'hui
+  const [dateEnd, setDateEnd] = useState(new Date(new Date().setDate(new Date().getDate() + 1))); // Demain
+  const [rating, setRating] = useState(3); // Initialisation à 3 pour avoir une valeur de départ
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
@@ -41,9 +40,9 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
     console.log("Form reset");
     setTitle("");
     setPhoto(null);
-    setDateStart(null);
-    setDateEnd(null);
-    setRating(3);
+    setDateStart(new Date()); // Aujourd'hui
+    setDateEnd(new Date(new Date().setDate(new Date().getDate() + 1))); // Demain
+    setRating(3); // Remise à 3
     setDescription("");
     setImageFile(null);
     setError(null);
@@ -87,9 +86,11 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         photo: imageData.secure_url,
         dateStart,
         dateEnd,
-        rating: Number(rating),
+        rating: parseFloat(rating.toFixed(1)), // Assurez-vous que la valeur du rating est un nombre à une décimale
         description,
       };
+  
+      console.log("Nouvel itinéraire ajouté:", newTrip); // Ajout d'un log pour vérifier les données soumises
   
       const addedTrip = await addTrip(newTrip);
       onAddTrip(addedTrip); // Met à jour la liste des voyages localement
@@ -167,10 +168,12 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
           <FormControl mt={4}>
             <FormLabel>Évaluation</FormLabel>
             <ReactStars
-              count={5}
-              value={rating}
-              onChange={(newRating) => setRating(newRating)}
+              count={5} // Limité à 5 étoiles
+              value={parseFloat(rating.toFixed(1))} // S'assurer qu'on passe bien un nombre à une décimale
+              onChange={(newRating) => {setRating(newRating); // Laisser la valeur telle quelle pour afficher les demi-étoiles
+              }}
               size={24}
+              half={true} // Permet les étoiles en demi
               color2={"#ffd700"}
             />
           </FormControl>

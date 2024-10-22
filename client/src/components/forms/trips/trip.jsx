@@ -22,6 +22,7 @@ import { UpdateTripModal } from "../modals/updateTripModal";
 import { DeleteTripModal } from "../modals/deleteTripModal";
 import { Link as RouterLink } from "react-router-dom";
 import { deleteTrip } from "../../../api/tripApi";
+import ReactStars from "react-stars"; // Importer ReactStars
 
 export function Trip({ id, photo, title, dateStart, dateEnd, description, rating, onTripDeleted, onTripUpdated }) {
   const [updatedTrip, setUpdatedTrip] = useState({});
@@ -43,18 +44,15 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
   };
 
   const handleUpdateTrip = (updatedTripData) => {
-    // Vérifiez si updatedTripData est défini avant d'essayer d'accéder à ses propriétés
     if (updatedTripData) {
-        // Copier les données mises à jour
-        const { userId, ...tripDataWithoutUserId } = updatedTripData;
-
-        setUpdatedTrip(tripDataWithoutUserId); // Enregistrer les nouvelles données du voyage
-        onTripUpdated(tripDataWithoutUserId); // Appeler la fonction pour mettre à jour le voyage dans le parent
-        onUpdateClose(); // Fermer la modale
+      const { userId, ...tripDataWithoutUserId } = updatedTripData;
+      setUpdatedTrip(tripDataWithoutUserId); // Enregistrer les nouvelles données du voyage
+      onTripUpdated(tripDataWithoutUserId); // Appeler la fonction pour mettre à jour le voyage dans le parent
+      onUpdateClose(); // Fermer la modale
     } else {
-        console.error("updatedTripData is undefined");
+      console.error("updatedTripData is undefined");
     }
-};
+  };
 
   const handleDeleteClick = () => {
     onDeleteOpen(); // Ouvrir la modale de suppression
@@ -68,14 +66,6 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
     } catch (error) {
       console.error("Erreur lors de la suppression du voyage:", error);
     }
-  };
-
-  const renderStars = (rating) => {
-    return Array(5)
-      .fill("")
-      .map((_, i) => (
-        <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
-      ));
   };
 
   const colorTheme = "gray";
@@ -115,7 +105,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
                 photo={photo}
                 startDate={new Date(dateStart)}
                 endDate={new Date(dateEnd)}
-                rating={rating}
+                rating={Number(rating)}
                 description={description}
               />
               <DeleteTripButton onClick={handleDeleteClick} />
@@ -182,7 +172,17 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
                 >
                   Évaluation
                 </Badge>
-                <Box pt="2">{renderStars(rating || updatedTrip.rating)}</Box>
+                <Box pt="2">
+                  <ReactStars
+                    count={5}
+                    value={Number(rating)} // Assurez-vous que la note est un nombre
+                    size={24}
+                    half={true} // Permet d'afficher des étoiles à moitié remplies
+                    color2={"#ffd700"} // Couleur pour les étoiles pleines
+                    color1={"#a9a9a9"} // Couleur pour les étoiles vides
+                    edit={false} // Empêche l'édition (utilisateur ne peut pas changer la note)
+                  />
+                </Box>
               </Box>
             </VStack>
           </Flex>

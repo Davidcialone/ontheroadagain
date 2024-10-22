@@ -105,7 +105,7 @@ export async function fetchTrips() {
   }
 }
 
-export async function addTrip(newTrip) {
+export async function addTrip(newTrip, existingTrips = []) {
   const { title, photo, dateStart, dateEnd, rating, description } = newTrip;
 
   if (!title || !dateStart || !dateEnd) {
@@ -115,61 +115,51 @@ export async function addTrip(newTrip) {
   if (!photo) {
     throw new Error("Aucune image fournie pour le téléchargement.");
   }
-
-  try {
-    const userId = getUserIdFromToken();
-
-    // Vérification des doublons : récupérer les voyages pertinents
-    const existingTrips = await fetchTrips(); // Optionnel : ajouter des filtres côté API
-    const tripExists = existingTrips.some(
+  const userId = getUserIdFromToken();
+  // Vérification des doublons : utiliser le tableau existant des voyages
+  const tripExists =
+    Array.isArray(existingTrips) &&
+    existingTrips.some(
       (trip) =>
         trip.title === title &&
         trip.dateStart === dateStart &&
         trip.dateEnd === dateEnd
     );
 
-    if (tripExists) {
-      throw new Error(
-        "Un voyage avec le même titre et les mêmes dates existe déjà."
-      );
-    }
-
-    const tripData = {
-      title,
-      photo,
-      dateStart,
-      dateEnd,
-      rating: Number(rating), // S'assurer que le rating est un nombre
-      description,
-      user_id: userId,
-    };
-
-    const response = await fetch(
-      "http://localhost:5000/ontheroadagain/api/me/trips",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify(tripData),
-      }
+  if (tripExists) {
+    throw new Error(
+      "Un voyage avec le même titre et les mêmes dates existe déjà."
     );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erreur lors de l'ajout du voyage: ${errorText}`);
-    }
-
-    try {
-      return await response.json(); // Tentative de conversion en JSON
-    } catch (jsonError) {
-      throw new Error("Réponse de l'API non valide.");
-    }
-  } catch (error) {
-    console.error("Erreur lors de l'ajout du voyage:", error);
-    throw error;
   }
+
+  const tripData = {
+    title,
+    photo,
+    dateStart,
+    dateEnd,
+    rating: Number(rating),
+    description,
+    user_id: userId,
+  };
+
+  const response = await fetch(
+    "http://localhost:5000/ontheroadagain/api/me/trips",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+      body: JSON.stringify(tripData),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Erreur lors de l'ajout du voyage: ${errorText}`);
+  }
+
+  return await response.json(); // Renvoyer la réponse JSON
 }
 
 export async function deleteTrip(tripId) {

@@ -25,7 +25,10 @@ export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
         <ModalHeader>Supprimer la visite</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Text>Êtes-vous sûr de vouloir supprimer cette visite ? <br />Cette action est irréversible.</Text>
+          <Text>
+            Êtes-vous sûr de vouloir supprimer cette visite ? <br />
+            Cette action est irréversible.
+          </Text>
         </ModalBody>
         <ModalFooter>
           <Button colorScheme="red" mr={3} onClick={handleDelete}>
@@ -41,6 +44,7 @@ export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
 }
 
 DeleteVisitModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onDelete: PropTypes.func, // Ajout de cette prop
 };

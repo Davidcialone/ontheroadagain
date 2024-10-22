@@ -10,13 +10,12 @@ import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 import { AddVisitModal } from '../modals/addVisitModal';
 
-
 export function MyTrips() {
   const [trips, setTrips] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
-  const [currentTripId, setCurrentTripId] = useState(null); // Ajout d'un état pour le tripId
+  const [currentTripId, setCurrentTripId] = useState(null);
   const { isOpen: isAddTripModalOpen, onOpen: onOpenAddTripModal, onClose: onCloseAddTripModal } = useDisclosure();
   const { isOpen: isAddVisitModalOpen, onOpen: onOpenAddVisitModal, onClose: onCloseAddVisitModal } = useDisclosure();
   const navigate = useNavigate();
@@ -34,7 +33,11 @@ export function MyTrips() {
 
   useEffect(() => {
     const loadTrips = async () => {
-      if (tripsFetched.current) return; // Évite un fetch multiple
+      console.log("Début du chargement des voyages...");
+      if (tripsFetched.current) {
+        console.log("Voyages déjà chargés, évitant le double appel.");
+        return; // Évite un fetch multiple
+      }
       tripsFetched.current = true;
 
       try {
@@ -50,7 +53,7 @@ export function MyTrips() {
         
         const formattedTripsData = tripsData.map(trip => ({
           ...trip,
-          rating: Number(trip.rating) || 0,
+          rating: Number(trip.rating).toFixed(1) || 0, // Formater à une décimale
         }));
 
         setTrips(formattedTripsData);
@@ -58,6 +61,7 @@ export function MyTrips() {
         console.error("Erreur lors du chargement des voyages:", err);
         setError(err.message);
       } finally {
+        console.log("Chargement des voyages terminé.");
         setLoading(false);
       }
     };
@@ -66,39 +70,45 @@ export function MyTrips() {
   }, [isAuthenticated, navigate]);
 
   const handleAddTrip = async (tripData) => {
-    if (isAdding) return;
+    console.log("handleAddTrip appelé avec tripData:", tripData);
+    if (isAdding) {
+      console.log("Ajout en cours, évitant un appel supplémentaire.");
+      return;
+    }
     setIsAdding(true);
-  
+
     try {
       const existingTrip = trips.find(trip =>
         trip.title === tripData.title &&
         trip.dateStart === tripData.dateStart &&
         trip.dateEnd === tripData.dateEnd
       );
-  
+
       if (existingTrip) {
+        console.log("Voyage existant trouvé:", existingTrip);
         throw new Error("Un voyage avec le même titre et les mêmes dates existe déjà.");
       }
-  
+
       const token = Cookies.get('token');
       const decodedToken = jwtDecode(token);
       const userId = decodedToken.id || decodedToken.user_id;
-  
+
       const tripWithUserId = {
         ...tripData,
         user_id: userId,
         rating: Number(tripData.rating) || 0,
       };
-  
+
+      console.log("Appel API pour ajouter un voyage avec les données:", tripWithUserId);
       const response = await addTrip(tripWithUserId);
       console.log("Voyage ajouté:", response);
-  
+
       // Ajoute le nouveau voyage à l'état local
       setTrips((prevTrips) => [
         ...prevTrips,
         { ...response, rating: Number(response.rating) },
       ]);
-  
+
       onCloseAddTripModal();
       setNewTripData({
         title: '',
@@ -113,16 +123,18 @@ export function MyTrips() {
       console.error("Erreur lors de l'ajout du voyage:", err);
       setError("Erreur lors de l'ajout du voyage: " + err.message);
     } finally {
+      console.log("Ajout terminé.");
       setIsAdding(false);
     }
   };
-  
 
   const handleTripDeleted = (id) => {
+    console.log("Suppression du voyage avec l'ID:", id);
     setTrips((prevTrips) => prevTrips.filter(trip => trip.id !== id));
   };
 
   const handleTripUpdated = (updatedTripData) => {
+    console.log("Mise à jour du voyage:", updatedTripData);
     setTrips((prevTrips) =>
       prevTrips.map(trip => (trip.id === updatedTripData.id ? { ...updatedTripData, rating: Number(updatedTripData.rating) } : trip))
     );
@@ -138,7 +150,7 @@ export function MyTrips() {
       <h1>Mes voyages</h1>
       <div className='roadbook'>
         <div className='add-trip-button-layout'>
-          <AddTripButton onClick={onOpenAddTripModal} />
+          <AddTripButton onClick={onOpenAddTripModal} disabled={isAdding} />
           {error && <div className="error-message">{error}</div>}
           <AddTripModal
             isOpen={isAddTripModalOpen}
@@ -160,7 +172,7 @@ export function MyTrips() {
                 dateStart={trip.dateStart}
                 dateEnd={trip.dateEnd}
                 description={trip.description}
-                rating={trip.rating}
+                rating={Number(trip.rating)}
                 onTripDeleted={handleTripDeleted}
                 onTripUpdated={handleTripUpdated}
                 onAddVisit={() => handleAddVisit(trip.id)} // Ajout de la fonction pour ouvrir la modale d'ajout de visite

@@ -9,7 +9,6 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Text,
   Input,
   Textarea,
   FormControl,
@@ -20,24 +19,28 @@ import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
 
 export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
-  const [title, setTitle] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const [title, setTitle] = useState(""); // Initialisé à une chaîne vide
+  const [startDate, setStartDate] = useState(null); // Null est acceptable pour le DatePicker
+  const [endDate, setEndDate] = useState(null); // Null est acceptable pour le DatePicker
+  const [rating, setRating] = useState(0); // Initialisé à 0, donc un nombre
+  const [comment, setComment] = useState(""); // Initialisé à une chaîne vide
 
-  // Utilisez useEffect pour pré-remplir le formulaire avec les données de la visite existante
   useEffect(() => {
     if (visit) {
-      setTitle(visit.title);
-      setStartDate(new Date(visit.startDate));
-      setEndDate(new Date(visit.endDate));
-      setRating(visit.rating);
-      setComment(visit.comment);
+      setTitle(visit.title || ""); // Assure que la chaîne n'est jamais null
+      setStartDate(visit.startDate ? new Date(visit.startDate) : null);
+      setEndDate(visit.endDate ? new Date(visit.endDate) : null);
+      setRating(Number(visit.rating) || 0); // Conversion explicite en nombre
+      setComment(visit.comment || ""); // Assure que la chaîne n'est jamais null
     }
   }, [visit]);
 
   const handleSave = () => {
+    if (!startDate || !endDate || endDate < startDate) {
+      console.error("Date de départ ou de fin invalide");
+      return;
+    }
+
     const visitDetails = {
       title,
       startDate,
@@ -62,7 +65,7 @@ export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
             <Input
               placeholder="Titre de la visite"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => setTitle(e.target.value || "")} // Assure une chaîne vide si null
             />
           </FormControl>
 
@@ -72,6 +75,7 @@ export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
               selected={startDate}
               onChange={(date) => setStartDate(date)}
               dateFormat="dd/MM/yyyy"
+              placeholderText="Sélectionnez une date"
             />
           </FormControl>
 
@@ -81,6 +85,8 @@ export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
               selected={endDate}
               onChange={(date) => setEndDate(date)}
               dateFormat="dd/MM/yyyy"
+              placeholderText="Sélectionnez une date"
+              minDate={startDate}
             />
           </FormControl>
 
@@ -89,8 +95,8 @@ export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
             <ReactStars
               count={5}
               size={24}
-              value={rating}
-              onChange={(newRating) => setRating(newRating)}
+              value={rating} // Assure que c'est un nombre
+              onChange={(newRating) => setRating(Number(newRating))} // Conversion explicite en nombre
             />
           </FormControl>
 
@@ -99,7 +105,7 @@ export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
             <Textarea
               placeholder="Ajoutez un commentaire"
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={(e) => setComment(e.target.value || "")} // Assure une chaîne vide si null
             />
           </FormControl>
         </ModalBody>
@@ -120,6 +126,6 @@ export function UpdateVisitModal({ isOpen, onClose, visit, onUpdateVisit }) {
 UpdateVisitModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  visit: PropTypes.object, // Un objet représentant la visite à mettre à jour
-  onUpdateVisit: PropTypes.func.isRequired, // Fonction pour mettre à jour la visite
+  visit: PropTypes.object,
+  onUpdateVisit: PropTypes.func.isRequired,
 };

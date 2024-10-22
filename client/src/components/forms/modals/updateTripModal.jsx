@@ -48,7 +48,7 @@ export function UpdateTripModal({
       setPhoto(initialPhoto || null);
       setStartDate(initialStartDate || null);
       setEndDate(initialEndDate || null);
-      setRating(initialRating || 3);
+      setRating(Number(initialRating) || 3); // Assurez-vous que c'est un nombre
       setDescription(initialDescription || "");
       setImageFile(null);
       setError(null);
