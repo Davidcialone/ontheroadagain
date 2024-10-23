@@ -81,8 +81,8 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
               style={{ textDecoration: "none" }}
             >
               <Image
-                src={photo || updatedTrip.photo} // Utiliser la photo mise à jour si elle existe
-                alt={title || updatedTrip.title}
+                src={photo || updatedTrip.photo || "default-image-url"} // Utiliser la photo mise à jour ou une image par défaut
+                alt={title || updatedTrip.title || "Titre non disponible"}
                 className="trip-image"
                 objectFit="cover"
                 width="100%"
@@ -93,7 +93,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
             </Link>
           </Box>
           <Flex justifyContent="space-between" alignItems="center" padding={4}>
-            <Heading size="md">{title || updatedTrip.title}</Heading>
+            <Heading size="md">{title || updatedTrip.title || "Titre non disponible"}</Heading>
             <Box>
               <UpdateTripButton onClick={handleUpdateClick} />
               <UpdateTripModal
@@ -105,7 +105,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
                 photo={photo}
                 startDate={new Date(dateStart)}
                 endDate={new Date(dateEnd)}
-                rating={Number(rating)}
+                rating={typeof rating === "number" ? Number(rating) : 0} // Vérification de la note
                 description={description}
               />
               <DeleteTripButton onClick={handleDeleteClick} />
@@ -159,7 +159,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
                   Description
                 </Badge>
                 <Text pt="2" fontSize="sm">
-                  {description || updatedTrip.description}
+                  {description || updatedTrip.description || "Aucune description disponible"}
                 </Text>
               </Box>
               <Box>
@@ -175,7 +175,7 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
                 <Box pt="2">
                   <ReactStars
                     count={5}
-                    value={Number(rating)} // Assurez-vous que la note est un nombre
+                    value={typeof rating === "number" ? Number(rating) : 0} // Assurez-vous que la note est un nombre
                     size={24}
                     half={true} // Permet d'afficher des étoiles à moitié remplies
                     color2={"#ffd700"} // Couleur pour les étoiles pleines
@@ -211,12 +211,19 @@ export function Trip({ id, photo, title, dateStart, dateEnd, description, rating
 // Définir les types de props
 Trip.propTypes = {
   id: PropTypes.number.isRequired,
-  photo: PropTypes.string.isRequired,
+  photo: PropTypes.string, // Peut être une chaîne vide
   title: PropTypes.string.isRequired,
   dateStart: PropTypes.string.isRequired,
   dateEnd: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  rating: PropTypes.number, // Note du voyage
+  description: PropTypes.string,
+  rating: PropTypes.number, // Note du voyage, peut être nulle
   onTripDeleted: PropTypes.func.isRequired, // Ajout de la prop pour la gestion de la suppression
   onTripUpdated: PropTypes.func.isRequired, // Ajout de la prop pour la gestion de la mise à jour
+};
+
+// Valeurs par défaut pour les props
+Trip.defaultProps = {
+  photo: "default-image-url", // URL d'image par défaut
+  description: "Aucune description disponible", // Valeur par défaut pour la description
+  rating: 0, // Valeur par défaut pour la note
 };

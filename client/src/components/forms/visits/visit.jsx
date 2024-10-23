@@ -42,22 +42,32 @@ export function Visit({ title, photos = [], startDate, endDate, rating, comment,
 
   // Function to render rating stars
   const renderStars = (rating) => {
+    // Vérifie si rating est un nombre et qu'il est entre 0 et 5
+    const validRating = typeof rating === 'number' && rating >= 0 && rating <= 5 ? rating : 0;
+
     return Array(5)
       .fill("")
       .map((_, i) => (
-        <StarIcon key={i} color={i < rating ? "yellow.400" : "gray.300"} />
+        <StarIcon key={i} color={i < validRating ? "yellow.400" : "gray.300"} />
       ));
   };
 
+  // Vérifie que title est une chaîne non vide
+  const validTitle = typeof title === 'string' && title.trim() !== "" ? title : "Titre non disponible";
+
+  // Vérifie que startDate et endDate sont des chaînes non vides
+  const validStartDate = typeof startDate === 'string' && startDate.trim() !== "" ? startDate : "Date de départ non disponible";
+  const validEndDate = typeof endDate === 'string' && endDate.trim() !== "" ? endDate : "Date de retour non disponible";
+
   return (
     <Card width="100%" className="responsive-card" mb={4} boxShadow="md">
-    <CardHeader display="flex" alignItems="center" justifyContent="space-between">
-  <Heading size="md">{title}</Heading>
-  <Box>
-    <UpdateVisitButton onClick={() => { onUpdate(); onUpdateOpen(); }} /> {/* Appel de la fonction onUpdate ici */}
-    <DeleteVisitButton onClick={() => { onDelete(); onDeleteOpen(); }} /> {/* Appel de la fonction onDelete ici */}
-  </Box>
-</CardHeader>
+      <CardHeader display="flex" alignItems="center" justifyContent="space-between">
+        <Heading size="md">{validTitle}</Heading>
+        <Box>
+          <UpdateVisitButton onClick={() => { onUpdate(); onUpdateOpen(); }} />
+          <DeleteVisitButton onClick={() => { onDelete(); onDeleteOpen(); }} />
+        </Box>
+      </CardHeader>
 
       <CardBody>
         <Flex direction={["column", "column", "row"]} gap={4}>
@@ -66,7 +76,7 @@ export function Visit({ title, photos = [], startDate, endDate, rating, comment,
             <Box>
               <Heading size="xs" textTransform="uppercase">Dates</Heading>
               <Text pt="2" fontSize="sm">
-                Départ : {startDate} - Retour : {endDate}
+                Départ : {validStartDate} - Retour : {validEndDate}
               </Text>
             </Box>
 
@@ -80,7 +90,7 @@ export function Visit({ title, photos = [], startDate, endDate, rating, comment,
             <Box>
               <Heading size="xs" textTransform="uppercase">Commentaire</Heading>
               <Text size="sm">
-                {comment || "Aucun commentaire disponible"} {/* Default comment */}
+                {comment && typeof comment === 'string' && comment.trim() !== "" ? comment : "Aucun commentaire disponible"}
               </Text>
             </Box>
           </VStack>
@@ -88,17 +98,18 @@ export function Visit({ title, photos = [], startDate, endDate, rating, comment,
           {/* Visit photos */}
           <Box flex={1} minWidth={["100%", "100%", "50%"]}>
             <Flex flexWrap="wrap" gap={2} mb={4}>
-              {photos.length > 0 ? (
+              {Array.isArray(photos) && photos.length > 0 ? (
                 photos.map((photo, index) => (
-                  <Box key={index} cursor="pointer" onClick={() => { setPhotoIndex(index); onLightboxOpen(); }}>
-                    <Image src={photo} alt={`Photo ${index + 1}`} boxSize="100px" objectFit="cover" />
-                  </Box>
+                  typeof photo === 'string' && photo.trim() !== "" ? (
+                    <Box key={index} cursor="pointer" onClick={() => { setPhotoIndex(index); onLightboxOpen(); }}>
+                      <Image src={photo} alt={`Photo ${index + 1}`} boxSize="100px" objectFit="cover" />
+                    </Box>
+                  ) : null // Ne pas rendre si photo n'est pas une chaîne valide
                 ))
               ) : (
                 <Text>Aucune photo disponible</Text>
               )}
             </Flex>
-
             {/* Button to add new photo */}
             <Button leftIcon={<AddIcon />} onClick={() => console.log("Ajouter une photo")}>
               Ajouter une photo

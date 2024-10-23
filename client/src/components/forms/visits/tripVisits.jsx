@@ -40,7 +40,7 @@ export function TripVisits() {
                 }
 
                 const visitsData = await getVisitsForTrip(numericTripId);
-                setVisits(visitsData);
+                setVisits(Array.isArray(visitsData) ? visitsData : []); // Assure que visitsData est un tableau
             } catch (err) {
                 setError("Erreur lors du chargement des visites: " + err.message);
             } finally {
@@ -60,6 +60,13 @@ export function TripVisits() {
             return;
         }
 
+        // Vérifie que visitData est un objet valide
+        if (typeof visitData !== 'object' || visitData === null) {
+            setError("Données de visite invalides.");
+            setIsAdding(false);
+            return;
+        }
+
         try {
             const visitWithTripId = {
                 ...visitData,
@@ -69,10 +76,10 @@ export function TripVisits() {
     
             const response = await addVisit(visitWithTripId);
     
-            setVisits((prevVisits) => [
+            setVisits((prevVisits) => Array.isArray(prevVisits) ? [
                 ...prevVisits,
                 { ...response, rating: Number(response.rating) || 0 }
-            ]);
+            ] : [{ ...response, rating: Number(response.rating) || 0 }]); // Assure que prevVisits est un tableau
     
             onAddClose();
         } catch (err) {
@@ -83,12 +90,17 @@ export function TripVisits() {
     };
 
     const handleVisitUpdated = (updatedVisit) => {
-        setVisits((prevVisits) =>
-            prevVisits.map((visit) => 
-                visit.id === updatedVisit.id ? { ...updatedVisit, rating: Number(updatedVisit.rating) || 0 } : visit
-            )
-        );
-        onUpdateClose(); // Fermer la modale de mise à jour après l'édition
+        // Vérifie que updatedVisit est un objet valide
+        if (typeof updatedVisit === 'object' && updatedVisit !== null) {
+            setVisits((prevVisits) =>
+                Array.isArray(prevVisits) ? prevVisits.map((visit) => 
+                    visit.id === updatedVisit.id ? { ...updatedVisit, rating: Number(updatedVisit.rating) || 0 } : visit
+                ) : []
+            );
+            onUpdateClose(); // Fermer la modale de mise à jour après l'édition
+        } else {
+            console.error("Erreur: updatedVisit n'est pas un objet valide.", updatedVisit);
+        }
     };
 
     const handleVisitDeleted = async () => {
@@ -96,7 +108,9 @@ export function TripVisits() {
         console.log("Tentative de suppression de la visite avec l'ID:", visitToDelete.id);
         try {
             // Ici, vous pourriez également appeler une API pour supprimer la visite du serveur
-            setVisits((prevVisits) => prevVisits.filter((visit) => visit.id !== visitToDelete.id));
+            setVisits((prevVisits) => 
+                Array.isArray(prevVisits) ? prevVisits.filter((visit) => visit.id !== visitToDelete.id) : []
+            );
             console.log("Visite supprimée avec succès:", visitToDelete.id);
             onDeleteClose(); // Fermez la modale après la suppression
         } catch (err) {
@@ -141,30 +155,38 @@ export function TripVisits() {
                     )}
                 </div>
 
-                {/* Affichage des visites */}
+                Affichage des visites
                 <SimpleGrid columns={[1, 1, 1, 2, 3]} spacing={5} className='tripsRoadbook'>
                     {loading ? (
                         <p>Chargement des visites...</p>
                     ) : (
-                        visits.map(visit => (
-                            <Visit
-                                key={visit.id}
-                                title={visit.title}
-                                photos={visit.photo ? [visit.photo] : []} 
-                                startDate={visit.dateStart}
-                                endDate={visit.dateEnd}
-                                rating={Number(visit.rating) || 0}
-                                comment={visit.comment || ""}
-                                onUpdate={() => {
-                                    setUpdatedVisit(visit); // Met à jour la visite sélectionnée
-                                    onUpdateOpen(); // Ouvre la modale de mise à jour
-                                }}
-                                onDelete={() => {
-                                    setVisitToDelete(visit); // Définit la visite à supprimer
-                                    onDeleteOpen(); // Ouvre la modale de suppression
-                                }}
-                            />
-                        ))
+                        Array.isArray(visits) && visits.length > 0 ? (
+                            visits.map(visit => {
+                                // Log each visit to debug
+                                console.log('Visit:', visit);
+                                return (
+                                    <Visit
+                                        key={visit.id}
+                                        title={visit.title}
+                                        photos={visit.photo ? [visit.photo] : []} 
+                                        startDate={visit.dateStart}
+                                        endDate={visit.dateEnd}
+                                        rating={Number(visit.rating) || 0}
+                                        comment={visit.comment || ""}
+                                        onUpdate={() => {
+                                            setUpdatedVisit(visit); // Met à jour la visite sélectionnée
+                                            onUpdateOpen(); // Ouvre la modale de mise à jour
+                                        }}
+                                        onDelete={() => {
+                                            setVisitToDelete(visit); // Définit la visite à supprimer
+                                            onDeleteOpen(); // Ouvre la modale de suppression
+                                        }}
+                                    />
+                                );
+                            })
+                        ) : (
+                            <p>Aucune visite trouvée.</p>
+                        )
                     )}
                 </SimpleGrid>
             </div>

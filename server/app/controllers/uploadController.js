@@ -1,4 +1,6 @@
-import { v2 as cloudinary } from "cloudinary";
+import cloudinaryPkg from "cloudinary";
+const { v2: cloudinary } = cloudinaryPkg;
+
 import dotenv from "dotenv";
 
 dotenv.config(); // Charger les variables d'environnement
@@ -92,11 +94,9 @@ const uploadController = {
       res.status(200).json({ success: true, imageUrl });
     } catch (err) {
       console.error("Erreur lors de l'upload de l'image :", err);
-      res
-        .status(500)
-        .json({
-          message: "Erreur lors du téléchargement de l'image de visite.",
-        });
+      res.status(500).json({
+        message: "Erreur lors du téléchargement de l'image de visite.",
+      });
     }
   },
 };

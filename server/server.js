@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import sequelize from "./db.js";
 import { router } from "./app/routers/index.js";
-import { v2 as cloudinary } from "cloudinary"; // Importer Cloudinary
+import cloudinaryPkg from "cloudinary";
+const { v2: cloudinary } = cloudinaryPkg;
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 import dotenv from "dotenv";
