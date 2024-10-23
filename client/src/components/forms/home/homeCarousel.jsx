@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Image, Text } from '@chakra-ui/react';
+import { Box, Card, CardMedia, Typography, Container } from '@mui/material';
 
 const baseSlides = [
   { img: '/ontheroadagain/Rome.png', label: 'Rome' },
@@ -10,10 +10,9 @@ const baseSlides = [
 ];
 
 const slides = [];
-for (let i = 1; i <= 10; i++) {
+for (let i = 0; i < 10; i++) {
   slides.push(...baseSlides); // Ajoute le contenu de baseSlides à chaque itération
 }
-
 
 export const HomeCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -23,56 +22,62 @@ export const HomeCarousel = () => {
   // Effet pour le défilement automatique
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) =>
-        prev + 1 <= slides.length - slidesToShow ? prev + 1 : 0 // Revenir au début
-      );
+      setCurrentSlide((prev) => (prev + 1) % (slides.length - slidesToShow + 1)); // Modulo pour revenir au début
     }, 4000); // Défilement toutes les 4 secondes
 
     return () => clearInterval(interval); // Nettoyer l'intervalle à la désactivation du composant
   }, [slides.length, slidesToShow]);
 
   return (
-    <Box width="100vw" overflow="hidden" position="relative">
+    <Container maxWidth="lg" sx={{ overflow: 'hidden', position: 'relative' }}>
       <Box
         display="flex"
-        transition="transform 1s ease" // Augmenter la durée de transition pour plus de fluidité
+        transition="transform 1s ease"
         transform={`translateX(-${(currentSlide * 100) / slidesToShow}%)`}
         width="100%"
       >
         {slides.map((slide, index) => (
           <Box
             key={index}
-            width={`${100 / slidesToShow}%`} // Largeur de chaque image en pourcentage
+            width={`${100 / slidesToShow}%`}
             flexShrink={0}
-            height={height} // Utiliser la hauteur fixe ici
+            height={height}
             position="relative"
             padding={0}
             margin={0}
           >
-            <Image
-              src={slide.img}
-              alt={slide.label}
-              objectFit="cover"
-              width="100%"
-              height="100%"
-              margin="0 auto"
-              transition="opacity 0.5s ease" // Ajout d'une transition pour l'opacité
-            />
-            <Text
-              textAlign="center"
-              position="absolute"
-              bottom="8px"
-              left="0"
-              right="0"
-              color="white"
-              bg="rgba(0, 0, 0, 0.2)"
-              fontSize="2vh"
-            >
-              {slide.label}
-            </Text>
+            <Card sx={{ height: '100%', position: 'relative' }}>
+              <CardMedia
+                component="img"
+                image={slide.img}
+                alt={slide.label}
+                sx={{
+                  objectFit: 'cover',
+                  height: '100%',
+                  width: '100%',
+                  transition: 'opacity 0.5s ease',
+                }}
+              />
+              <Typography
+                variant="h6"
+                component="div"
+                textAlign="center"
+                position="absolute"
+                bottom="8px"
+                left="0"
+                right="0"
+                color="white"
+                sx={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  padding: '0.5rem',
+                }}
+              >
+                {slide.label}
+              </Typography>
+            </Card>
           </Box>
         ))}
       </Box>
-    </Box>
+    </Container>
   );
 };

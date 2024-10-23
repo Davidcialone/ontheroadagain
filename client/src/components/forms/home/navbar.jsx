@@ -1,56 +1,61 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Navbar, Container, Nav } from 'react-bootstrap';
-import { AuthContext } from '../auth/authContext'; // Assurez-vous d'importer le bon AuthContext
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+  Menu,
+  MenuItem,
+} from '@mui/material';
+import { AuthContext } from '../auth/authContext';
 
 export function NavbarSite() {
-  const { isAuthenticated, logout } = useContext(AuthContext); // Consommer le contexte d'authentification
+  const { isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // État pour gérer le menu déroulant
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   // Fonction de déconnexion
   const handleLogout = () => {
-    logout(); // Appeler la fonction de déconnexion depuis le contexte
-    navigate('/login'); // Rediriger l'utilisateur vers la page de connexion
+    logout();
+    navigate('/login');
+  };
+
+  // Gérer l'ouverture et la fermeture du menu
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   return (
-    <Navbar bg="light" expand="lg" className="mb-4">
+    <AppBar position="static">
       <Container>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Item>
-              <Nav.Link as={Link} to="/">Accueil</Nav.Link>
-            </Nav.Item>
-            {isAuthenticated && (
-              <>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/me/trips">Mes voyages</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/me/trips/projects">Mes projets de voyages</Nav.Link>
-                </Nav.Item>
-              </>
-            )}
-          </Nav>
-          <Nav>
-            {isAuthenticated ? (
-              <Nav.Item>
-                <Nav.Link as="button" onClick={handleLogout} className="me-2">Déconnexion</Nav.Link>
-              </Nav.Item>
-            ) : (
-              <>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/login" className="me-2">Connexion</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/signup">Inscription</Nav.Link>
-                </Nav.Item>
-              </>
-            )}
-          </Nav>
-        </Navbar.Collapse>
+        <Toolbar>
+          <Typography variant="h6" component={Link} to="/" style={{ flexGrow: 1, color: 'white', textDecoration: 'none' }}>
+            OnTheRoadAgain
+          </Typography>
+          {isAuthenticated && (
+            <>
+              <Button color="inherit" component={Link} to="/me/trips">Mes voyages</Button>
+              <Button color="inherit" component={Link} to="/me/trips/projects">Mes projets de voyages</Button>
+            </>
+          )}
+          {isAuthenticated ? (
+            <Button color="inherit" onClick={handleLogout}>Déconnexion</Button>
+          ) : (
+            <>
+              <Button color="inherit" component={Link} to="/login">Connexion</Button>
+              <Button color="inherit" component={Link} to="/signup">Inscription</Button>
+            </>
+          )}
+        </Toolbar>
       </Container>
-    </Navbar>
+    </AppBar>
   );
 }

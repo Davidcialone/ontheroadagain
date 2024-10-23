@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import '../../../style/signup.css';
 import { useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // Corriger l'import si nécessaire
+import { jwtDecode } from 'jwt-decode'; // Corriger l'import si nécessaire
 import Cookies from 'js-cookie';
 import { AuthContext } from '../auth/authContext'; // Import du contexte d'authentification
+import { Container, TextField, Button, Typography, Box, Snackbar } from '@mui/material';
 
 export function Login() {
   const { login } = useContext(AuthContext); // Récupérer la fonction de login du contexte
@@ -11,6 +11,7 @@ export function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // État pour gérer la snackbar
 
   // Vérifier si un token est déjà présent
   useEffect(() => {
@@ -66,36 +67,53 @@ export function Login() {
     } catch (err) {
       console.error(err);
       setError(err.message);
+      setSnackbarOpen(true); // Ouvrir la snackbar en cas d'erreur
     }
   };
 
+  // Fonction pour fermer la snackbar
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
   return (
-    <div className="signup-container">
-      <form onSubmit={handleSubmit} className="signup-form">
-        <h2 style={{ textAlign: 'center' }}>Connexion</h2>
-        {error && <p className="error-message">{error}</p>}
-        <div className="form-group">
-          <label>Email:</label>
-          <input
+    <Container maxWidth="sm" sx={{ marginTop: 4 }}>
+      <Box sx={{ padding: 3, borderRadius: 2, boxShadow: 1 }}>
+        <Typography variant="h4" component="h2" align="center">Connexion</Typography>
+        {error && (
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
+            onClose={handleSnackbarClose}
+            message={error}
+          />
+        )}
+        <form onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
             type="email"
-            className="form-control"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </div>
-        <div className="form-group">
-          <label>Mot de passe:</label>
-          <input
+          <TextField
+            label="Mot de passe"
             type="password"
-            className="form-control"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </div>
-        <button type="submit" className="btn btn-primary">Se connecter</button>
-      </form>
-    </div>
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            Se connecter
+          </Button>
+        </form>
+      </Box>
+    </Container>
   );
 }

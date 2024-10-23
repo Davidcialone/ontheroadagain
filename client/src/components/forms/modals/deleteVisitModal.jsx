@@ -2,15 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Text,
-} from "@chakra-ui/react";
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
   const handleDelete = () => {
@@ -19,27 +16,23 @@ export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
   };
 
   return (
-    <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Supprimer la visite</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Text>
-            Êtes-vous sûr de vouloir supprimer cette visite ? <br />
-            Cette action est irréversible.
-          </Text>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="red" mr={3} onClick={handleDelete}>
-            Supprimer
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Annuler
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Supprimer la visite</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Êtes-vous sûr de vouloir supprimer cette visite ? <br />
+          Cette action est irréversible.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDelete} color="error">
+          Supprimer
+        </Button>
+        <Button onClick={onClose} variant="outlined">
+          Annuler
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -48,3 +41,5 @@ DeleteVisitModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onDelete: PropTypes.func, // Ajout de cette prop
 };
+
+export default DeleteVisitModal;

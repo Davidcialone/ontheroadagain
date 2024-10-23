@@ -2,18 +2,15 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Input,
-  Textarea,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
   FormControl,
-  FormLabel,
-} from "@chakra-ui/react";
+  FormHelperText,
+} from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
@@ -84,76 +81,100 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Ajouter une visite</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <FormControl>
-            <FormLabel>Titre</FormLabel>
-            <Input
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="Titre de la visite"
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Date de début</FormLabel>
-            <DatePicker
-              selected={dateStart}
-              onChange={(date) => {
-                setDateStart(date);
-                if (dateEnd && date < dateEnd) {
-                  setDateEnd(null); // Réinitialiser dateEnd si dateStart est modifiée
-                }
-              }}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Sélectionnez une date de début"
-              isClearable // Ajoute une option pour effacer la sélection
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Date de fin</FormLabel>
-            <DatePicker
-              selected={dateEnd}
-              onChange={(date) => setDateEnd(date)}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Sélectionnez une date de fin"
-              minDate={dateStart} // Empêche la sélection de dates antérieures à dateStart
-              isClearable // Ajoute une option pour effacer la sélection
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Note</FormLabel>
-            <ReactStars
-              count={5}
-              value={rating}
-              onChange={(newRating) => setRating(newRating)}
-              size={24}
-              color2={"#ffd700"}
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Commentaire</FormLabel>
-            <Textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Commentaire de la visite"
-            />
-          </FormControl>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleSave}>
-            Enregistrer
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Annuler
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Ajouter une visite</DialogTitle>
+      <DialogContent>
+        {error && <FormHelperText error>{error}</FormHelperText>}
+        <FormControl fullWidth margin="normal">
+          <TextField
+            value={title}
+            onChange={handleTitleChange}
+            label="Titre"
+            placeholder="Titre de la visite"
+            variant="outlined"
+            required
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <TextField
+            label="Date de début"
+            variant="outlined"
+            InputLabelProps={{ shrink: true }}
+            // Utilisation du DatePicker
+            InputProps={{
+              readOnly: true,
+              value: dateStart ? dateStart.toLocaleDateString() : '',
+              onClick: () => setDateStart(dateStart),
+            }}
+            placeholder="Sélectionnez une date de début"
+          />
+          <DatePicker
+            selected={dateStart}
+            onChange={(date) => {
+              setDateStart(date);
+              if (dateEnd && date < dateEnd) {
+                setDateEnd(null); // Réinitialiser dateEnd si dateStart est modifiée
+              }
+            }}
+            dateFormat="dd/MM/yyyy"
+            isClearable // Ajoute une option pour effacer la sélection
+            wrapperClassName="react-datepicker-wrapper"
+            popperClassName="react-datepicker-popper"
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <TextField
+            label="Date de fin"
+            variant="outlined"
+            InputLabelProps={{ shrink: true }}
+            InputProps={{
+              readOnly: true,
+              value: dateEnd ? dateEnd.toLocaleDateString() : '',
+              onClick: () => setDateEnd(dateEnd),
+            }}
+            placeholder="Sélectionnez une date de fin"
+          />
+          <DatePicker
+            selected={dateEnd}
+            onChange={(date) => setDateEnd(date)}
+            dateFormat="dd/MM/yyyy"
+            minDate={dateStart} // Empêche la sélection de dates antérieures à dateStart
+            isClearable // Ajoute une option pour effacer la sélection
+            wrapperClassName="react-datepicker-wrapper"
+            popperClassName="react-datepicker-popper"
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <FormHelperText>Note</FormHelperText>
+          <ReactStars
+            count={5}
+            value={rating}
+            onChange={(newRating) => setRating(newRating)}
+            size={24}
+            color2={"#ffd700"}
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <TextField
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            label="Commentaire"
+            placeholder="Commentaire de la visite"
+            variant="outlined"
+            multiline
+            rows={4}
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={handleSave}>
+          Enregistrer
+        </Button>
+        <Button onClick={onClose} color="default">
+          Annuler
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -163,3 +184,5 @@ AddVisitModal.propTypes = {
   onAddVisit: PropTypes.func,
   tripId: PropTypes.number, // Le tripId est maintenant requis
 };
+
+export default AddVisitModal;

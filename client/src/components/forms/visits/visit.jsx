@@ -4,129 +4,118 @@ import {
   Box,
   Button,
   Card,
-  CardBody,
+  CardContent,
   CardHeader,
-  Heading,
-  Text,
-  VStack,
-  Flex,
-  Image,
-  useDisclosure
-} from "@chakra-ui/react";
-import { StarIcon, AddIcon } from "@chakra-ui/icons"; 
-import { UpdateVisitButton } from "../buttons/updateVisitButton";
-import { DeleteVisitButton } from "../buttons/deleteVisitButton";
+  Typography,
+  Grid,
+  IconButton,
+  Snackbar,
+} from "@mui/material"; // Utilisation de MUI v5
+import { Star } from "@mui/icons-material"; // Star icon from MUI v5
+import { Add as AddIcon } from "@mui/icons-material"; // Add icon from MUI v5
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 
 export function Visit({ title, photos = [], startDate, endDate, rating, comment, onUpdate, onDelete }) {
   const [photoIndex, setPhotoIndex] = useState(0);
-
-  const {
-    isOpen: isLightboxOpen,
-    onOpen: onLightboxOpen,
-    onClose: onLightboxClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isUpdateOpen,
-    onOpen: onUpdateOpen,
-    onClose: onUpdateClose,
-  } = useDisclosure();
-
-  const {
-    isOpen: isDeleteOpen,
-    onOpen: onDeleteOpen,
-    onClose: onDeleteClose,
-  } = useDisclosure();
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  
+  // Snackbar states
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   // Function to render rating stars
   const renderStars = (rating) => {
-    // Vérifie si rating est un nombre et qu'il est entre 0 et 5
     const validRating = typeof rating === 'number' && rating >= 0 && rating <= 5 ? rating : 0;
 
     return Array(5)
       .fill("")
       .map((_, i) => (
-        <StarIcon key={i} color={i < validRating ? "yellow.400" : "gray.300"} />
+        <Star key={i} color={i < validRating ? "gold" : "gray"} />
       ));
   };
 
-  // Vérifie que title est une chaîne non vide
+  // Validating title, startDate, and endDate
   const validTitle = typeof title === 'string' && title.trim() !== "" ? title : "Titre non disponible";
-
-  // Vérifie que startDate et endDate sont des chaînes non vides
   const validStartDate = typeof startDate === 'string' && startDate.trim() !== "" ? startDate : "Date de départ non disponible";
   const validEndDate = typeof endDate === 'string' && endDate.trim() !== "" ? endDate : "Date de retour non disponible";
 
   return (
-    <Card width="100%" className="responsive-card" mb={4} boxShadow="md">
-      <CardHeader display="flex" alignItems="center" justifyContent="space-between">
-        <Heading size="md">{validTitle}</Heading>
-        <Box>
-          <UpdateVisitButton onClick={() => { onUpdate(); onUpdateOpen(); }} />
-          <DeleteVisitButton onClick={() => { onDelete(); onDeleteOpen(); }} />
-        </Box>
-      </CardHeader>
+    <Card variant="outlined" sx={{ mb: 2, boxShadow: 1 }}>
+      <CardHeader
+        title={<Typography variant="h6">{validTitle}</Typography>}
+        action={
+          <Box>
+            <IconButton onClick={() => { onUpdate(); setSnackbarOpen(true); }}>
+              <span>Modifier</span>
+            </IconButton>
+            <IconButton onClick={() => { onDelete(); setSnackbarOpen(true); }}>
+              <span>Supprimer</span>
+            </IconButton>
+          </Box>
+        }
+      />
 
-      <CardBody>
-        <Flex direction={["column", "column", "row"]} gap={4}>
-          <VStack spacing={4} align="stretch" flex={1}>
-            {/* Visit dates */}
+      <CardContent>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
             <Box>
-              <Heading size="xs" textTransform="uppercase">Dates</Heading>
-              <Text pt="2" fontSize="sm">
-                Départ : {validStartDate} - Retour : {validEndDate}
-              </Text>
+              <Typography variant="subtitle2" textTransform="uppercase">Dates</Typography>
+              <Typography>{`Départ : ${validStartDate} - Retour : ${validEndDate}`}</Typography>
             </Box>
 
-            {/* Visit rating */}
-            <Box>
-              <Heading size="xs" textTransform="uppercase">Évaluation</Heading>
-              <Box pt="2">{renderStars(rating)}</Box>
+            <Box mt={2}>
+              <Typography variant="subtitle2" textTransform="uppercase">Évaluation</Typography>
+              <Box>{renderStars(rating)}</Box>
             </Box>
 
-            {/* Visit comment */}
-            <Box>
-              <Heading size="xs" textTransform="uppercase">Commentaire</Heading>
-              <Text size="sm">
+            <Box mt={2}>
+              <Typography variant="subtitle2" textTransform="uppercase">Commentaire</Typography>
+              <Typography>
                 {comment && typeof comment === 'string' && comment.trim() !== "" ? comment : "Aucun commentaire disponible"}
-              </Text>
+              </Typography>
             </Box>
-          </VStack>
+          </Grid>
 
-          {/* Visit photos */}
-          <Box flex={1} minWidth={["100%", "100%", "50%"]}>
-            <Flex flexWrap="wrap" gap={2} mb={4}>
+          <Grid item xs={12} md={6}>
+            <Box display="flex" flexWrap="wrap" gap={2}>
               {Array.isArray(photos) && photos.length > 0 ? (
                 photos.map((photo, index) => (
                   typeof photo === 'string' && photo.trim() !== "" ? (
-                    <Box key={index} cursor="pointer" onClick={() => { setPhotoIndex(index); onLightboxOpen(); }}>
-                      <Image src={photo} alt={`Photo ${index + 1}`} boxSize="100px" objectFit="cover" />
+                    <Box key={index} cursor="pointer" onClick={() => { setPhotoIndex(index); setIsLightboxOpen(true); }}>
+                      <img src={photo} alt={`Photo ${index + 1}`} style={{ width: "100px", height: "100px", objectFit: "cover" }} />
                     </Box>
-                  ) : null // Ne pas rendre si photo n'est pas une chaîne valide
+                  ) : null
                 ))
               ) : (
-                <Text>Aucune photo disponible</Text>
+                <Typography>Aucune photo disponible</Typography>
               )}
-            </Flex>
-            {/* Button to add new photo */}
-            <Button leftIcon={<AddIcon />} onClick={() => console.log("Ajouter une photo")}>
+            </Box>
+            <Button
+              variant="outlined"
+              startIcon={<AddIcon />}
+              onClick={() => console.log("Ajouter une photo")}
+            >
               Ajouter une photo
             </Button>
-          </Box>
-        </Flex>
-      </CardBody>
+          </Grid>
+        </Grid>
+      </CardContent>
 
       {/* Lightbox for photo preview */}
       <Lightbox
         open={isLightboxOpen}
-        close={onLightboxClose}
+        close={() => setIsLightboxOpen(false)}
         slides={photos.map(src => ({ src }))}
         index={photoIndex}
       />
 
-      {/* Add Update and Delete Modal Logic Here if needed */}
+      {/* Snackbar for feedback on actions */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message="Action effectuée !"
+      />
     </Card>
   );
 }

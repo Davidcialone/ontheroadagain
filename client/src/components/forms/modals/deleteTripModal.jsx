@@ -2,15 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Text,
-} from "@chakra-ui/react";
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
 export function DeleteTripModal({ isOpen, onClose, onDelete, tripId }) {
   const handleDelete = () => {
@@ -21,33 +18,31 @@ export function DeleteTripModal({ isOpen, onClose, onDelete, tripId }) {
   };
 
   return (
-    <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Supprimer le voyage</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Text>
-            Êtes-vous sûr de vouloir supprimer ce voyage ? <br />
-            Cette action est irréversible.
-          </Text>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="red" mr={3} onClick={handleDelete}>
-            Supprimer
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Annuler
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Supprimer le voyage</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Êtes-vous sûr de vouloir supprimer ce voyage ? <br />
+          Cette action est irréversible.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDelete} color="error">
+          Supprimer
+        </Button>
+        <Button onClick={onClose} variant="outlined">
+          Annuler
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
 DeleteTripModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
-  onDelete: PropTypes.func, // Assurez-vous que la fonction onDelete est une prop
-  tripId: PropTypes.number, // Ajoutez la prop pour l'ID du voyage
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired, // Assurez-vous que la fonction onDelete est une prop
+  tripId: PropTypes.number.isRequired, // Ajoutez la prop pour l'ID du voyage
 };
+
+export default DeleteTripModal;

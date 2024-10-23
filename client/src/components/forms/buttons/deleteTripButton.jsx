@@ -1,12 +1,19 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { DeleteIcon } from '@chakra-ui/icons'; // Importing from Chakra UI
+import { Button } from "@mui/material"; // Importer le composant Button
+import DeleteIcon from "@mui/icons-material/Delete"; // Importer l'icône Delete de Material UI
 
 export function DeleteTripButton({ onClick }) {
   return (
-    <button className="delete-visit-button" onClick={onClick}>
-    <DeleteIcon/>
-    </button>
+    <Button 
+      className="delete-visit-button" // Classe pour les styles personnalisés
+      onClick={onClick} 
+      variant="outlined" // Type de bouton, peut être 'text', 'contained' ou 'outlined'
+      color="secondary" // Couleur du bouton
+      startIcon={<DeleteIcon />} // Ajoute l'icône au début du bouton
+    >
+      Supprimer
+    </Button>
   );
 }
 

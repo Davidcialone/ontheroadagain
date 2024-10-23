@@ -40,3 +40,13 @@
 .read-the-docs {
   color: #888;
 }
+
+
+
+/* Ajuster le max-width pour le conteneur */
+@media (min-width: 1200px) {
+  .MuiContainer-root {
+      max-width: none !important; 
+      padding: 32px; /* Ajuster le padding pour les écrans larges */
+  }
+}
