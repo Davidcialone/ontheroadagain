@@ -179,8 +179,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
 }
 
 AddVisitModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
   onAddVisit: PropTypes.func,
   tripId: PropTypes.number, // Le tripId est maintenant requis
 };

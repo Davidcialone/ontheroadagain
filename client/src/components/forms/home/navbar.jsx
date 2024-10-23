@@ -6,8 +6,6 @@ import {
   Typography,
   Button,
   Container,
-  Menu,
-  MenuItem,
 } from '@mui/material';
 import { AuthContext } from '../auth/authContext';
 
@@ -24,36 +22,75 @@ export function NavbarSite() {
     navigate('/login');
   };
 
-  // Gérer l'ouverture et la fermeture du menu
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+  // Styles des boutons
+ const buttonStyles = {
+    color: '#333',                      // Couleur du texte (gris foncé)
+    backgroundColor: '#87CEEB',        // Couleur de fond (gris clair)
+    margin: '1rem',                    // Marges
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.4)', // Ombre portée
+    borderRadius: '4px',               // Bords arrondis (optionnel)
+    transition: 'background-color 0.3s, box-shadow 0.3s', // Transition pour l'effet hover
+    '&:hover': {
+      color:'black',
+      backgroundColor: '#bdbdbd',      // Couleur de fond au survol (gris plus foncé)
+      boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)', // Ombre plus forte au survol
+    },
   };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
+  
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: '#FFC106', borderRadius: '8px' }}>
       <Container>
-        <Toolbar>
-          <Typography variant="h6" component={Link} to="/" style={{ flexGrow: 1, color: 'white', textDecoration: 'none' }}>
-            OnTheRoadAgain
-          </Typography>
-          {isAuthenticated && (
-            <>
-              <Button color="inherit" component={Link} to="/me/trips">Mes voyages</Button>
-              <Button color="inherit" component={Link} to="/me/trips/projects">Mes projets de voyages</Button>
-            </>
-          )}
-          {isAuthenticated ? (
-            <Button color="inherit" onClick={handleLogout}>Déconnexion</Button>
-          ) : (
-            <>
-              <Button color="inherit" component={Link} to="/login">Connexion</Button>
-              <Button color="inherit" component={Link} to="/signup">Inscription</Button>
-            </>
-          )}
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          {/* Boutons à gauche */}
+          <div>
+            {isAuthenticated && (
+              <>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/me/trips"
+                >
+                  Mes voyages
+                </Button>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/me/trips/projects"
+                >
+                  Mes projets de voyages
+                </Button>
+              </>
+            )}
+          </div>
+          
+          {/* Bouton de déconnexion à droite */}
+          <div>
+            {isAuthenticated ? (
+              <Button 
+                sx={buttonStyles}  // Appliquer ici avec sx
+                onClick={handleLogout}
+              >
+                Déconnexion
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/login"
+                >
+                  Connexion
+                </Button>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/signup"
+                >
+                  Inscription
+                </Button>
+              </>
+            )}
+          </div>
         </Toolbar>
       </Container>
     </AppBar>

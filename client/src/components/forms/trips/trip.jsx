@@ -206,7 +206,7 @@ export function Trip({
   </Button>
   <Button
     component={RouterLink}
-    to={`/trips/${id}/visits`}
+    to={`/api/me/trips/${id}`}
     variant="outlined"
     size="small"
     color={color}

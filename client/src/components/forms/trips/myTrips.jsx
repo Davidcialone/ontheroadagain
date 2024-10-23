@@ -164,9 +164,26 @@ export function MyTrips() {
             <Typography variant="h4" gutterBottom>Mes voyages</Typography>
             <div className='roadbook'>
                 <div className='add-trip-button-layout'>
-                    <Button variant="contained" color="primary" onClick={onOpenAddTripModal} disabled={isAdding}>
-                        Ajouter un voyage
-                    </Button>
+                <Button 
+                    variant="contained" 
+                    sx={{ 
+                        color: '#333',                      // Couleur du texte (gris foncé)
+                        backgroundColor: '#87CEEB',        // Couleur de fond (bleu clair)
+                        margin: '1rem',                    // Marges
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.4)', // Ombre portée
+                        borderRadius: '4px',               // Bords arrondis
+                        transition: 'background-color 0.3s, box-shadow 0.3s', // Transition pour l'effet hover
+                        '&:hover': {
+                            color: 'black',                 // Couleur du texte au survol
+                            backgroundColor: '#bdbdbd',    // Couleur de fond au survol (gris plus foncé)
+                            boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)', // Ombre plus forte au survol
+                        },
+                    }}
+                    onClick={onOpenAddTripModal} 
+                    disabled={isAdding}
+                >
+                    Ajouter un voyage
+                </Button>
                     {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>}
                     <AddTripModal
                         isOpen={isAddTripModalOpen}

@@ -50,3 +50,14 @@
       padding: 32px; /* Ajuster le padding pour les écrans larges */
   }
 }
+
+.h2{
+  font-family: 'Montserrat', sans-serif; /* Police audacieuse */
+  font-size: 4rem; /* Taille du texte */
+  font-weight: 700; /* Gras */
+  color: #8d8888; /* Couleur neutre */
+  text-align: center; /* Centré */
+  margin: 40px 0; /* Espacement */
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5); /* Ombre plus marquée */
+  letter-spacing: 2px; /* Espacement entre les lettres */
+}

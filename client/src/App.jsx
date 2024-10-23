@@ -11,6 +11,7 @@ import '../src/style/trip.css';
 import '../src/style/visit.css';
 import { AuthProvider } from './components/forms/auth/authContext';
 import { TripVisits } from './components/forms/visits/tripVisits';
+import shadows from '@mui/material/styles/shadows';
 
 export function App() {
   // État pour gérer l'authentification de l'utilisateur
@@ -29,8 +30,37 @@ export function App() {
       <CssBaseline /> {/* Ajoute les styles CSS globaux de MUI */}
       <Box sx={{ width: "100%", minHeight: "100vh", bgcolor: 'background.default', color: 'text.primary' }}>
         <Router basename="/ontheroadagain">
-          <Container maxWidth="lg"> {/* Utilisation d'un conteneur MUI */}
-            <Typography variant="h2" align="center" gutterBottom>ON THE ROAD AGAIN</Typography>
+         <Container  maxWidth="lg" 
+            sx={{ 
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.9)', // Ombre personnalisée
+                padding: '20px', // Optionnel: ajout de padding
+                backgroundColor: 'white', // Optionnel: couleur de fond
+            }} > {/* Utilisation d'un conteneur MUI */} 
+ <Typography 
+    variant="h2" 
+    align="center" 
+    gutterBottom 
+    sx={{ 
+        fontFamily: 'Montserrat, sans-serif', // Police audacieuse
+        fontSize: { xs: '3rem', md: '5rem' }, // Taille du texte responsive
+        fontWeight: 900, // Très gras
+        color: '#FFC107', // Jaune doux (moins intense)
+        textAlign: 'center', // Centré
+        margin: '40px 0', // Espacement
+        textShadow: '4px 4px 12px rgba(255, 193, 7, 0.2)', // Ombre dorée atténuée
+        letterSpacing: '3px', // Espacement entre les lettres
+        textTransform: 'uppercase', // Transforme le texte en majuscules
+        background: '#87CEEB', // Dégradé beige à bleu clair (plage à ciel)
+        padding: '20px', // Padding pour donner de l'espace autour du texte
+        borderRadius: '10px', // Coins arrondis
+    }}
+>
+    On The Road Again
+</Typography>
+
+
+
+
             <NavbarSite />
             <Routes>
               <Route path="/" element={<Home />} />
@@ -41,7 +71,7 @@ export function App() {
               />
               {/* Route dynamique pour les visites avec le tripId */}
               <Route
-                path="/me/trips/:tripId/visits"
+                path="/api/me/trips/:tripId"
                 element={isAuthenticated ? <TripVisits /> : <Navigate to="/login" />}
               />
               {/* Route vers la page de connexion */}
