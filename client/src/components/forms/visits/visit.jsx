@@ -35,21 +35,12 @@ export function Visit({
   const [images, setImages] = useState([]);
   const { tripId } = useParams();
 
-  React.useEffect(() => {
-    console.log("Trip ID:", tripId);
-  }, [tripId]);
-
-  const handleUpdateClick = () => {
-    setIsUpdateOpen(true);
-  };
+  const handleUpdateClick = () => setIsUpdateOpen(true);
+  const handleDeleteClick = () => setIsDeleteOpen(true);
 
   const handleUpdateVisit = (updatedVisitData) => {
     onVisitUpdated(updatedVisitData);
     setIsUpdateOpen(false);
-  };
-
-  const handleDeleteClick = () => {
-    setIsDeleteOpen(true);
   };
 
   const handleImageUpload = (event) => {
@@ -58,102 +49,112 @@ export function Visit({
     setImages((prevImages) => [...prevImages, ...imageUrls]);
   };
 
-  return (
-    <Card variant="outlined" sx={{ mb: 2, boxShadow: 1, padding: 2, border: "2px solid #b0bec5" }}>
-      <Grid container spacing={2}>
-        
-        {/* Left Section - Details */}
-        <Grid item xs={12} md={6} sx={{ border: "1px solid #b0bec5", padding: 2 }}>
-          <Box sx={{display:'flex', mb: 2, boxShadow: 1, padding: 2, border: "2px solid #b0bec5"} }>
-            <CardHeader
-              title={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>{title || "Titre non disponible"}</Typography>}
-            />
-            <CardActions>
-              <Button size="small" startIcon={<EditIcon />} onClick={handleUpdateClick}> </Button>
-              <Button size="small" startIcon={<DeleteIcon />} onClick={handleDeleteClick}></Button>
-            </CardActions>
-          </Box>
-          
-          <CardContent sx={{ border: "1px dashed #90a4ae", borderRadius: 1, mt: 2, padding: 2 }}>
-            <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: '1px 8px', borderRadius: '8px' }}>
-              Dates
-            </Badge>
-            <Typography variant="body2" mt={1}>
-              Du {new Date(dateStart).toLocaleDateString("fr-FR")} au {new Date(dateEnd).toLocaleDateString("fr-FR")}
-            </Typography>
+  const color = "#F5DEB3"
 
-            <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: '1px 8px', borderRadius: '8px', mt: 2 }}>
-              Note
-            </Badge>
-            <Box display="flex" justifyContent="center" mt={1}>
-              <ReactStars count={5} value={rating} size={24} half={true} edit={false} color2={"#ffd700"} color1={"#a9a9a9"} />
-            </Box>
-
-            <Badge color="gray" sx={{ mb: 1, backgroundColor: "#f4f4f4", padding: '1px 8px', borderRadius: '8px', mt: 2 }}>
-              Commentaire
-            </Badge>
-            <Typography>{comment || "Aucun commentaire disponible"}</Typography>
-          </CardContent>
-        </Grid>
-
-        {/* Right Section - Image Upload and Carousel */}
-        <Grid item xs={12} md={6} sx={{ border: "1px solid #b0bec5", padding: 2 }}>
-          <CardMedia>
-            <input
-              accept="image/*"
-              style={{ display: 'none' }}
-              id="upload-button"
-              multiple
-              type="file"
-              onChange={handleImageUpload}
-            />
-            <label htmlFor="upload-button">
-              <Button variant="contained" color="primary" component="span">
-                Add Image
-              </Button>
-            </label>
-
-            {images.length > 0 && (
-              <Box mt={2} sx={{ border: "1px dashed #90a4ae", padding: 2, borderRadius: 1 }}>
-                <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
-                  {images.map((image, index) => (
-                    <Box
-                      key={index}
-                      component="img"
-                      src={image}
-                      alt={`Uploaded ${index}`}
-                      width="100%"
-                      height="300px"
-                      sx={{ objectFit: "cover", borderRadius: 1 }}
-                    />
-                  ))}
-                </Slider>
+    return (
+      <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 8, padding: 2,
+        '&:hover': {
+          boxShadow: 12,
+        },
+      }}>
+        <Grid container spacing={2}>
+          {/* Left Section - Details */}
+          <Grid item xs={12} md={4} sx={{ borderRight: "1px solid #b0bec5", marginTop: 2, padding: 2 }}>
+            {/* Title and Icons */}
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                {title || "Titre non disponible"}
+              </Typography>
+              <Box display="flex" gap={0.5}>
+                <Button size="small" startIcon={<EditIcon />} onClick={handleUpdateClick} sx={{ color: 'black', minWidth: 0, padding: 0.5 }} />
+                <Button size="small" startIcon={<DeleteIcon />} onClick={handleDeleteClick} sx={{ color: 'black', minWidth: 0, padding: 0.5 }} />
               </Box>
-            )}
-          </CardMedia>
+            </Box>
+  
+            {/* Dates Section */}
+            <CardContent sx={{ mt: 2 }}>
+              <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: "1px 8px", borderRadius: "8px" }}>
+                Dates
+              </Badge>
+              <Typography variant="body2" mt={1}>
+                Du {new Date(dateStart).toLocaleDateString("fr-FR")} au {new Date(dateEnd).toLocaleDateString("fr-FR")}
+              </Typography>
+  
+              {/* Rating Section */}
+              <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: "1px 8px", borderRadius: "8px", mt: 2 }}>
+                Note
+              </Badge>
+              <Box display="flex" justifyContent="center" mt={1}>
+                <ReactStars count={5} value={rating} size={24} half={true} edit={false} color2={"#ffd700"} color1={"#a9a9a9"} />
+              </Box>
+  
+              {/* Comment Section */}
+              <Badge color="gray" sx={{ mb: 1, backgroundColor: "#f4f4f4", padding: "1px 8px", borderRadius: "8px", mt: 2 }}>
+                Commentaire
+              </Badge>
+              <Typography variant="body2">{comment || "Aucun commentaire disponible"}</Typography>
+            </CardContent>
+          </Grid>
+  
+          {/* Right Section - Image Upload and Carousel */}
+          <Grid item xs={12} md={8} sx={{ padding: 2 }}> {/* Changed to md={8} for 2/3 width */}
+            <CardMedia>
+              <input
+                accept="image/*"
+                style={{ display: "none" }}
+                id="upload-button"
+                multiple
+                type="file"
+                onChange={handleImageUpload}
+              />
+              <label htmlFor="upload-button">
+                <Button sx={{ variant: "contained", color: "black", component: "span", boxShadow: '8' }}>
+                  Ajouter des images
+                </Button>
+              </label>
+  
+              {images.length > 0 && (
+                <Box mt={2} sx={{ border: "1px dashed #90a4ae", padding: 2, borderRadius: 1 }}>
+                  <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
+                    {images.map((image, index) => (
+                      <Box
+                        key={index}
+                        component="img"
+                        src={image}
+                        alt={`Uploaded ${index}`}
+                        width="100%"
+                        height="300px"
+                        sx={{ objectFit: "cover", borderRadius: 1 }}
+                      />
+                    ))}
+                  </Slider>
+                </Box>
+              )}
+            </CardMedia>
+          </Grid>
         </Grid>
-      </Grid>
-
-      {/* Update Visit Modal */}
-      <UpdateVisitModal
-        isOpen={isUpdateOpen}
-        onClose={() => setIsUpdateOpen(false)}
-        visit={{ title, dateStart, dateEnd, rating, comment, id: visitId }}
-        onUpdateVisit={handleUpdateVisit}
-      />
-
-      {/* Delete Modal */}
-      <DeleteVisitModal
-        open={isDeleteOpen}
-        onClose={() => setIsDeleteOpen(false)}
-        visitId={visitId}
-        onDelete={() => {
-          onVisitDeleted(visitId);
-          setIsDeleteOpen(false);
-        }}
-      />
-    </Card>
-  );
+  
+        {/* Update Visit Modal */}
+        <UpdateVisitModal
+          isOpen={isUpdateOpen}
+          onClose={() => setIsUpdateOpen(false)}
+          visit={{ title, dateStart, dateEnd, rating, comment, id: visitId }}
+          onUpdateVisit={handleUpdateVisit}
+        />
+  
+        {/* Delete Modal */}
+        <DeleteVisitModal
+          open={isDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)}
+          visitId={visitId}
+          onDelete={() => {
+            onVisitDeleted(visitId);
+            setIsDeleteOpen(false);
+          }}
+        />
+      </Card>
+    );
+  
 }
 
 Visit.propTypes = {

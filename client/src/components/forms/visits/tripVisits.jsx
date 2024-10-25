@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import { AddVisitModal } from '../modals/addVisitModal';
 import { UpdateVisitModal } from '../modals/updateVisitModal';
 import { DeleteVisitModal } from '../modals/deleteVisitModal';
-import { Visit } from './Visit'; // Assurez-vous que le chemin est correct
+import { Visit } from '../visits/visit';    
 import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
@@ -191,13 +191,13 @@ export function TripVisits() {
                     />
                 </div>
     
-                <Grid container spacing={3}>
+                <Grid container sx={{ display: 'flex', flexDirection: 'column', width: '100%' }} spacing={3}>
                     {loading ? (
                         <CircularProgress />
                     ) : (
                         Array.isArray(visits) && visits.length > 0 ? (
                             visits.map((visit) => (
-                                <Grid item xs={12} sm={6} md={4} key={visit.id}>
+                                <Grid item xs={12} sm={12} md={12} key={visit.id}>
                                     <Visit
                                         visitId={visit.id} 
                                         title={visit.title}
