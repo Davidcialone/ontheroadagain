@@ -2,119 +2,155 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
+  Grid,
   Button,
   Card,
   CardContent,
   CardHeader,
   Typography,
-  Grid,
-  IconButton,
-  Snackbar,
-} from "@mui/material"; // Utilisation de MUI v5
-import { Star } from "@mui/icons-material"; // Star icon from MUI v5
-import { Add as AddIcon } from "@mui/icons-material"; // Add icon from MUI v5
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
+  CardActions,
+  Badge,
+  CardMedia,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ReactStars from "react-stars";
+import { UpdateVisitModal } from "../modals/updateVisitModal";
+import { DeleteVisitModal } from "../modals/deleteVisitModal";
+import { useParams } from "react-router-dom";
+import Slider from "react-slick";
 
-export function Visit({ title, photos = [], startDate, endDate, rating, comment, onUpdate, onDelete }) {
-  const [photoIndex, setPhotoIndex] = useState(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  
-  // Snackbar states
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+export function Visit({
+  title,
+  dateStart,
+  dateEnd,
+  rating,
+  comment,
+  onVisitUpdated,
+  onVisitDeleted,
+  visitId,
+}) {
+  const [isUpdateOpen, setIsUpdateOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [images, setImages] = useState([]);
+  const { tripId } = useParams();
 
-  // Function to render rating stars
-  const renderStars = (rating) => {
-    const validRating = typeof rating === 'number' && rating >= 0 && rating <= 5 ? rating : 0;
+  React.useEffect(() => {
+    console.log("Trip ID:", tripId);
+  }, [tripId]);
 
-    return Array(5)
-      .fill("")
-      .map((_, i) => (
-        <Star key={i} color={i < validRating ? "gold" : "gray"} />
-      ));
+  const handleUpdateClick = () => {
+    setIsUpdateOpen(true);
   };
 
-  // Validating title, startDate, and endDate
-  const validTitle = typeof title === 'string' && title.trim() !== "" ? title : "Titre non disponible";
-  const validStartDate = typeof startDate === 'string' && startDate.trim() !== "" ? startDate : "Date de départ non disponible";
-  const validEndDate = typeof endDate === 'string' && endDate.trim() !== "" ? endDate : "Date de retour non disponible";
+  const handleUpdateVisit = (updatedVisitData) => {
+    onVisitUpdated(updatedVisitData);
+    setIsUpdateOpen(false);
+  };
+
+  const handleDeleteClick = () => {
+    setIsDeleteOpen(true);
+  };
+
+  const handleImageUpload = (event) => {
+    const files = Array.from(event.target.files);
+    const imageUrls = files.map((file) => URL.createObjectURL(file));
+    setImages((prevImages) => [...prevImages, ...imageUrls]);
+  };
 
   return (
-    <Card variant="outlined" sx={{ mb: 2, boxShadow: 1 }}>
-      <CardHeader
-        title={<Typography variant="h6">{validTitle}</Typography>}
-        action={
-          <Box>
-            <IconButton onClick={() => { onUpdate(); setSnackbarOpen(true); }}>
-              <span>Modifier</span>
-            </IconButton>
-            <IconButton onClick={() => { onDelete(); setSnackbarOpen(true); }}>
-              <span>Supprimer</span>
-            </IconButton>
+    <Card variant="outlined" sx={{ mb: 2, boxShadow: 1, padding: 2, border: "2px solid #b0bec5" }}>
+      <Grid container spacing={2}>
+        
+        {/* Left Section - Details */}
+        <Grid item xs={12} md={6} sx={{ border: "1px solid #b0bec5", padding: 2 }}>
+          <Box sx={{display:'flex', mb: 2, boxShadow: 1, padding: 2, border: "2px solid #b0bec5"} }>
+            <CardHeader
+              title={<Typography variant="h6" sx={{ fontWeight: 'bold' }}>{title || "Titre non disponible"}</Typography>}
+            />
+            <CardActions>
+              <Button size="small" startIcon={<EditIcon />} onClick={handleUpdateClick}> </Button>
+              <Button size="small" startIcon={<DeleteIcon />} onClick={handleDeleteClick}></Button>
+            </CardActions>
           </Box>
-        }
-      />
+          
+          <CardContent sx={{ border: "1px dashed #90a4ae", borderRadius: 1, mt: 2, padding: 2 }}>
+            <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: '1px 8px', borderRadius: '8px' }}>
+              Dates
+            </Badge>
+            <Typography variant="body2" mt={1}>
+              Du {new Date(dateStart).toLocaleDateString("fr-FR")} au {new Date(dateEnd).toLocaleDateString("fr-FR")}
+            </Typography>
 
-      <CardContent>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Box>
-              <Typography variant="subtitle2" textTransform="uppercase">Dates</Typography>
-              <Typography>{`Départ : ${validStartDate} - Retour : ${validEndDate}`}</Typography>
+            <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: '1px 8px', borderRadius: '8px', mt: 2 }}>
+              Note
+            </Badge>
+            <Box display="flex" justifyContent="center" mt={1}>
+              <ReactStars count={5} value={rating} size={24} half={true} edit={false} color2={"#ffd700"} color1={"#a9a9a9"} />
             </Box>
 
-            <Box mt={2}>
-              <Typography variant="subtitle2" textTransform="uppercase">Évaluation</Typography>
-              <Box>{renderStars(rating)}</Box>
-            </Box>
-
-            <Box mt={2}>
-              <Typography variant="subtitle2" textTransform="uppercase">Commentaire</Typography>
-              <Typography>
-                {comment && typeof comment === 'string' && comment.trim() !== "" ? comment : "Aucun commentaire disponible"}
-              </Typography>
-            </Box>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Box display="flex" flexWrap="wrap" gap={2}>
-              {Array.isArray(photos) && photos.length > 0 ? (
-                photos.map((photo, index) => (
-                  typeof photo === 'string' && photo.trim() !== "" ? (
-                    <Box key={index} cursor="pointer" onClick={() => { setPhotoIndex(index); setIsLightboxOpen(true); }}>
-                      <img src={photo} alt={`Photo ${index + 1}`} style={{ width: "100px", height: "100px", objectFit: "cover" }} />
-                    </Box>
-                  ) : null
-                ))
-              ) : (
-                <Typography>Aucune photo disponible</Typography>
-              )}
-            </Box>
-            <Button
-              variant="outlined"
-              startIcon={<AddIcon />}
-              onClick={() => console.log("Ajouter une photo")}
-            >
-              Ajouter une photo
-            </Button>
-          </Grid>
+            <Badge color="gray" sx={{ mb: 1, backgroundColor: "#f4f4f4", padding: '1px 8px', borderRadius: '8px', mt: 2 }}>
+              Commentaire
+            </Badge>
+            <Typography>{comment || "Aucun commentaire disponible"}</Typography>
+          </CardContent>
         </Grid>
-      </CardContent>
 
-      {/* Lightbox for photo preview */}
-      <Lightbox
-        open={isLightboxOpen}
-        close={() => setIsLightboxOpen(false)}
-        slides={photos.map(src => ({ src }))}
-        index={photoIndex}
+        {/* Right Section - Image Upload and Carousel */}
+        <Grid item xs={12} md={6} sx={{ border: "1px solid #b0bec5", padding: 2 }}>
+          <CardMedia>
+            <input
+              accept="image/*"
+              style={{ display: 'none' }}
+              id="upload-button"
+              multiple
+              type="file"
+              onChange={handleImageUpload}
+            />
+            <label htmlFor="upload-button">
+              <Button variant="contained" color="primary" component="span">
+                Add Image
+              </Button>
+            </label>
+
+            {images.length > 0 && (
+              <Box mt={2} sx={{ border: "1px dashed #90a4ae", padding: 2, borderRadius: 1 }}>
+                <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
+                  {images.map((image, index) => (
+                    <Box
+                      key={index}
+                      component="img"
+                      src={image}
+                      alt={`Uploaded ${index}`}
+                      width="100%"
+                      height="300px"
+                      sx={{ objectFit: "cover", borderRadius: 1 }}
+                    />
+                  ))}
+                </Slider>
+              </Box>
+            )}
+          </CardMedia>
+        </Grid>
+      </Grid>
+
+      {/* Update Visit Modal */}
+      <UpdateVisitModal
+        isOpen={isUpdateOpen}
+        onClose={() => setIsUpdateOpen(false)}
+        visit={{ title, dateStart, dateEnd, rating, comment, id: visitId }}
+        onUpdateVisit={handleUpdateVisit}
       />
 
-      {/* Snackbar for feedback on actions */}
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={6000}
-        onClose={() => setSnackbarOpen(false)}
-        message="Action effectuée !"
+      {/* Delete Modal */}
+      <DeleteVisitModal
+        open={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        visitId={visitId}
+        onDelete={() => {
+          onVisitDeleted(visitId);
+          setIsDeleteOpen(false);
+        }}
       />
     </Card>
   );
@@ -122,13 +158,11 @@ export function Visit({ title, photos = [], startDate, endDate, rating, comment,
 
 Visit.propTypes = {
   title: PropTypes.string.isRequired,
-  photos: PropTypes.arrayOf(PropTypes.string),
-  startDate: PropTypes.string.isRequired,
-  endDate: PropTypes.string.isRequired,
+  dateStart: PropTypes.string.isRequired,
+  dateEnd: PropTypes.string.isRequired,
   rating: PropTypes.number.isRequired,
   comment: PropTypes.string,
-  onUpdate: PropTypes.func,
-  onDelete: PropTypes.func,
+  onVisitUpdated: PropTypes.func,
+  onVisitDeleted: PropTypes.func,
+  visitId: PropTypes.number.isRequired,
 };
-
-export default Visit;

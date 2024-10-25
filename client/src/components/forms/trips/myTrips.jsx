@@ -9,7 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import { fetchTrips, addTrip } from '../../../../src/api/tripApi'; 
 import { Trip } from './trip'; 
 import { AddTripModal } from '../modals/addTripModal'; 
-import { AddVisitModal } from '../modals/addVisitModal'; 
+
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -24,8 +24,7 @@ export function MyTrips() {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     
     const [isAddTripModalOpen, setIsAddTripModalOpen] = useState(false); // State for AddTripModal
-    const [isAddVisitModalOpen, setIsAddVisitModalOpen] = useState(false); // State for AddVisitModal
-
+    
     const navigate = useNavigate();
     const tripsFetched = useRef(false);
     const { isAuthenticated } = useContext(AuthContext);
@@ -198,7 +197,7 @@ export function MyTrips() {
                     ) : (
                         Array.isArray(trips) && trips.length > 0 ? (
                             trips.map(trip => (
-                                <Grid item  
+                                <Grid 
                                 xs={12}          // 1 carte (plein écran sur mobile)
                                 sm={6}           // 2 cartes pour les écrans ≥ 1000px
                                 md={4}           // 3 cartes pour les écrans ≥ 1280px
@@ -222,13 +221,6 @@ export function MyTrips() {
                         )
                     )}
                 </Grid>
-
-                {/* Modale pour ajouter une visite */}
-                <AddVisitModal 
-                    tripId={currentTripId} 
-                    isOpen={isAddVisitModalOpen}
-                    onClose={onCloseAddVisitModal} 
-                />
             </div>
 
             {/* Snackbar pour afficher les messages d'erreur */}

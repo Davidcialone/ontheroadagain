@@ -3,16 +3,19 @@ import PropTypes from "prop-types";
 import {
   Button,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
+  DialogContent,
+  DialogActions,
   TextField,
+  Typography,
   FormControl,
+  IconButton,
   FormHelperText,
 } from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Importer l'icône de calendrier
 import { addTrip, uploadImageToCloudinary } from "../../../api/tripApi";
 
 export function AddTripModal({ isOpen, onClose, onAddTrip }) {
@@ -25,6 +28,8 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dateStartOpen, setDateStartOpen] = useState(false); // État pour l'ouverture du DatePicker de date de début
+  const [dateEndOpen, setDateEndOpen] = useState(false); // État pour l'ouverture du DatePicker de date de fin
 
   useEffect(() => {
     if (isOpen) {
@@ -33,7 +38,6 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   }, [isOpen]);
 
   const resetForm = () => {
-    console.log("Form reset");
     setTitle("");
     setPhoto(null);
     setDateStart(new Date());
@@ -53,7 +57,6 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         setError("Veuillez télécharger une image (JPEG, PNG, GIF).");
         return;
       }
-      console.log("Photo uploaded: ", file);
       setPhoto(URL.createObjectURL(file));
       setImageFile(file);
       setError(null);
@@ -86,8 +89,6 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         description,
       };
 
-      console.log("Nouvel itinéraire ajouté:", newTrip);
-
       const addedTrip = await addTrip(newTrip);
       onAddTrip(addedTrip);
       onClose();
@@ -96,7 +97,6 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
       if (error.message.includes("Un voyage avec le même titre et les mêmes dates existe déjà")) {
         setError("Un voyage avec le même titre et les mêmes dates existe déjà.");
       } else {
-        console.error("Erreur lors de l'ajout du voyage:", error);
         setError("Une erreur est survenue lors de l'ajout du voyage.");
       }
     } finally {
@@ -105,46 +105,37 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Ajouter un voyage</DialogTitle>
       <DialogContent>
         {error && <FormHelperText error>{error}</FormHelperText>}
+        
         <FormControl fullWidth margin="normal" required>
           <TextField
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
             label="Titre"
+            variant="outlined"
             placeholder="Titre du voyage"
-            variant="outlined"
+            value={title}
+            onChange={(e) => setTitle(e.target.value || "")}
           />
         </FormControl>
+
+        {/* Date de début avec icône */}
         <FormControl fullWidth margin="normal" required>
-          <input
-            type="file"
-            onChange={handlePhotoUpload}
-            accept="image/jpeg, image/png, image/gif"
-          />
-          {photo && (
-            <img
-              src={photo}
-              alt="Aperçu"
-              style={{
-                marginTop: "10px",
-                width: "100%",
-                maxHeight: "200px",
-                objectFit: "cover",
-              }}
-            />
-          )}
-        </FormControl>
-        <FormControl fullWidth margin="normal" required>
+          <Typography>Date de début</Typography>
           <TextField
-            label="Date de début"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            value={dateStart ? dateStart.toLocaleDateString() : ''}
-            onClick={() => setDateStart(dateStart)}
+            placeholder="Sélectionner une date"
+            value={dateStart ? dateStart.toLocaleDateString() : ""}
             readOnly
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={() => setDateStartOpen(true)}>
+                  <CalendarTodayIcon />
+                </IconButton>
+              ),
+            }}
+            onClick={() => setDateStartOpen(true)} // Ouvre le calendrier
           />
           <DatePicker
             selected={dateStart}
@@ -155,32 +146,42 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
               }
             }}
             dateFormat="dd/MM/yyyy"
-            isClearable
-            wrapperClassName="react-datepicker-wrapper"
-            popperClassName="react-datepicker-popper"
+            open={dateStartOpen}
+            onClickOutside={() => setDateStartOpen(false)}
+            onCalendarClose={() => setDateStartOpen(false)}
           />
         </FormControl>
+
+        {/* Date de fin avec icône */}
         <FormControl fullWidth margin="normal" required>
+          <Typography>Date de fin</Typography>
           <TextField
-            label="Date de fin"
             variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            value={dateEnd ? dateEnd.toLocaleDateString() : ''}
-            onClick={() => setDateEnd(dateEnd)}
+            placeholder="Sélectionner une date"
+            value={dateEnd ? dateEnd.toLocaleDateString() : ""}
             readOnly
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={() => setDateEndOpen(true)}>
+                  <CalendarTodayIcon />
+                </IconButton>
+              ),
+            }}
+            onClick={() => setDateEndOpen(true)} // Ouvre le calendrier
           />
           <DatePicker
             selected={dateEnd}
             onChange={(date) => setDateEnd(date)}
             dateFormat="dd/MM/yyyy"
             minDate={dateStart}
-            isClearable
-            wrapperClassName="react-datepicker-wrapper"
-            popperClassName="react-datepicker-popper"
+            open={dateEndOpen}
+            onClickOutside={() => setDateEndOpen(false)}
+            onCalendarClose={() => setDateEndOpen(false)}
           />
         </FormControl>
+
         <FormControl fullWidth margin="normal">
-          <FormHelperText>Évaluation</FormHelperText>
+          <Typography>Évaluation</Typography>
           <ReactStars
             count={5}
             value={parseFloat(rating.toFixed(1))}
@@ -190,20 +191,20 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
             color2={"#ffd700"}
           />
         </FormControl>
+
         <FormControl fullWidth margin="normal" required>
           <TextField
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
             label="Description"
-            placeholder="Description du voyage"
             variant="outlined"
             multiline
             rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value || "")}
           />
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={handleSave} disabled={isSubmitting}>
+        <Button color="primary" onClick={handleSave}>
           Enregistrer
         </Button>
         <Button onClick={onClose} color="default">

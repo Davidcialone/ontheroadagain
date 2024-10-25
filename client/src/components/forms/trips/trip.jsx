@@ -14,13 +14,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Link as RouterLink } from "react-router-dom";
-import { deleteTrip } from "../../../api/tripApi";
 import ReactStars from "react-stars";
+import { deleteTrip } from "../../../api/tripApi";
 import { UpdateTripModal } from "../modals/updateTripModal";
 import { DeleteTripModal } from "../modals/deleteTripModal";
+import { CardTitle } from "react-bootstrap";
 
 export function Trip({ 
-  id, 
+  id, // ensure `id` is correctly named
   photo = "default-image-url", 
   title, 
   dateStart, 
@@ -63,15 +64,14 @@ export function Trip({
     }
   };
 
-  const color= "gray";
+  const color = "gray";
   const backgroundColor = "#f4f4f4";
 
   return (
     <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 8,
       '&:hover': {
-        boxShadow: 12, // Increase shadow on hover for more effect
-      }, 
-      
+        boxShadow: 12,
+      },
     }}>
       <CardMedia
         component="img"
@@ -80,40 +80,58 @@ export function Trip({
         alt={title || updatedTrip.title || "Title not available"}
         sx={{ 
           objectFit: "cover", 
-          transition: 'transform 0.3s ease-in-out', // Smooth zoom effect
+          transition: 'transform 0.3s ease-in-out',
           '&:hover': {
-            transform: 'scale(1.1)', // Zoom in the image by 10% on hover
+            transform: 'scale(1.1)',
           },
         }}
       />
       <CardContent>
-      <Typography
-        variant="h6"
-        component="div"
-        sx={{
-          fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)', // Ajoute l'effet d'ombre ici
-        }}
-      >
-        {title || updatedTrip.title || "Title not available"}
-      </Typography>
-
+        <Card sx={{display:'flex', justifyContent:'space-between', padding:'0.5rem'}}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{
+            fontWeight: 'bold',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          {title || updatedTrip.title || "Title not available"}
+        </Typography>
+        <CardActions sx={{ padding: 0, marginRight: -1 }}> {/* Reduce padding and move slightly to the right */}
+      <Box display="flex" gap={0.5} alignItems="center"> {/* Controls spacing between icons */}
+        <Button
+          onClick={handleUpdateClick}
+          size="small"
+          color={color}
+          startIcon={<EditIcon />}
+          sx={{ minWidth: 0, padding: 0.5 }} // Reduces padding around icon
+        />
+        <Button
+          onClick={handleDeleteClick}
+          size="small"
+          color={color}
+          startIcon={<DeleteIcon />}
+          sx={{ minWidth: 0, padding: 0.5 }} // Reduces padding around icon
+        />
+      </Box>
+    </CardActions>
+      </Card>
 
         {/* Dates Section */}
         <Box mt={2}>
-        <Badge 
-            color= {color} 
+          <Badge 
+            color={color} 
             sx={{ 
               mr: 1, 
-              backgroundColor: {backgroundColor}, // light gray background
-              border: '1px solid #a9a9a9', // dark gray border
-              padding: '1px 8px ' , // optional: some padding for better appearance
-              borderRadius: '8px', // optional: rounded corners
+              backgroundColor: backgroundColor,
+              border: '1px solid #a9a9a9',
+              padding: '1px 8px',
+              borderRadius: '8px',
             }}
           >
             Dates
-        </Badge>
-
+          </Badge>
           <Typography variant="body2" mt={1}>
             Du{" "}
             {new Date(dateStart).toLocaleDateString("fr-FR", {
@@ -132,13 +150,13 @@ export function Trip({
 
         {/* Description Section */}
         <Box mt={2}>
-          <Badge  color= {color} 
+          <Badge color={color} 
             sx={{ 
               mr: 1, 
-              backgroundColor: {backgroundColor}, // light gray background
-              border: '1px solid #a9a9a9', // dark gray border
-              padding: '1px 8px ' , // optional: some padding for better appearance
-              borderRadius: '8px', // optional: rounded corners
+              backgroundColor: backgroundColor,
+              border: '1px solid #a9a9a9',
+              padding: '1px 8px',
+              borderRadius: '8px',
             }}>
             Description
           </Badge>
@@ -149,13 +167,13 @@ export function Trip({
 
         {/* Rating Section */}
         <Box mt={2}>
-          <Badge  color= {color}  
+          <Badge color={color}  
             sx={{ 
               mr: 1, 
-              backgroundColor: {backgroundColor}, // light gray background
-              border: '1px solid #a9a9a9', // dark gray border
-              padding: '1px 8px ' , // optional: some padding for better appearance
-              borderRadius: '8px', // optional: rounded corners
+              backgroundColor: backgroundColor,
+              border: '1px solid #a9a9a9',
+              padding: '1px 8px',
+              borderRadius: '8px',
             }}>
             Note
           </Badge>
@@ -173,55 +191,30 @@ export function Trip({
         </Box>
       </CardContent>
 
-      <CardActions sx={{ justifyContent: 'center' }}>
-  <Button
-    onClick={handleUpdateClick}
-    variant="outlined"
-    size="small"
-    color={color}
-    startIcon={<EditIcon />}
-    sx={{
-      boxShadow: 2,
-      '&:hover': {
-        boxShadow: 4, // Increase shadow on hover for more effect
-      },
-    }}
-  >
-    Modifier
-  </Button>
-  <Button
-    onClick={handleDeleteClick}
-    variant="outlined"
-    size="small"
-    color={color}
-    startIcon={<DeleteIcon />}
-    sx={{
-      boxShadow: 2,
-      '&:hover': {
-        boxShadow: 4, // Increase shadow on hover for more effect
-      },
-    }}
-  >
-    Effacer
-  </Button>
-  <Button
-    component={RouterLink}
-    to={`/api/me/trips/${id}`}
-    variant="outlined"
-    size="small"
-    color={color}
-    startIcon={<VisibilityIcon />}
-    sx={{
-      boxShadow: 2,
-      '&:hover': {
-        boxShadow: 4, // Increase shadow on hover for more effect
-      },
-    }}
-  >
-    Visites
-  </Button>
-</CardActions>
+     
 
+      <Box display="flex" justifyContent="flex-end">
+        <Button
+          sx={{
+            m: 1,
+            boxShadow: 2,
+            '&:hover': {
+              boxShadow: 4,
+            },
+          }}
+          component={RouterLink}
+          to={`/api/me/trips/${id}`} // Ensure `id` is used here
+          variant="outlined"
+          size="small"
+          color={color}
+          startIcon={<VisibilityIcon />}
+        >
+          Visites
+        </Button>
+      </Box>
+
+
+      
 
       <UpdateTripModal
         isOpen={isUpdateOpen}
@@ -230,8 +223,8 @@ export function Trip({
         tripId={id}
         title={title}
         photo={photo}
-        startDate={new Date(dateStart)}
-        endDate={new Date(dateEnd)}
+        dateStart={new Date(dateStart)}
+        dateEnd={new Date(dateEnd)}
         rating={typeof rating === "number" ? Number(rating) : 0}
         description={description}
       />
@@ -258,3 +251,4 @@ Trip.propTypes = {
   onTripDeleted: PropTypes.func.isRequired,
   onTripUpdated: PropTypes.func.isRequired,
 };
+

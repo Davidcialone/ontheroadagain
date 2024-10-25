@@ -120,6 +120,7 @@ export async function getVisitsForTrip(tripId) {
       }
     );
 
+    // Log the raw response for debugging
     if (!response.ok) {
       console.error(
         "Erreur lors de la récupération des visites:",
@@ -136,8 +137,17 @@ export async function getVisitsForTrip(tripId) {
     //   JSON.stringify(tripData, null, 2)
     // );
 
-    const visits = tripData || [];
-    console.log("Visites récupérées avec succès:", visits);
+    const visits = Array.isArray(tripData)
+      ? tripData.map((visit) => ({
+          ...visit,
+          rating: Number(visit.rating) || 0, // Ensure rating is a number
+          comment: visit.comment || "Aucun commentaire disponible", // Handle null comments
+          place: visit.place || "Lieu non spécifié", // Handle null places
+          place_id: visit.place_id || null, // Handle null place_id if needed
+        }))
+      : [];
+
+    console.log("Mapped visits:", visits); // Log visits after mapping
 
     if (visits.length === 0) {
       console.warn("Aucune visite trouvée pour ce voyage.");

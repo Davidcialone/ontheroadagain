@@ -38,7 +38,7 @@ export function NavbarSite() {
   };
   
   return (
-    <AppBar position="static" sx={{ backgroundColor: '#FFC106', borderRadius: '8px' }}>
+    <AppBar position="static" sx={{ backgroundColor: '#f5deb3', borderRadius: '8px' }}>
       <Container>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
           {/* Boutons à gauche */}

@@ -37,8 +37,8 @@ export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
 }
 
 DeleteVisitModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
   onDelete: PropTypes.func, // Ajout de cette prop
 };
 

@@ -5,86 +5,61 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   TextField,
   FormControl,
   FormHelperText,
+  IconButton,
 } from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import ReactStars from "react-stars";
-import { addVisit } from "../../../api/visitApi"; // Assurez-vous que cette fonction existe dans l'API visit
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Importer l'icône
+import { addVisit } from "../../../api/visitApi"; // Assurez-vous que cette fonction existe
 
-export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
+export function AddVisitModal({ open, onClose, onAddVisit, tripId }) {
   const [title, setTitle] = useState("");
   const [dateStart, setDateStart] = useState(null);
   const [dateEnd, setDateEnd] = useState(null);
   const [comment, setComment] = useState("");
-  const [rating, setRating] = useState(3);
-  const [geo, setGeo] = useState("");
   const [error, setError] = useState(null);
+  const [dateStartOpen, setDateStartOpen] = useState(false);
+  const [dateEndOpen, setDateEndOpen] = useState(false);
 
   const handleSave = async () => {
     setError(null);
-    console.log("Tentative d'enregistrement de la visite...");
-
-    // Vérifie que tous les champs requis sont remplis
     if (!title || !dateStart || !dateEnd || !comment) {
       setError("Veuillez remplir tous les champs requis.");
-      console.warn("Champs requis manquants:", { title, dateStart, dateEnd, comment });
       return;
     }
-
-    // Vérifie que la date de fin est après la date de début
     if (dateEnd <= dateStart) {
       setError("La date de fin doit être après la date de début.");
-      console.warn("Validation des dates échouée:", { dateStart, dateEnd });
       return;
     }
-
-    // Vérifie que tripId est valide
     if (!tripId) {
       setError("Le tripId est manquant. Veuillez sélectionner un voyage.");
-      console.warn("tripId est manquant");
       return;
     }
-
     try {
-      const newVisit = {
-        title,
-        dateStart,
-        dateEnd,
-        comment,
-        rating,
-        geo,
-        tripId, // Assurez-vous que tripId est inclus
-      };
-
-      console.log("Données de la nouvelle visite:", newVisit);
+      const newVisit = { title, dateStart, dateEnd, comment, tripId };
       const response = await addVisit(newVisit);
-      console.log("Nouvelle visite ajoutée:", response);
-      onAddVisit(response); // Passe la nouvelle visite ajoutée
+      onAddVisit(response);
       onClose();
     } catch (error) {
-      console.error("Erreur lors de l'ajout de la visite:", error);
       setError("Une erreur est survenue lors de l'ajout de la visite.");
-      console.error("Détails de l'erreur:", error);
     }
   };
 
-  // Met à jour le commentaire lorsque le titre change
   const handleTitleChange = (e) => {
-    const newTitle = e.target.value;
-    setTitle(newTitle);
-    setComment(newTitle); // Met à jour le commentaire avec le titre
+    setTitle(e.target.value);
+    setComment(e.target.value);
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose}>
+    <Dialog open={open} onClose={onClose}>
       <DialogTitle>Ajouter une visite</DialogTitle>
       <DialogContent>
         {error && <FormHelperText error>{error}</FormHelperText>}
+        
         <FormControl fullWidth margin="normal">
           <TextField
             value={title}
@@ -95,18 +70,23 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
             required
           />
         </FormControl>
+
+        {/* Date de début */}
         <FormControl fullWidth margin="normal">
           <TextField
             label="Date de début"
             variant="outlined"
             InputLabelProps={{ shrink: true }}
-            // Utilisation du DatePicker
+            value={dateStart ? dateStart.toLocaleDateString() : ''}
+            onClick={() => setDateStartOpen(true)} // Ouvre le calendrier
             InputProps={{
               readOnly: true,
-              value: dateStart ? dateStart.toLocaleDateString() : '',
-              onClick: () => setDateStart(dateStart),
+              endAdornment: (
+                <IconButton onClick={() => setDateStartOpen(true)}>
+                  <CalendarTodayIcon />
+                </IconButton>
+              ),
             }}
-            placeholder="Sélectionnez une date de début"
           />
           <DatePicker
             selected={dateStart}
@@ -117,52 +97,51 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
               }
             }}
             dateFormat="dd/MM/yyyy"
-            isClearable // Ajoute une option pour effacer la sélection
-            wrapperClassName="react-datepicker-wrapper"
-            popperClassName="react-datepicker-popper"
+            minDate={new Date()} // Date minimum
+            open={dateStartOpen}
+            onClickOutside={() => setDateStartOpen(false)}
+            onCalendarClose={() => setDateStartOpen(false)}
           />
         </FormControl>
+
+        {/* Date de fin */}
         <FormControl fullWidth margin="normal">
           <TextField
             label="Date de fin"
             variant="outlined"
             InputLabelProps={{ shrink: true }}
+            value={dateEnd ? dateEnd.toLocaleDateString() : ''}
+            onClick={() => setDateEndOpen(true)} // Ouvre le calendrier
             InputProps={{
               readOnly: true,
-              value: dateEnd ? dateEnd.toLocaleDateString() : '',
-              onClick: () => setDateEnd(dateEnd),
+              endAdornment: (
+                <IconButton onClick={() => setDateEndOpen(true)}>
+                  <CalendarTodayIcon />
+                </IconButton>
+              ),
             }}
-            placeholder="Sélectionnez une date de fin"
           />
           <DatePicker
             selected={dateEnd}
-            onChange={(date) => setDateEnd(date)}
+            onChange={setDateEnd}
             dateFormat="dd/MM/yyyy"
-            minDate={dateStart} // Empêche la sélection de dates antérieures à dateStart
-            isClearable // Ajoute une option pour effacer la sélection
-            wrapperClassName="react-datepicker-wrapper"
-            popperClassName="react-datepicker-popper"
+            minDate={dateStart}
+            open={dateEndOpen}
+            onClickOutside={() => setDateEndOpen(false)}
+            onCalendarClose={() => setDateEndOpen(false)}
           />
         </FormControl>
-        <FormControl fullWidth margin="normal">
-          <FormHelperText>Note</FormHelperText>
-          <ReactStars
-            count={5}
-            value={rating}
-            onChange={(newRating) => setRating(newRating)}
-            size={24}
-            color2={"#ffd700"}
-          />
-        </FormControl>
+
+        {/* Commentaire */}
         <FormControl fullWidth margin="normal">
           <TextField
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
             label="Commentaire"
-            placeholder="Commentaire de la visite"
             variant="outlined"
             multiline
             rows={4}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Ajoutez un commentaire"
           />
         </FormControl>
       </DialogContent>
@@ -179,10 +158,10 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
 }
 
 AddVisitModal.propTypes = {
-  isOpen: PropTypes.bool,
-  onClose: PropTypes.func,
-  onAddVisit: PropTypes.func,
-  tripId: PropTypes.number, // Le tripId est maintenant requis
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onAddVisit: PropTypes.func.isRequired,
+  tripId: PropTypes.number.isRequired,
 };
 
 export default AddVisitModal;

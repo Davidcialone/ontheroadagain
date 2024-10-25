@@ -44,10 +44,10 @@ export function App() {
         fontFamily: 'Montserrat, sans-serif', // Police audacieuse
         fontSize: { xs: '3rem', md: '5rem' }, // Taille du texte responsive
         fontWeight: 900, // Très gras
-        color: '#FFC107', // Jaune doux (moins intense)
+        color: '#ffdb17', // Jaune doux (moins intense)
         textAlign: 'center', // Centré
         margin: '40px 0', // Espacement
-        textShadow: '4px 4px 12px rgba(255, 193, 7, 0.2)', // Ombre dorée atténuée
+        textShadow: '4px 4px 12px rgba(255, 193, 7, 0.3)', // Ombre dorée atténuée
         letterSpacing: '3px', // Espacement entre les lettres
         textTransform: 'uppercase', // Transforme le texte en majuscules
         background: '#87CEEB', // Dégradé beige à bleu clair (plage à ciel)
