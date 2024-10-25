@@ -191,7 +191,7 @@ export function TripVisits() {
                     />
                 </div>
     
-                <Grid container sx={{ display: 'flex', flexDirection: 'column', width: '100%' }} spacing={3}>
+                <Grid container sx={{ display: 'flex', width: '100%' }} spacing={3}>
                     {loading ? (
                         <CircularProgress />
                     ) : (
