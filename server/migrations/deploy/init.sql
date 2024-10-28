@@ -48,6 +48,7 @@ CREATE TABLE "trip"(
 CREATE TABLE "visit"(
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "title" TEXT NOT NULL,
+  "photo" TEXT,
   "dateStart" DATE NOT NULL,
   "dateEnd" DATE NOT NULL,
   "comment" TEXT,

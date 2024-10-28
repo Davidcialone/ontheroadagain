@@ -13,12 +13,14 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReactStars from "react-stars";
+import { deleteVisit } from "../../../api/visitApi";
 import { UpdateVisitModal } from "../modals/updateVisitModal";
 import { DeleteVisitModal } from "../modals/deleteVisitModal";
 import { useParams } from "react-router-dom";
 import Slider from "react-slick";
 
 export function Visit({
+  id,
   title,
   photo,
   dateStart,
@@ -31,17 +33,25 @@ export function Visit({
   latitude,
   longitude,
 }) {
+  const [updatedVisit, setUpdatedVisit] = useState({});
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  const [images, setImages] = useState([]);
-  const { tripId } = useParams();
-
+  
   const handleUpdateClick = () => setIsUpdateOpen(true);
-  const handleDeleteClick = () => setIsDeleteOpen(true);
-
   const handleUpdateVisit = (updatedVisitData) => {
     onVisitUpdated(updatedVisitData);
     setIsUpdateOpen(false);
+  };
+  
+  const handleDeleteClick = () => setIsDeleteOpen(true);
+  const handleDeleteVisit = async () => {
+    try {
+      await deleteVisit(id);
+      onCVisitDeleted(id);
+      setIsDeleteOpen(false);
+    } catch (error) {
+      console.error("Error deleting visit:", error);
+    }
   };
 
   const handleImageUpload = (event) => {
@@ -236,7 +246,7 @@ export function Visit({
                 Ajouter des photos
               </Button>
             </label>
-
+{/* 
             {images.length > 0 && (
               <Box
                 mt={2}
@@ -261,8 +271,8 @@ export function Visit({
                     />
                   ))}
                 </Slider>
-              </Box>
-            )}
+              </Box> */}
+            {/* )} */}
           </CardMedia>
         </Grid>
       </Grid>
@@ -277,7 +287,7 @@ export function Visit({
 
       {/* Delete Modal */}
       <DeleteVisitModal
-        open={isDeleteOpen}
+        isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         visitId={visitId}
         onDelete={() => {

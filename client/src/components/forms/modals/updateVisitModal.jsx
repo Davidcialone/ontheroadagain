@@ -189,8 +189,8 @@ export function UpdateVisitModal({
 }
 
 UpdateVisitModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onUpdateVisit: PropTypes.func.isRequired,
-  visit: PropTypes.object.isRequired, // Updated to expect a visit object
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  onUpdateVisit: PropTypes.func,
+  visit: PropTypes.object, // Updated to expect a visit object
 };

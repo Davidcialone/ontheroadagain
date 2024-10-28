@@ -2,6 +2,10 @@ import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
 
+// Informations Cloudinary directement intégrées
+const CLOUDINARY_CLOUD_NAME = "dn1y58few";
+const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain";
+
 // Fonction pour vérifier si le token est expiré
 function isTokenExpired(decodedToken) {
   const currentTime = Date.now() / 1000;
@@ -160,7 +164,6 @@ export async function getVisitsForTrip(tripId) {
   }
 }
 
-// Fonction pour ajouter une nouvelle visite
 export async function addVisit(visitData) {
   console.log("Ajout d'une nouvelle visite avec les données:", visitData);
 
@@ -174,10 +177,52 @@ export async function addVisit(visitData) {
       throw new Error("tripId est manquant.");
     }
 
+    // Log des données de la visite avant leur transformation
+    console.log("Données de visite avant transformation:", visitData);
+
+    // Créer un objet pour envoyer les données
+    const { title, photo, dateStart, dateEnd, rating, comment } = visitData;
+
+    // Vérification des valeurs avant de les envoyer
     console.log(
-      "Envoi de la requête pour ajouter une visite au tripId:",
-      tripId
-    ); // Log avant l'envoi de la requête
+      "Valeurs vérifiées - Title:",
+      title,
+      "Photo:",
+      photo,
+      "DateStart:",
+      dateStart,
+      "DateEnd:",
+      dateEnd,
+      "Rating:",
+      rating,
+      "Comment:",
+      comment
+    );
+
+    // Vérifiez que les valeurs nécessaires ne sont pas nulles
+    if (!title || !dateStart || !dateEnd) {
+      console.error("Données de visite incomplètes :", {
+        title,
+        dateStart,
+        dateEnd,
+      });
+      throw new Error(
+        "Les données de visite doivent contenir title, dateStart et dateEnd."
+      );
+    }
+
+    // Préparez l'objet de données de visite
+    const visitDataToSend = {
+      title: title.trim(), // Utiliser trim() pour enlever les espaces
+      photo,
+      dateStart,
+      dateEnd,
+      rating: Number(rating), // Assurez-vous que le rating est un nombre
+      comment,
+      trip_id: tripId,
+    };
+
+    console.log("Données de visite à envoyer:", visitDataToSend); // Log des données de visite
 
     const response = await fetch(
       `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits`,
@@ -187,21 +232,27 @@ export async function addVisit(visitData) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`,
         },
-        body: JSON.stringify(visitData),
+        body: JSON.stringify(visitDataToSend),
       }
     );
+
+    // Log de la réponse brute
+    const responseText = await response.text(); // Lire la réponse comme texte pour le log
+    console.log("Réponse brute du serveur:", responseText);
 
     if (!response.ok) {
       console.error(
         "Erreur lors de l'ajout de la visite:",
-        response.statusText
+        response.statusText,
+        "Code de statut:",
+        response.status
       );
       throw new Error(
         `Erreur lors de l'ajout de la visite: ${response.statusText}`
       );
     }
 
-    const result = await response.json();
+    const result = JSON.parse(responseText); // Parsez la réponse JSON
     console.log("Visite ajoutée avec succès:", result);
     return result;
   } catch (error) {

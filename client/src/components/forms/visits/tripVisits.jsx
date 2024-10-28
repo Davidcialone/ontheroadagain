@@ -94,6 +94,7 @@ export function TripVisits() {
                 tripId: numericTripId,
                 rating: Number(visitData.rating) || 0,
             };
+            console.log('Adding visit:', visitWithTripId); // Journal de débogage
 
             const response = await addVisit(visitWithTripId);
             setVisits((prevVisits) =>

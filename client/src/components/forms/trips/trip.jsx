@@ -18,7 +18,6 @@ import ReactStars from "react-stars";
 import { deleteTrip } from "../../../api/tripApi";
 import { UpdateTripModal } from "../modals/updateTripModal";
 import { DeleteTripModal } from "../modals/deleteTripModal";
-import { CardTitle } from "react-bootstrap";
 
 export function Trip({ 
   id, // ensure `id` is correctly named
@@ -35,9 +34,7 @@ export function Trip({
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const handleUpdateClick = () => {
-    setIsUpdateOpen(true);
-  };
+  const handleUpdateClick = () => { setIsUpdateOpen(true); };
 
   const handleUpdateTrip = (updatedTripData) => {
     if (updatedTripData) {
@@ -50,9 +47,7 @@ export function Trip({
     }
   };
 
-  const handleDeleteClick = () => {
-    setIsDeleteOpen(true);
-  };
+  const handleDeleteClick = () => {setIsDeleteOpen(true); };
 
   const handleDeleteTrip = async () => {
     try {

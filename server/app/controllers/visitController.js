@@ -39,9 +39,17 @@ export async function createVisit(req, res) {
 
   console.log("tripId reçu:", tripId); // Log pour vérifier la valeur du tripId
 
+  // Vérifiez si les champs requis sont présents
+  if (!title || !dateStart || !dateEnd) {
+    return res
+      .status(400)
+      .json({ error: "Les champs title, dateStart et dateEnd sont requis." });
+  }
+
   try {
     const visit = await Visit.create({
       title,
+      photo,
       dateStart,
       dateEnd,
       comment,
@@ -49,6 +57,8 @@ export async function createVisit(req, res) {
       geo,
       trip_id: tripId, // Utiliser le tripId extrait de visitData
     });
+    console.log("Données de la visite reçues:", req.body);
+
     res.status(201).json(visit);
   } catch (err) {
     console.error("Erreur lors de la création de la visite:", err);

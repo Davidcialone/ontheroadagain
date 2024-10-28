@@ -70,6 +70,10 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
       setError("Veuillez remplir tous les champs requis.");
       return;
     }
+    if (dateEnd <= dateStart) {
+      setError("La date de fin doit être après la date de début.");
+      return;
+    }
 
     if (isSubmitting) {
       return; // Empêche une double soumission
@@ -87,6 +91,7 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         dateEnd,
         rating: parseFloat(rating.toFixed(1)),
         description,
+       
       };
 
       const addedTrip = await addTrip(newTrip);
@@ -118,6 +123,12 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
             value={title}
             onChange={(e) => setTitle(e.target.value || "")}
           />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <Typography>Photo actuelle</Typography>
+          {photo && <img src={photo} alt="Voyage actuel" style={{ width: "100%", marginBottom: "1em" }} />}
+          <input type="file" onChange={handlePhotoUpload} />
+          <FormHelperText>Importer une nouvelle image (JPEG, PNG, GIF)</FormHelperText>
         </FormControl>
 
         {/* Date de début avec icône */}

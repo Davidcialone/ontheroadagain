@@ -48,6 +48,14 @@ export function NavbarSite() {
                 <Button 
                   sx={buttonStyles}  // Appliquer ici avec sx
                   component={Link} 
+                  to="/"
+                >
+                 Accueil
+                </Button>
+               
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
                   to="/me/trips"
                 >
                   Mes voyages

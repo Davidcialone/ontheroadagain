@@ -17,6 +17,10 @@ Visit.init(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    photo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     comment: {
       type: DataTypes.STRING,
       allowNull: true,

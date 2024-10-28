@@ -9,11 +9,15 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
+
+export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId }) {
   const handleDelete = () => {
-    onDelete();
-    onClose();
+    if (visitId) {
+      onDelete(visitId); // Passer l'ID du voyage à la fonction onDelete
+    }
+    onClose(); // Fermer la modal après l'appel à onDelete
   };
+
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
@@ -39,7 +43,8 @@ export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
 DeleteVisitModal.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
-  onDelete: PropTypes.func, // Ajout de cette prop
+  onDelete: PropTypes.func, // Assurez-vous que la fonction onDelete est une prop
+  visitId: PropTypes.number, 
 };
 
 export default DeleteVisitModal;
