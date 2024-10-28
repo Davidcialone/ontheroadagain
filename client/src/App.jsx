@@ -29,7 +29,7 @@ export function App() {
     <AuthProvider>
       <CssBaseline /> {/* Ajoute les styles CSS globaux de MUI */}
       <Box sx={{ width: "100%", minHeight: "100vh", bgcolor: 'background.default', color: 'text.primary' }}>
-        <Router basename="/ontheroadagain">
+        <Router >
          <Container  maxWidth="lg" 
             sx={{ 
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.9)', // Ombre personnalisée

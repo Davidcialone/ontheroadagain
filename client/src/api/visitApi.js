@@ -115,7 +115,7 @@ export async function getVisitsForTrip(tripId) {
       tripId
     );
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits`,
+      `http://localhost:5000/api/me/trips/${tripId}/visits`,
       {
         method: "GET",
         headers: {
@@ -229,7 +229,7 @@ export async function addVisit(visitData, existingVisits = []) {
 
     // Envoi de la requête POST
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits`,
+      `http://localhost:5000/api/me/trips/${tripId}/visits`,
       {
         method: "POST",
         headers: {
@@ -277,7 +277,7 @@ export async function updateVisit(visitId, visitData, tripId) {
 
     console.log("Envoi de la requête pour mettre à jour la visite:", visitId);
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits/${visitId}`,
+      `http://localhost:5000/api/me/trips/${tripId}/visits/${visitId}`,
       {
         method: "PUT",
         headers: {
@@ -320,7 +320,7 @@ export async function deleteVisit(visitId, tripId) {
 
     console.log("Envoi de la requête pour supprimer la visite:", visitId);
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits/${visitId}`,
+      `http://localhost:5000/api/me/trips/${tripId}/visits/${visitId}`,
       {
         method: "DELETE",
         headers: {

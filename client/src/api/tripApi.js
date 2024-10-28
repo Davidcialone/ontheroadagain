@@ -80,16 +80,13 @@ export async function fetchTrips() {
 
   try {
     const userId = getUserIdFromToken();
-    const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      }
-    );
+    const response = await fetch(`http://localhost:5000/api/me/trips`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -142,17 +139,14 @@ export async function addTrip(newTrip, existingTrips = []) {
     user_id: userId,
   };
 
-  const response = await fetch(
-    "http://localhost:5000/ontheroadagain/api/me/trips",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-      body: JSON.stringify(tripData),
-    }
-  );
+  const response = await fetch("http://localhost:5000/api/me/trips", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${Cookies.get("token")}`,
+    },
+    body: JSON.stringify(tripData),
+  });
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -166,7 +160,7 @@ export async function deleteTrip(tripId) {
   try {
     const userId = getUserIdFromToken();
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`,
+      `http://localhost:5000/api/me/trips/${tripId}`,
       {
         method: "DELETE",
         headers: {
@@ -202,7 +196,7 @@ export async function updateTrip(tripId, updatedTrip) {
     };
 
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`,
+      `http://localhost:5000/api/me/trips/${tripId}`,
       {
         method: "PATCH",
         headers: {
