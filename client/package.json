@@ -8,12 +8,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.2",
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.5",
-
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "lorem-ipsum": "^2.0.8",
@@ -27,9 +26,9 @@
     "react-router-dom": "^6.26.2",
     "react-slick": "^0.30.2",
     "react-stars": "^2.2.5",
+    "rollup": "^4.24.2",
     "slick-carousel": "^1.8.1",
-    "yet-another-react-lightbox": "^3.21.6",
-     "@esbuild-plugins/node-globals-polyfill": "^0.2.2"
+    "yet-another-react-lightbox": "^3.21.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
