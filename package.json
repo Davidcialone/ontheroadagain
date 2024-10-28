@@ -13,6 +13,7 @@
         "preview": "cd client && npm run preview"
     },
     "devDependencies": {
+        "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
         "@types/jwt-decode": "^3.1.0",
         "@vitejs/plugin-react": "^4.3.2",
         "concurrently": "^6.5.1",
@@ -24,7 +25,6 @@
         "@emotion/react": "^11.13.3",
         "@emotion/styled": "^11.13.0",
         "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-        "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
         "bcrypt": "^5.1.1",
         "bootstrap": "^5.3.3",
         "buffer": "^6.0.3",
