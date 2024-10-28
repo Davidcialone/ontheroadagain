@@ -5,14 +5,19 @@
       "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist"
+        "zeroConfig": false,
+        "buildCommand": "cd client && npm run build",
+        "outputDirectory": "client/dist"
       }
     }
   ],
   "routes": [
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/client/dist/index.html"
     }
   ]
 }
