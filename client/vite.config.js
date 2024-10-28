@@ -1,8 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
-import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
+import globalsPolyfill from "@esbuild-plugins/node-globals-polyfill";
 
 export default defineConfig({
   plugins: [react()],
@@ -25,11 +24,10 @@ export default defineConfig({
     esbuildOptions: {
       // Polyfill for Node.js globals like process and Buffer
       plugins: [
-        NodeGlobalsPolyfillPlugin({
-          process: true,
+        globalsPolyfill({
           buffer: true,
+          process: true,
         }),
-        NodeModulesPolyfillPlugin(),
       ],
     },
   },
