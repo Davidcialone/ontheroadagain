@@ -17,7 +17,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "ontheroadagain-f90s0cdhf-davidcialones-projects.vercel.app/api/:path*" 
+      "destination": "https://ontheroadagain-f90s0cdhf-davidcialones-projects.vercel.app/ontheraodagain/api/:path*"
     },
     {
       "source": "/(.*)",
