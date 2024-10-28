@@ -11,9 +11,6 @@
       }
     }
   ],
-  "env": {
-    "VITE_API_URL": "https://votre-backend-externe.com/api"
-  },
   "routes": [
     {
       "src": "/(.*)",
