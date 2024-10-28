@@ -97,6 +97,7 @@ export async function uploadImageToCloudinary(imageFile) {
   }
 }
 
+// Fonction pour récupérer les visites pour un voyage
 export async function getVisitsForTrip(tripId) {
   console.log("Récupération des visites...");
 
@@ -114,7 +115,7 @@ export async function getVisitsForTrip(tripId) {
       tripId
     );
     const response = await fetch(
-      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}`,
+      `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits`,
       {
         method: "GET",
         headers: {
@@ -124,7 +125,10 @@ export async function getVisitsForTrip(tripId) {
       }
     );
 
-    // Log the raw response for debugging
+    // Log de la réponse brute pour le débogage
+    const responseText = await response.text(); // Lire la réponse comme texte pour le log
+    console.log("Réponse brute du serveur:", responseText);
+
     if (!response.ok) {
       console.error(
         "Erreur lors de la récupération des visites:",
@@ -135,23 +139,24 @@ export async function getVisitsForTrip(tripId) {
       );
     }
 
-    const tripData = await response.json();
-    // console.log(
-    //   "Détails du voyage récupérés avec succès:",
-    //   JSON.stringify(tripData, null, 2)
-    // );
+    const tripData = JSON.parse(responseText);
+    console.log("Détails du voyage récupérés avec succès:", tripData); // Log des détails récupérés
 
     const visits = Array.isArray(tripData)
       ? tripData.map((visit) => ({
-          ...visit,
-          rating: Number(visit.rating) || 0, // Ensure rating is a number
-          comment: visit.comment || "Aucun commentaire disponible", // Handle null comments
-          place: visit.place || "Lieu non spécifié", // Handle null places
-          place_id: visit.place_id || null, // Handle null place_id if needed
+          id: visit.id,
+          title: visit.title,
+          photo: visit.photo || "default_image.png", // Utilisez une image par défaut si photo est nulle
+          dateStart: new Date(visit.dateStart).toLocaleDateString("fr-FR"), // Format de date en français
+          dateEnd: new Date(visit.dateEnd).toLocaleDateString("fr-FR"),
+          rating: Number(visit.rating) || 0, // Assurez-vous que la note est un nombre
+          comment: visit.comment || "Aucun commentaire disponible", // Gérer les commentaires nuls
+          place: visit.place || "Lieu non spécifié", // Gérer les lieux nuls
+          place_id: visit.place_id || null, // Gérer les IDs de lieu nuls
         }))
       : [];
 
-    console.log("Mapped visits:", visits); // Log visits after mapping
+    console.log("Visites mappées:", visits); // Log des visites après le mappage
 
     if (visits.length === 0) {
       console.warn("Aucune visite trouvée pour ce voyage.");
@@ -164,11 +169,11 @@ export async function getVisitsForTrip(tripId) {
   }
 }
 
+// Fonction pour ajouter une nouvelle visite
 export async function addVisit(visitData) {
   console.log("Ajout d'une nouvelle visite avec les données:", visitData);
 
-  // Vérification et extraction du tripId de visitData
-  const tripId = visitData.tripId;
+  const tripId = visitData.tripId; // Vérification et extraction du tripId
   console.log("tripId extrait de visitData:", tripId); // Log pour vérifier tripId
 
   try {
@@ -177,29 +182,11 @@ export async function addVisit(visitData) {
       throw new Error("tripId est manquant.");
     }
 
-    // Log des données de la visite avant leur transformation
     console.log("Données de visite avant transformation:", visitData);
 
     // Créer un objet pour envoyer les données
     const { title, photo, dateStart, dateEnd, rating, comment } = visitData;
 
-    // Vérification des valeurs avant de les envoyer
-    console.log(
-      "Valeurs vérifiées - Title:",
-      title,
-      "Photo:",
-      photo,
-      "DateStart:",
-      dateStart,
-      "DateEnd:",
-      dateEnd,
-      "Rating:",
-      rating,
-      "Comment:",
-      comment
-    );
-
-    // Vérifiez que les valeurs nécessaires ne sont pas nulles
     if (!title || !dateStart || !dateEnd) {
       console.error("Données de visite incomplètes :", {
         title,
@@ -214,16 +201,17 @@ export async function addVisit(visitData) {
     // Préparez l'objet de données de visite
     const visitDataToSend = {
       title: title.trim(), // Utiliser trim() pour enlever les espaces
-      photo,
+      photo: photo || null, // Assurez-vous que photo est null si non fournie
       dateStart,
       dateEnd,
-      rating: Number(rating), // Assurez-vous que le rating est un nombre
-      comment,
+      rating: isNaN(Number(rating)) ? 3 : Number(rating), // Assurez-vous que le rating est un nombre, par défaut 3
+      comment: comment || null, // Assurez-vous que comment est null si non fourni
       trip_id: tripId,
     };
 
     console.log("Données de visite à envoyer:", visitDataToSend); // Log des données de visite
 
+    // Envoi de la requête POST
     const response = await fetch(
       `http://localhost:5000/ontheroadagain/api/me/trips/${tripId}/visits`,
       {
@@ -236,7 +224,6 @@ export async function addVisit(visitData) {
       }
     );
 
-    // Log de la réponse brute
     const responseText = await response.text(); // Lire la réponse comme texte pour le log
     console.log("Réponse brute du serveur:", responseText);
 

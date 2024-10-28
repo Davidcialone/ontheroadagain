@@ -202,6 +202,7 @@ export function TripVisits() {
                                     <Visit
                                         visitId={visit.id} 
                                         title={visit.title}
+                                        photo={visit.photo}
                                         dateStart={visit.dateStart}
                                         dateEnd={visit.dateEnd}
                                         comment={visit.comment}
