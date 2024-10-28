@@ -4,32 +4,35 @@ import path from "path";
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 
 export default defineConfig({
-  plugins: [
-    react(),
-    // Ajoutez des plugins supplémentaires si nécessaire
-  ],
-  base: "/ontheroadagain/",
+  plugins: [react()],
+  base: "/", // Changé de "/ontheroadagain/" à "/" pour le déploiement Vercel
   root: path.resolve(__dirname, ""),
   build: {
-    outDir: "dist", // Assurez-vous que le répertoire de sortie est défini sur 'dist'
+    outDir: "dist",
     rollupOptions: {
-      // Excluez jwt-decode si vous le souhaitez
       external: ["jwt-decode"],
     },
   },
   server: {
     port: 3000,
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_URL || "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      process: "process/browser", // Polyfill pour 'process'
-      buffer: "buffer", // Polyfill pour 'Buffer' si nécessaire
+      process: "process/browser",
+      buffer: "buffer",
     },
   },
   optimizeDeps: {
     esbuildOptions: {
-      // Polyfill pour les globales de Node.js comme process et Buffer
       plugins: [
         NodeGlobalsPolyfillPlugin({
           buffer: true,
