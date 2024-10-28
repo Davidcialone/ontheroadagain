@@ -9,26 +9,19 @@
         "buildCommand": "npm install && npm run build",
         "outputDirectory": "dist"
       }
-    },
-    {
-      "src": "server/index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["server/**/*.js"]
-      }
     }
   ],
   "env": {
-    "VITE_API_URL": "/api" 
+    "VITE_API_URL": "https://ontheroadagain/api" 
   },
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "/server/index.js"
+      "destination": "https://ontheroadagain/api/:path*"
     },
     {
-      "source": "/ontheroadagain/(.*)",
-      "destination": "/client/dist/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
