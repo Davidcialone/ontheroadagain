@@ -17,7 +17,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "votre_url_api/api/:path*"
+      "destination": "/ontheroadagain/api/:path*"
     },
     {
       "source": "/(.*)",
