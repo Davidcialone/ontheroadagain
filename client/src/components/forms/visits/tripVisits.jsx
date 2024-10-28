@@ -34,20 +34,20 @@ export function TripVisits() {
     const [updatedVisit, setUpdatedVisit] = useState(null);
     const [visitToDelete, setVisitToDelete] = useState(null);
 
-    // useEffect pour récupérer les voyages
-    useEffect(() => {
-        const loadTrips = async () => {
-            try {
-                const tripsData = await fetchTrips(); // Récupérer les voyages
-                setTrips(tripsData); 
-            } catch (err) {
-                setError(`Erreur lors du chargement des voyages: ${err.message}`);
-                setSnackbarOpen(true); 
-            }
-        };
+    // // useEffect pour récupérer les voyages
+    // useEffect(() => {
+    //     const loadTrips = async () => {
+    //         try {
+    //             const tripsData = await fetchTrips(); // Récupérer les voyages
+    //             setTrips(tripsData); 
+    //         } catch (err) {
+    //             setError(`Erreur lors du chargement des voyages: ${err.message}`);
+    //             setSnackbarOpen(true); 
+    //         }
+    //     };
 
-        loadTrips();
-    }, []);
+    //     loadTrips();
+    // }, []);
 
     useEffect(() => {
         const loadVisits = async () => {

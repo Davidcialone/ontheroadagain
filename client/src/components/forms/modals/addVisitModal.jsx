@@ -38,6 +38,8 @@ export function AddVisitModal({ open, onClose, onAddVisit }) {
     }
   }, [open]);
 
+  
+
   const resetForm = () => {
     setTitle("");
     setPhoto(null);
@@ -50,6 +52,8 @@ export function AddVisitModal({ open, onClose, onAddVisit }) {
     setIsSubmitting(false);
     console.log('Form reset'); // Log de réinitialisation
   };
+
+
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
@@ -67,7 +71,7 @@ export function AddVisitModal({ open, onClose, onAddVisit }) {
     }
   };
 
-  const handleSave = async () => {
+const handleSave = async () => {
     setError(null);
     console.log('Saving visit...'); // Log lors de la sauvegarde
 
@@ -84,13 +88,15 @@ export function AddVisitModal({ open, onClose, onAddVisit }) {
       return;
     }
 
+    // Vérifier si la soumission a déjà eu lieu
     if (isSubmitting) {
       console.log('Already submitting'); // Log si la soumission est déjà en cours
       return;
     }
 
+    // Marquer comme soumis
     setIsSubmitting(true);
-    console.log('Submitting...'); // Log de soumission
+   
 
     try {
       const imageData = await uploadImageToCloudinary(imageFile); // Supposant que cette fonction soit définie ailleurs
@@ -123,7 +129,7 @@ export function AddVisitModal({ open, onClose, onAddVisit }) {
       setIsSubmitting(false);
       console.log('Submitting finished'); // Log de fin de soumission
     }
-  };
+};
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);

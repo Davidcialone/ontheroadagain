@@ -170,7 +170,7 @@ export async function getVisitsForTrip(tripId) {
 }
 
 // Fonction pour ajouter une nouvelle visite
-export async function addVisit(visitData) {
+export async function addVisit(visitData, existingVisits = []) {
   console.log("Ajout d'une nouvelle visite avec les données:", visitData);
 
   const tripId = visitData.tripId; // Vérification et extraction du tripId
@@ -198,14 +198,30 @@ export async function addVisit(visitData) {
       );
     }
 
+    // Vérification des doublons
+    const visitExists =
+      Array.isArray(existingVisits) &&
+      existingVisits.some(
+        (visit) =>
+          visit.title === title &&
+          visit.dateStart === dateStart &&
+          visit.dateEnd === dateEnd &&
+          visit.rating === rating && // Inclure le rating si c'est pertinent
+          visit.comment === comment // Inclure le commentaire si c'est pertinent
+      );
+
+    if (visitExists) {
+      throw new Error("Une visite avec les mêmes détails existe déjà.");
+    }
+
     // Préparez l'objet de données de visite
     const visitDataToSend = {
-      title: title.trim(), // Utiliser trim() pour enlever les espaces
-      photo: photo || null, // Assurez-vous que photo est null si non fournie
+      title: title.trim(),
+      photo: photo || null,
       dateStart,
       dateEnd,
-      rating: isNaN(Number(rating)) ? 3 : Number(rating), // Assurez-vous que le rating est un nombre, par défaut 3
-      comment: comment || null, // Assurez-vous que comment est null si non fourni
+      rating: isNaN(Number(rating)) ? 3 : Number(rating),
+      comment: comment || null,
       trip_id: tripId,
     };
 
