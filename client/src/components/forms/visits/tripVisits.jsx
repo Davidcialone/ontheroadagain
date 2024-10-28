@@ -174,7 +174,7 @@ export function TripVisits() {
                     {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>}
                     {/* Modals pour ajouter, mettre à jour et supprimer des visites */}
                     <AddVisitModal 
-                        open={openAddModal} 
+                        isOpen={openAddModal} 
                         onClose={() => setOpenAddModal(false)} 
                         onAddVisit={handleAddVisit} 
                     />
@@ -185,7 +185,7 @@ export function TripVisits() {
                         onUpdateVisit={handleVisitUpdated} 
                     />
                     <DeleteVisitModal 
-                        open={openDeleteModal} 
+                        isOpen={openDeleteModal} 
                         onClose={() => setOpenDeleteModal(false)} 
                         visit={visitToDelete} 
                         onDelete={handleVisitDeleted} 

@@ -18,7 +18,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { addVisit, uploadImageToCloudinary } from "../../../api/visitApi";
 import { useParams } from "react-router-dom";
 
-export function AddVisitModal({ open, onClose, onAddVisit }) {
+export function AddVisitModal({ isOpen, onClose, onAddVisit }) {
   const { tripId } = useParams(); // Récupérer tripId depuis l'URL
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
@@ -33,10 +33,10 @@ export function AddVisitModal({ open, onClose, onAddVisit }) {
   const [rating, setRating] = useState(3);
 
   useEffect(() => {
-    if (open) {
+    if (isOpen) {
       resetForm();
     }
-  }, [open]);
+  }, [isOpen]);
 
   
 
@@ -137,7 +137,7 @@ const handleSave = async () => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Ajouter une visite</DialogTitle>
       <DialogContent>
         {error && <FormHelperText error>{error}</FormHelperText>}
@@ -245,7 +245,7 @@ const handleSave = async () => {
 }
 
 AddVisitModal.propTypes = {
-  open: PropTypes.bool.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onAddVisit: PropTypes.func.isRequired,
 };
