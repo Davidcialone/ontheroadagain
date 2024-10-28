@@ -2,15 +2,25 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
+import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/", // Changé de "/ontheroadagain/" à "/" pour le déploiement Vercel
+  base: "/ontheroadagain/",
   root: path.resolve(__dirname, ""),
   build: {
     outDir: "dist",
     rollupOptions: {
       external: ["jwt-decode"],
+      plugins: [
+        // Enable rollup polyfills plugin
+        // used during production bundling
+        NodeGlobalsPolyfillPlugin({
+          process: true,
+          buffer: true,
+        }),
+        NodeModulesPolyfillPlugin(),
+      ],
     },
   },
   server: {
@@ -33,11 +43,17 @@ export default defineConfig({
   },
   optimizeDeps: {
     esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+        global: "globalThis",
+      },
+      // Enable esbuild polyfill plugins
       plugins: [
         NodeGlobalsPolyfillPlugin({
-          buffer: true,
           process: true,
+          buffer: true,
         }),
+        NodeModulesPolyfillPlugin(),
       ],
     },
   },
