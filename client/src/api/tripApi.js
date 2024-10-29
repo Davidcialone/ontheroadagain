@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
 
-// Informations Cloudinary directement intégrées
 const CLOUDINARY_CLOUD_NAME = "dn1y58few";
 const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain";
 
@@ -31,11 +30,12 @@ export function getUserIdFromToken() {
 }
 
 export async function uploadImageToCloudinary(imageFile) {
+  console.log("Début de l'upload de l'image vers Cloudinary...");
+
   if (!(imageFile instanceof File)) {
     throw new Error("Le premier argument doit être un objet File ou Blob.");
   }
 
-  // Compresser l'image avant de la télécharger
   const compressedImage = await new Promise((resolve, reject) => {
     new Compressor(imageFile, {
       quality: 0.6,
@@ -61,6 +61,8 @@ export async function uploadImageToCloudinary(imageFile) {
       }
     );
 
+    console.log("Réponse de Cloudinary reçue.");
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(
@@ -70,16 +72,21 @@ export async function uploadImageToCloudinary(imageFile) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error uploading image to Cloudinary:", error);
+    console.error(
+      "Erreur lors du téléchargement de l'image sur Cloudinary:",
+      error
+    );
     throw new Error("Échec du téléchargement de l'image sur Cloudinary");
   }
 }
 
 export async function fetchTrips() {
-  console.log("Fetching trips...");
+  console.log("Début de fetchTrips...");
 
   try {
     const userId = getUserIdFromToken();
+    console.log(`User ID récupéré pour fetchTrips: ${userId}`);
+
     const response = await fetch(`http://localhost:5000/api/me/trips`, {
       method: "GET",
       headers: {
@@ -87,6 +94,8 @@ export async function fetchTrips() {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
     });
+
+    console.log("Réponse de fetchTrips reçue.");
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -103,6 +112,8 @@ export async function fetchTrips() {
 }
 
 export async function addTrip(newTrip, existingTrips = []) {
+  console.log("Début de addTrip...");
+
   const { title, photo, dateStart, dateEnd, rating, description } = newTrip;
 
   if (!title || !dateStart || !dateEnd) {
@@ -113,7 +124,10 @@ export async function addTrip(newTrip, existingTrips = []) {
     throw new Error("Aucune image fournie pour le téléchargement.");
   }
   const userId = getUserIdFromToken();
-  // Vérification des doublons : utiliser le tableau existant des voyages
+
+  console.log(`User ID récupéré pour addTrip: ${userId}`);
+  console.log(`Vérification des doublons pour le voyage ${title}`);
+
   const tripExists =
     Array.isArray(existingTrips) &&
     existingTrips.some(
@@ -124,6 +138,7 @@ export async function addTrip(newTrip, existingTrips = []) {
     );
 
   if (tripExists) {
+    console.log("Un voyage avec le même titre et les mêmes dates existe déjà.");
     throw new Error(
       "Un voyage avec le même titre et les mêmes dates existe déjà."
     );
@@ -139,6 +154,8 @@ export async function addTrip(newTrip, existingTrips = []) {
     user_id: userId,
   };
 
+  console.log("Appel de l'API pour ajouter un nouveau voyage.");
+
   const response = await fetch("http://localhost:5000/api/me/trips", {
     method: "POST",
     headers: {
@@ -148,17 +165,23 @@ export async function addTrip(newTrip, existingTrips = []) {
     body: JSON.stringify(tripData),
   });
 
+  console.log("Réponse de l'API pour addTrip reçue.");
+
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Erreur lors de l'ajout du voyage: ${errorText}`);
   }
 
-  return await response.json(); // Renvoyer la réponse JSON
+  return await response.json();
 }
 
 export async function deleteTrip(tripId) {
+  console.log(`Début de deleteTrip pour le voyage ID ${tripId}...`);
+
   try {
     const userId = getUserIdFromToken();
+    console.log(`User ID récupéré pour deleteTrip: ${userId}`);
+
     const response = await fetch(
       `http://localhost:5000/api/me/trips/${tripId}`,
       {
@@ -170,6 +193,8 @@ export async function deleteTrip(tripId) {
       }
     );
 
+    console.log("Réponse de l'API pour deleteTrip reçue.");
+
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(
@@ -177,14 +202,17 @@ export async function deleteTrip(tripId) {
       );
     }
   } catch (error) {
-    console.error("Error deleting trip:", error);
+    console.error("Erreur lors de la suppression du voyage:", error);
     throw error;
   }
 }
 
 export async function updateTrip(tripId, updatedTrip) {
+  console.log(`Début de updateTrip pour le voyage ID ${tripId}...`);
+
   try {
     const userId = getUserIdFromToken();
+    console.log(`User ID récupéré pour updateTrip: ${userId}`);
 
     const tripData = {
       ...updatedTrip,
@@ -194,6 +222,8 @@ export async function updateTrip(tripId, updatedTrip) {
         ? updatedTrip.photo
         : `${updatedTrip.photo}.jpeg`,
     };
+
+    console.log("Appel de l'API pour mettre à jour le voyage.");
 
     const response = await fetch(
       `http://localhost:5000/api/me/trips/${tripId}`,
@@ -207,6 +237,8 @@ export async function updateTrip(tripId, updatedTrip) {
       }
     );
 
+    console.log("Réponse de l'API pour updateTrip reçue.");
+
     if (!response.ok) {
       const errorMessage = await response.text();
       throw new Error(
@@ -216,7 +248,7 @@ export async function updateTrip(tripId, updatedTrip) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error updating trip:", error);
+    console.error("Erreur lors de la mise à jour du voyage:", error);
     throw error;
   }
 }

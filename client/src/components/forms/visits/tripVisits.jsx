@@ -3,18 +3,17 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/authContext';
 import { addVisit, getVisitsForTrip } from '../../../api/visitApi'; 
 import { fetchTrips } from '../../../api/tripApi';
-import { Button, Typography, CircularProgress, Snackbar } from '@mui/material';
+import { Button, Typography, CircularProgress, Snackbar, Alert as MuiAlert } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { AddVisitModal } from '../modals/addVisitModal';
 import { UpdateVisitModal } from '../modals/updateVisitModal';
 import { DeleteVisitModal } from '../modals/deleteVisitModal';
 import { Visit } from '../visits/visit';    
-import MuiAlert from '@mui/material/Alert';
 
 const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
 
 export function TripVisits() {
-    const { tripId, setCurrentTripId } = useParams(); // Assurez-vous que le nom de la variable est correct
+    const { tripId } = useParams(); // Récupérer tripId
     const numericTripId = Number(tripId);
     const [trips, setTrips] = useState([]);
     const [visits, setVisits] = useState([]);
@@ -34,21 +33,6 @@ export function TripVisits() {
     const [updatedVisit, setUpdatedVisit] = useState(null);
     const [visitToDelete, setVisitToDelete] = useState(null);
 
-    // // useEffect pour récupérer les voyages
-    // useEffect(() => {
-    //     const loadTrips = async () => {
-    //         try {
-    //             const tripsData = await fetchTrips(); // Récupérer les voyages
-    //             setTrips(tripsData); 
-    //         } catch (err) {
-    //             setError(`Erreur lors du chargement des voyages: ${err.message}`);
-    //             setSnackbarOpen(true); 
-    //         }
-    //     };
-
-    //     loadTrips();
-    // }, []);
-
     useEffect(() => {
         const loadVisits = async () => {
             if (visitsFetched.current) return;
@@ -60,9 +44,9 @@ export function TripVisits() {
                     return;
                 }
 
-                console.log(`Fetching visits for tripId: ${numericTripId}`); // Journal de débogage
+                console.log(`Fetching visits for tripId: ${numericTripId}`);
                 const visitsData = await getVisitsForTrip(numericTripId);
-                console.log('Visits data:', visitsData); // Journal de débogage
+                console.log('Visits data:', visitsData);
 
                 setVisits(Array.isArray(visitsData) ? visitsData : []);
                 const trip = trips.find((trip) => trip.id === numericTripId);
@@ -80,35 +64,12 @@ export function TripVisits() {
     }, [numericTripId, isAuthenticated, navigate, trips]);
 
     const handleAddVisit = async (visitData) => {
-        setIsAdding(true);
-
-        if (!numericTripId) {
-            setError('tripId est manquant.');
-            setIsAdding(false);
-            return;
-        }
-
-        try {
-            const visitWithTripId = {
-                ...visitData,
-                tripId: numericTripId,
-                rating: Number(visitData.rating) || 0,
-            };
-            console.log('Adding visit:', visitWithTripId); // Journal de débogage
-
-            const response = await addVisit(visitWithTripId);
-            setVisits((prevVisits) =>
-                Array.isArray(prevVisits) ? [...prevVisits, { ...response, rating: Number(response.rating) || 0 }] 
-                : [{ ...response, rating: Number(response.rating) || 0 }]
-            );
-            setOpenAddModal(false);
-        } catch (err) {
-            setError(`Erreur lors de l'ajout de la visite: ${err.message}`);
-            setSnackbarOpen(true); 
-        } finally {
-            setIsAdding(false);
-        }
+       // Ajout des données de la visite sans appel réseau
+        setVisits((prevVisits) => [...prevVisits, visitData]);
+        setSnackbarOpen(false);
+        setOpenAddModal(false);
     };
+        
 
     const handleVisitUpdated = (updatedVisit) => {
         setVisits((prevVisits) =>
@@ -126,7 +87,6 @@ export function TripVisits() {
     const handleVisitDeleted = async () => {
         if (!visitToDelete) return;
         try {
-            // Remplacez cette partie par l'appel réel à l'API pour supprimer la visite
             setVisits((prevVisits) =>
                 Array.isArray(prevVisits) ? prevVisits.filter((visit) => visit.id !== visitToDelete.id) : []
             );
@@ -134,6 +94,7 @@ export function TripVisits() {
         } catch (err) {
             console.error('Erreur lors de la suppression de la visite:', err);
             setError(`Erreur lors de la suppression de la visite: ${err.message}`);
+            setSnackbarOpen(true);
         }
     };
 
@@ -144,7 +105,7 @@ export function TripVisits() {
         setSnackbarOpen(false);
     };
 
-    console.log('openAddModal:', openAddModal); // Vérifiez la valeur de openAddModal
+    console.log('openAddModal:', openAddModal);
 
     return (
         <div>
@@ -172,7 +133,7 @@ export function TripVisits() {
                         Ajouter une visite
                     </Button>
                     {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>}
-                    {/* Modals pour ajouter, mettre à jour et supprimer des visites */}
+                    
                     <AddVisitModal 
                         isOpen={openAddModal} 
                         onClose={() => setOpenAddModal(false)} 

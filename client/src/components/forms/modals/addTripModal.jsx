@@ -64,51 +64,51 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   };
 
   const handleSave = async () => {
+    console.log("Tentative de sauvegarde du voyage...");
     setError(null);
 
     if (!title || !dateStart || !dateEnd || !description || !imageFile) {
-      setError("Veuillez remplir tous les champs requis.");
-      return;
+        setError("Veuillez remplir tous les champs requis.");
+        return;
     }
     if (dateEnd <= dateStart) {
-      setError("La date de fin doit être après la date de début.");
-      return;
+        setError("La date de fin doit être après la date de début.");
+        return;
     }
 
     if (isSubmitting) {
-      return; // Empêche une double soumission
+        console.log("Soumission déjà en cours, retour.");
+        return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const imageData = await uploadImageToCloudinary(imageFile);
+        const imageData = await uploadImageToCloudinary(imageFile);
+        const newTrip = {
+            title,
+            photo: imageData.secure_url,
+            dateStart,
+            dateEnd,
+            rating: parseFloat(rating.toFixed(1)),
+            description,
+        };
 
-      const newTrip = {
-        title,
-        photo: imageData.secure_url,
-        dateStart,
-        dateEnd,
-        rating: parseFloat(rating.toFixed(1)),
-        description,
-       
-      };
+        const addedTrip = await addTrip(newTrip); // Appel à l'API pour ajouter le voyage
 
-      const addedTrip = await addTrip(newTrip);
-      onAddTrip(addedTrip);
-      onClose();
-      resetForm();
+        // Ajoutez `addedTrip` au composant parent
+        onAddTrip(addedTrip);
+        onClose();
+        resetForm();
     } catch (error) {
-      if (error.message.includes("Un voyage avec le même titre et les mêmes dates existe déjà")) {
-        setError("Un voyage avec le même titre et les mêmes dates existe déjà.");
-      } else {
+        console.error("Erreur lors de l'ajout du voyage :", error);
         setError("Une erreur est survenue lors de l'ajout du voyage.");
-      }
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
 
+  
   return (
     <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Ajouter un voyage</DialogTitle>
@@ -215,9 +215,15 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={handleSave}>
-          Enregistrer
-        </Button>
+      <Button 
+        color="primary" 
+        onClick={(e) => {
+          e.preventDefault(); // Empêche le comportement par défaut
+          handleSave(); // Appel de votre fonction de sauvegarde
+        }}
+      >
+        Enregistrer
+      </Button>
         <Button onClick={onClose} color="default">
           Annuler
         </Button>

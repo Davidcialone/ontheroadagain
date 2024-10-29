@@ -233,9 +233,15 @@ const handleSave = async () => {
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button color="primary" onClick={handleSave} disabled={isSubmitting}>
-          Enregistrer
-        </Button>
+      <Button 
+        color="primary" 
+        onClick={(e) => {
+          e.preventDefault(); // Empêche le comportement par défaut
+          handleSave(); // Appel de votre fonction de sauvegarde
+        }}
+      >
+        Enregistrer
+      </Button>
         <Button onClick={onClose} color="default">
           Annuler
         </Button>

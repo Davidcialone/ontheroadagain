@@ -28,6 +28,7 @@ export function MyTrips() {
     const navigate = useNavigate();
     const tripsFetched = useRef(false);
     const { isAuthenticated } = useContext(AuthContext);
+    
 
     const [newTripData, setNewTripData] = useState({
         title: '',
@@ -70,57 +71,15 @@ export function MyTrips() {
         loadTrips();
     }, [isAuthenticated, navigate]);
 
-    const handleAddTrip = async (tripData) => {
-        if (isAdding) {
-            return;
-        }
-        setIsAdding(true);
-
-        try {
-            const existingTrip = Array.isArray(trips) ? trips.find(trip =>
-                trip.title === tripData.title &&
-                trip.dateStart === tripData.dateStart &&
-                trip.dateEnd === tripData.dateEnd
-            ) : null;
-
-            if (existingTrip) {
-                throw new Error("Un voyage avec le même titre et les mêmes dates existe déjà.");
-            }
-
-            const token = Cookies.get('token');
-            const decodedToken = jwtDecode(token);
-            const userId = decodedToken.id || decodedToken.user_id;
-
-            const tripWithUserId = {
-                ...tripData,
-                user_id: userId,
-                rating: Number(tripData.rating) || 0,
-            };
-
-            const response = await addTrip(tripWithUserId);
-            setTrips((prevTrips) => Array.isArray(prevTrips) ? [
-                ...prevTrips,
-                { ...response, rating: Number(response.rating) },
-            ] : [response]);
-
-            onCloseAddTripModal(); // Close the modal after adding the trip
-            setNewTripData({
-                title: '',
-                description: '',
-                dateStart: '',
-                dateEnd: '',
-                photo: '',
-                rating: 0,
-            });
-            setError(null);
-        } catch (err) {
-            console.error("Erreur lors de l'ajout du voyage:", err);
-            setError("Erreur lors de l'ajout du voyage: " + err.message);
-            setSnackbarOpen(true);
-        } finally {
-            setIsAdding(false);
-        }
+    const handleAddTrip = (tripData) => {
+        // Ajout des données du voyage sans appel réseau
+        setTrips((prevTrips) => [...prevTrips, tripData]);
+        setSnackbarOpen(true); // Affichage du snackbar de confirmation
+        setIsAddTripModalOpen(false); // Ferme le modal
     };
+    
+    
+    
 
     const handleTripDeleted = (id) => {
         setTrips((prevTrips) => {
