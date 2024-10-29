@@ -2,49 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { Box, Card, CardMedia, Typography, Container } from '@mui/material';
 
 const baseSlides = [
-  { img: '/ontheroadagain/Rome.png', label: 'Rome' },
-  { img: '/ontheroadagain/Paris.png', label: 'Paris' },
-  { img: '/ontheroadagain/Porto.png', label: 'Porto' },
-  { img: '/ontheroadagain/New York.png', label: 'New York' },
-  { img: '/ontheroadagain/Seville.png', label: 'Seville' }
+  { img: '/Rome.png', label: 'Rome' },
+  { img: '/Paris.png', label: 'Paris' },
+  { img: '/Porto.png', label: 'Porto' },
+  { img: '/New York.png', label: 'New York' },
+  { img: '/Seville.png', label: 'Seville' }
 ];
 
-const slides = [];
-for (let i = 0; i < 10; i++) {
-  slides.push(...baseSlides); // Ajoute le contenu de baseSlides à chaque itération
-}
+// Dupliquer les slides pour créer un effet infini
+const slides = [...baseSlides, ...baseSlides, ...baseSlides];
 
 export const HomeCarousel = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const slidesToShow = 3; // Nombre d'images à afficher
-  const height = "40vh"; // Hauteur du carousel en pourcentage de la hauteur de la fenêtre
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const slidesToShow = 3;
+  const height = "40vh";
 
-  // Effet pour le défilement automatique
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % (slides.length - slidesToShow + 1)); // Modulo pour revenir au début
-    }, 4000); // Défilement toutes les 4 secondes
+      setCurrentIndex((prev) => {
+        const nextIndex = prev + 1;
+        // Revenir au début quand on atteint la fin
+        if (nextIndex > slides.length - slidesToShow) {
+          return 0;
+        }
+        return nextIndex;
+      });
+    }, 4000);
 
-    return () => clearInterval(interval); // Nettoyer l'intervalle à la désactivation du composant
-  }, [slides.length, slidesToShow]);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Calculer les slides visibles actuellement
+  const visibleSlides = slides.slice(currentIndex, currentIndex + slidesToShow);
 
   return (
-    <Container maxWidth="lg" sx={{ overflow: 'hidden', position: 'relative' }}>
+    <Container maxWidth="lg" sx={{ overflow: 'hidden' }}>
       <Box
-        display="flex"
-        transition="transform 1s ease"
-        transform={`translateX(-${(currentSlide * 100) / slidesToShow}%)`}
-        width="100%"
+        sx={{
+          display: 'flex',
+          transition: 'transform 1s ease-in-out',
+          width: '100%',
+        }}
       >
-        {slides.map((slide, index) => (
+        {visibleSlides.map((slide, index) => (
           <Box
-            key={index}
-            width={`${100 / slidesToShow}%`}
-            flexShrink={0}
-            height={height}
-            position="relative"
-            padding={0}
-            margin={0}
+            key={`${slide.label}-${currentIndex}-${index}`}
+            sx={{
+              width: `${100 / slidesToShow}%`,
+              flexShrink: 0,
+              height: height,
+              padding: 1
+            }}
           >
             <Card sx={{ height: '100%', position: 'relative' }}>
               <CardMedia
@@ -52,24 +60,22 @@ export const HomeCarousel = () => {
                 image={slide.img}
                 alt={slide.label}
                 sx={{
-                  objectFit: 'cover',
                   height: '100%',
-                  width: '100%',
-                  transition: 'opacity 0.5s ease',
+                  objectFit: 'cover'
                 }}
               />
               <Typography
                 variant="h6"
                 component="div"
-                textAlign="center"
-                position="absolute"
-                bottom="8px"
-                left="0"
-                right="0"
-                color="white"
                 sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
                   backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  padding: '0.5rem',
+                  color: 'white',
+                  padding: 1,
+                  textAlign: 'center'
                 }}
               >
                 {slide.label}
