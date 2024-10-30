@@ -53,4 +53,4 @@ router.patch("/:tripId/visits/:visitId", cw(visitController.updateVisit));
  * @returns {Error} 404 - Visit not found
  * @security JWT
  */
-router.delete("/visits/:visitId", cw(visitController.deleteVisit));
+router.delete("/:tripId/visits/:visitId", cw(visitController.deleteVisit));

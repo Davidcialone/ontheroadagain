@@ -12,11 +12,16 @@ import {
 
 export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId, tripId }) {
   const handleDelete = () => {
-    if (visitId && tripId) { // Vérifier que visitId et tripId sont définis
-      onDelete(visitId, tripId); // Passer l'ID du voyage à la fonction onDelete
+    if (visitId && tripId) {
+        console.log(`Deleting visit with ID: ${visitId} and trip ID: ${tripId}`);
+        onDelete(visitId, tripId);
+    } else {
+        console.error("visitId or tripId is missing");
     }
-    onClose(); // Fermer la modal après l'appel à onDelete
-  };
+    onClose(); 
+};
+
+  
 
 
   return (
@@ -45,6 +50,7 @@ DeleteVisitModal.propTypes = {
   onClose: PropTypes.func,
   onDelete: PropTypes.func, // Assurez-vous que la fonction onDelete est une prop
   visitId: PropTypes.number, 
+  tripId: PropTypes.number,
 };
 
 export default DeleteVisitModal;

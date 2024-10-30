@@ -160,7 +160,9 @@ export function TripVisits() {
                             visits.map((visit) => (
                                 <Grid item xs={12} sm={12} md={12} key={visit.id}>
                                     <Visit
+                                        id={visit.id}
                                         visitId={visit.id} 
+                                        tripId={numericTripId}
                                         title={visit.title}
                                         photo={visit.photo}
                                         dateStart={visit.dateStart}
@@ -170,6 +172,7 @@ export function TripVisits() {
                                         geo={visit.geo}
                                         onVisitUpdated={handleVisitUpdated}
                                         onVisitDeleted={handleVisitDeleted}
+                                        onDeleteClick={() => handleDeleteClick(visit.id, visit.tripId)} // Passer les IDs lors du clic
                                     />
                                 </Grid>
                             ))

@@ -46,6 +46,7 @@ export function Visit({
   onVisitUpdated,
   onVisitDeleted,
   visitId,
+  tripId,
   latitude,
   longitude,
 }) {
@@ -65,7 +66,7 @@ export function Visit({
       img.onload = () => {
         EXIF.getData(img, function() {
           const allExifData = EXIF.getAllTags(this);
-          console.log("Données EXIF complètes:", allExifData);  // Debugging
+          // console.log("Données EXIF complètes:", allExifData);  // Debugging
 
           // Récupération des données GPS
           const lat = EXIF.getTag(this, "GPSLatitude");
@@ -112,17 +113,25 @@ export function Visit({
     setIsUpdateOpen(false);
   };
 
-  const handleDeleteClick = () => setIsDeleteOpen(true);
-
-  const handleDeleteVisit = async (visitIdid) => {
+  const handleDeleteClick = () => {
+    console.log("Open delete modal for visit:", visitId);
+    setIsDeleteOpen(true);
+  };
+  
+  const handleDeleteVisit = async (visitId, tripId) => {
+    console.log("Attempting to delete visit:", visitId, "for trip:", tripId);
     try {
-      await deleteVisit(visitIdid);
-      onVisitDeleted(visitIdid);
-      setIsDeleteOpen(false);
+      await deleteVisit(tripId, visitId); // Assurez-vous que `deleteVisit` est importé correctement
+      console.log("Visit deleted successfully:", visitId);
+      onVisitDeleted(visitId);
     } catch (error) {
       console.error("Error deleting visit:", error);
     }
   };
+  
+  
+  
+  
 
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
@@ -261,6 +270,7 @@ export function Visit({
         isOpen={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
         visitId={visitId}
+        tripId={tripId}
         onDelete={handleDeleteVisit}
       />
     </Card>
@@ -269,6 +279,7 @@ export function Visit({
 
 Visit.propTypes = {
   id: PropTypes.number,
+  tripId: PropTypes.number,
   title: PropTypes.string.isRequired,
   photo: PropTypes.string,
   dateStart: PropTypes.string.isRequired,

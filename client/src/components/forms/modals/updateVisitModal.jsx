@@ -53,7 +53,7 @@ export function UpdateVisitModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Log pour vérifier le tripId
-  console.log('tripId:', tripId);
+  // console.log('tripId:', tripId);
 
   // Reset fields when modal opens
   useEffect(() => {

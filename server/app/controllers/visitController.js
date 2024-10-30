@@ -68,7 +68,7 @@ export async function createVisit(req, res) {
   }
 }
 
-// PATCH /api/me/trips/:tripId/visit/:visitId
+// PATCH /api/me/trips/:tripId/visits/:visitId
 export async function updateVisit(req, res) {
   const visitId = parseInt(req.params.visitId);
   const tripId = parseInt(req.params.tripId);
@@ -108,10 +108,12 @@ export async function updateVisit(req, res) {
   }
 }
 
-// DELETE /api/me/trips/:tripId/visit/:visitId
+// DELETE /api/me/trips/:tripId/visits/:visitId
 export async function deleteVisit(req, res) {
   const visitId = parseInt(req.params.visitId);
   const tripId = parseInt(req.params.tripId);
+  console.log("Visit ID reçu:", visitId); // Ajout pour déboguer
+  console.log("Trip ID reçu:", tripId); // Ajout pour déboguer
 
   if (isNaN(visitId) || isNaN(tripId)) {
     return res.status(400).json({ error: "Paramètres invalides." });
