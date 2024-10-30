@@ -22,8 +22,17 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit }) {
   const { tripId } = useParams(); // Récupérer tripId depuis l'URL
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [dateStart, setDateStart] = useState(new Date());
-  const [dateEnd, setDateEnd] = useState(new Date(new Date().setDate(new Date().getDate() + 1)));
+  const [dateStart, setDateStart] = useState(() => {
+    const today = new Date();
+    return !isNaN(today) ? today : null;
+  });
+  
+  const [dateEnd, setDateEnd] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return !isNaN(tomorrow) ? tomorrow : null;
+  });
+  
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const [dateStartOpen, setDateStartOpen] = useState(false);
@@ -159,65 +168,75 @@ const handleSave = async () => {
           <FormHelperText>Importer une nouvelle image (JPEG, PNG, GIF)</FormHelperText>
         </FormControl>
 
-        {/* Date de début */}
         <FormControl fullWidth margin="normal">
-          <TextField
-            label="Date de début"
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            value={dateStart ? dateStart.toLocaleDateString() : ''}
-            onClick={() => setDateStartOpen(true)}
-            InputProps={{
-              readOnly: true,
-              endAdornment: (
-                <IconButton onClick={() => setDateStartOpen(true)}>
-                  <CalendarTodayIcon />
-                </IconButton>
-              ),
-            }}
-          />
-          <DatePicker
-            selected={dateStart}
-            onChange={(date) => {
-              setDateStart(date);
-              if (dateEnd && date < dateEnd) {
-                setDateEnd(null);
-              }
-            }}
-            dateFormat="dd/MM/yyyy"
-            open={dateStartOpen}
-            onClickOutside={() => setDateStartOpen(false)}
-            onCalendarClose={() => setDateStartOpen(false)}
-          />
-        </FormControl>
+  <TextField
+    label="Date de début"
+    variant="outlined"
+    InputLabelProps={{ shrink: true }}
+    value={dateStart instanceof Date && !isNaN(dateStart) ? dateStart.toLocaleDateString("fr-FR") : ""}
+    onClick={() => setDateStartOpen(true)}
+    InputProps={{
+      readOnly: true,
+      endAdornment: (
+        <IconButton onClick={() => setDateStartOpen(true)}>
+          <CalendarTodayIcon />
+        </IconButton>
+      ),
+    }}
+  />
+  <DatePicker
+    selected={dateStart instanceof Date && !isNaN(dateStart) ? dateStart : null}
+    onChange={(date) => {
+      if (date && date instanceof Date && !isNaN(date)) {
+        setDateStart(date);
+        if (dateEnd && date > dateEnd) {
+          setDateEnd(null); // Réinitialise si la date de début est postérieure
+        }
+      } else {
+        setError("La date de début n'est pas valide");
+      }
+    }}
+    dateFormat="dd/MM/yyyy"
+    open={dateStartOpen}
+    onClickOutside={() => setDateStartOpen(false)}
+    onCalendarClose={() => setDateStartOpen(false)}
+  />
+</FormControl>
 
-        {/* Date de fin */}
-        <FormControl fullWidth margin="normal">
-          <TextField
-            label="Date de fin"
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            value={dateEnd ? dateEnd.toLocaleDateString() : ''}
-            onClick={() => setDateEndOpen(true)}
-            InputProps={{
-              readOnly: true,
-              endAdornment: (
-                <IconButton onClick={() => setDateEndOpen(true)}>
-                  <CalendarTodayIcon />
-                </IconButton>
-              ),
-            }}
-          />
-          <DatePicker
-            selected={dateEnd}
-            onChange={setDateEnd}
-            dateFormat="dd/MM/yyyy"
-            minDate={dateStart}
-            open={dateEndOpen}
-            onClickOutside={() => setDateEndOpen(false)}
-            onCalendarClose={() => setDateEndOpen(false)}
-          />
-        </FormControl>
+{/* Date de fin */}
+<FormControl fullWidth margin="normal">
+  <TextField
+    label="Date de fin"
+    variant="outlined"
+    InputLabelProps={{ shrink: true }}
+    value={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd.toLocaleDateString("fr-FR") : ""}
+    onClick={() => setDateEndOpen(true)}
+    InputProps={{
+      readOnly: true,
+      endAdornment: (
+        <IconButton onClick={() => setDateEndOpen(true)}>
+          <CalendarTodayIcon />
+        </IconButton>
+      ),
+    }}
+  />
+  <DatePicker
+    selected={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd : null}
+    onChange={(date) => {
+      if (date && date instanceof Date && !isNaN(date)) {
+        setDateEnd(date);
+      } else {
+        setError("La date de fin n'est pas valide");
+      }
+    }}
+    dateFormat="dd/MM/yyyy"
+    minDate={dateStart instanceof Date && !isNaN(dateStart) ? dateStart : undefined}
+    open={dateEndOpen}
+    onClickOutside={() => setDateEndOpen(false)}
+    onCalendarClose={() => setDateEndOpen(false)}
+  />
+</FormControl>
+
 
         {/* Commentaire */}
         <FormControl fullWidth margin="normal">

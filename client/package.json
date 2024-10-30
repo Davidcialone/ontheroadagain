@@ -11,6 +11,7 @@
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.2",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@mui/icons-material": "^6.1.5",
     "@mui/material": "^6.1.5",
     "bootstrap": "^5.3.3",
@@ -20,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
     "lorem-ipsum": "^2.0.8",
+    "piexifjs": "^1.0.6",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
     "react-datepicker": "^7.3.0",
@@ -32,9 +34,8 @@
     "react-stars": "^2.2.5",
     "rollup": "^4.24.2",
     "slick-carousel": "^1.8.1",
-    "yet-another-react-lightbox": "^3.21.6",
     "vite": "^5.4.10",
-     "@esbuild-plugins/node-modules-polyfill": "^0.2.2"
+    "yet-another-react-lightbox": "^3.21.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

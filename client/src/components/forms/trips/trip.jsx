@@ -20,7 +20,7 @@ import { UpdateTripModal } from "../modals/updateTripModal";
 import { DeleteTripModal } from "../modals/deleteTripModal";
 
 export function Trip({ 
-  id, // ensure `id` is correctly named
+  id,
   photo = "default-image-url", 
   title, 
   dateStart, 
@@ -34,8 +34,7 @@ export function Trip({
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const handleUpdateClick = () => { setIsUpdateOpen(true); };
-
+  // Actions
   const handleUpdateTrip = (updatedTripData) => {
     if (updatedTripData) {
       const { userId, ...tripDataWithoutUserId } = updatedTripData;
@@ -47,8 +46,6 @@ export function Trip({
     }
   };
 
-  const handleDeleteClick = () => {setIsDeleteOpen(true); };
-
   const handleDeleteTrip = async () => {
     try {
       await deleteTrip(id);
@@ -59,15 +56,15 @@ export function Trip({
     }
   };
 
+  // UI Handlers
+  const openUpdateModal = () => setIsUpdateOpen(true);
+  const openDeleteModal = () => setIsDeleteOpen(true);
+
   const color = "gray";
   const backgroundColor = "#f4f4f4";
 
   return (
-    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 8,
-      '&:hover': {
-        boxShadow: 12,
-      },
-    }}>
+    <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 8, '&:hover': { boxShadow: 12 } }}>
       <CardMedia
         component="img"
         height="400"
@@ -76,42 +73,37 @@ export function Trip({
         sx={{ 
           objectFit: "cover", 
           transition: 'transform 0.3s ease-in-out',
-          '&:hover': {
-            transform: 'scale(1.1)',
-          },
+          '&:hover': { transform: 'scale(1.1)' },
         }}
       />
       <CardContent>
-        <Card sx={{display:'flex', justifyContent:'space-between', padding:'0.5rem'}}>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{
-            fontWeight: 'bold',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)',
-          }}
-        >
-          {title || updatedTrip.title || "Title not available"}
-        </Typography>
-        <CardActions sx={{ padding: 0, marginRight: -1 }}> {/* Reduce padding and move slightly to the right */}
-      <Box display="flex" gap={0.5} alignItems="center"> {/* Controls spacing between icons */}
-        <Button
-          onClick={handleUpdateClick}
-          size="small"
-          color={color}
-          startIcon={<EditIcon />}
-          sx={{ minWidth: 0, padding: 0.5 }} // Reduces padding around icon
-        />
-        <Button
-          onClick={handleDeleteClick}
-          size="small"
-          color={color}
-          startIcon={<DeleteIcon />}
-          sx={{ minWidth: 0, padding: 0.5 }} // Reduces padding around icon
-        />
-      </Box>
-    </CardActions>
-      </Card>
+        <Card sx={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem' }}>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ fontWeight: 'bold', textShadow: '2px 2px 4px rgba(0, 0, 0, 0.3)' }}
+          >
+            {title || updatedTrip.title || "Title not available"}
+          </Typography>
+          <CardActions sx={{ padding: 0, marginRight: -1 }}>
+            <Box display="flex" gap={0.5} alignItems="center">
+              <Button
+                onClick={openUpdateModal}
+                size="small"
+                color={color}
+                startIcon={<EditIcon />}
+                sx={{ minWidth: 0, padding: 0.5 }} // Réduit le padding autour de l'icône
+              />
+              <Button
+                onClick={openDeleteModal}
+                size="small"
+                color={color}
+                startIcon={<DeleteIcon />}
+                sx={{ minWidth: 0, padding: 0.5 }} // Réduit le padding autour de l'icône
+              />
+            </Box>
+          </CardActions>
+        </Card>
 
         {/* Dates Section */}
         <Box mt={2}>
@@ -133,7 +125,7 @@ export function Trip({
               day: "numeric",
               month: "long",
               year: "numeric",
-            })}{" "}
+            })}{" "} 
             au{" "}
             {new Date(dateEnd).toLocaleDateString("fr-FR", {
               day: "numeric",
@@ -152,7 +144,8 @@ export function Trip({
               border: '1px solid #a9a9a9',
               padding: '1px 8px',
               borderRadius: '8px',
-            }}>
+            }}
+          >
             Description
           </Badge>
           <Typography variant="body2" mt={1}>
@@ -169,7 +162,8 @@ export function Trip({
               border: '1px solid #a9a9a9',
               padding: '1px 8px',
               borderRadius: '8px',
-            }}>
+            }}
+          >
             Note
           </Badge>
           <Box display="flex" justifyContent="center" mt={1}>
@@ -186,19 +180,15 @@ export function Trip({
         </Box>
       </CardContent>
 
-     
-
       <Box display="flex" justifyContent="flex-end">
         <Button
           sx={{
             m: 1,
             boxShadow: 2,
-            '&:hover': {
-              boxShadow: 4,
-            },
+            '&:hover': { boxShadow: 4 },
           }}
           component={RouterLink}
-          to={`/api/me/trips/${id}`} // Ensure `id` is used here
+          to={`/me/trips/${id}`} // Utilisation de `id` ici
           variant="outlined"
           size="small"
           color={color}
@@ -208,9 +198,7 @@ export function Trip({
         </Button>
       </Box>
 
-
-      
-
+      {/* Modales */}
       <UpdateTripModal
         isOpen={isUpdateOpen}
         onClose={() => setIsUpdateOpen(false)}
@@ -234,7 +222,7 @@ export function Trip({
   );
 }
 
-// Define prop types
+// Définir les prop types
 Trip.propTypes = {
   id: PropTypes.number.isRequired,
   photo: PropTypes.string,
@@ -246,4 +234,3 @@ Trip.propTypes = {
   onTripDeleted: PropTypes.func.isRequired,
   onTripUpdated: PropTypes.func.isRequired,
 };
-

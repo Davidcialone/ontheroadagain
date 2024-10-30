@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
+import { piexif } from "piexifjs";
 
 // Informations Cloudinary directement intégrées
 const CLOUDINARY_CLOUD_NAME = "dn1y58few";
@@ -38,34 +39,63 @@ export function getUserIdFromToken() {
   return userId;
 }
 
-// Fonction pour télécharger une image compressée sur Cloudinary
-export async function uploadImageToCloudinary(imageFile) {
-  if (!(imageFile instanceof File)) {
-    console.error("Le premier argument doit être un objet File ou Blob.");
-    throw new Error("Le premier argument doit être un objet File ou Blob.");
-  }
-
-  console.log("Compression de l'image...");
-  const compressedImage = await new Promise((resolve, reject) => {
+// Fonction pour compresser l'image
+export function compressImage(imageFile) {
+  return new Promise((resolve, reject) => {
     new Compressor(imageFile, {
       quality: 0.6,
       success(result) {
-        console.log("Image compressée avec succès");
         resolve(result);
       },
       error(err) {
-        console.error("Erreur de compression de l'image:", err);
         reject(err);
       },
     });
   });
+}
 
+export async function uploadImageToCloudinary(imageFile) {
+  // Validation initiale
+  if (!(imageFile instanceof File)) {
+    throw new Error("Le premier argument doit être un objet File ou Blob.");
+  }
+
+  // Vérification des variables d'environnement
+  if (!CLOUDINARY_UPLOAD_PRESET || !CLOUDINARY_CLOUD_NAME) {
+    throw new Error("Configuration Cloudinary manquante");
+  }
+
+  console.log("Détails du fichier:", {
+    name: imageFile.name,
+    type: imageFile.type,
+    size: imageFile.size,
+  });
+
+  // Compression de l'image
+  console.log("Début de la compression...");
+  let compressedImage;
+  try {
+    compressedImage = await compressImage(imageFile);
+    console.log("Image compressée avec succès:", {
+      type: compressedImage.type,
+      size: compressedImage.size,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la compression:", error);
+    throw new Error("Échec de la compression de l'image");
+  }
+
+  // Préparation du FormData
   const formData = new FormData();
   formData.append("file", compressedImage);
   formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
 
+  // Log des données envoyées
+  console.log("Upload preset:", CLOUDINARY_UPLOAD_PRESET);
+  console.log("Cloud name:", CLOUDINARY_CLOUD_NAME);
+
   try {
-    console.log("Envoi de l'image à Cloudinary...");
+    console.log("Début de l'upload vers Cloudinary...");
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
       {
@@ -74,26 +104,64 @@ export async function uploadImageToCloudinary(imageFile) {
       }
     );
 
+    // Log de la réponse complète en cas d'erreur
     if (!response.ok) {
-      console.log(
-        `Erreur lors du téléchargement sur Cloudinary ! statut: ${response.status}`
-      );
       const errorText = await response.text();
-      console.log(
-        `Détails de l'erreur de téléchargement Cloudinary: ${errorText}`
-      );
-      throw new Error(`Cloudinary upload error! status: ${response.status}`);
+      console.error("Détails de l'erreur Cloudinary:", {
+        status: response.status,
+        statusText: response.statusText,
+        headers: Object.fromEntries(response.headers.entries()),
+        body: errorText,
+      });
+      throw new Error(`Erreur Cloudinary: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
-    console.log("Image téléchargée avec succès:", data);
+    console.log("Upload réussi:", {
+      publicId: data.public_id,
+      url: data.url,
+      format: data.format,
+      metadata: data.image_metadata,
+    });
+
     return data;
   } catch (error) {
-    console.error(
-      "Erreur lors du téléchargement de l'image sur Cloudinary:",
-      error
+    console.error("Erreur détaillée:", error);
+    throw error; // Propager l'erreur avec les détails
+  }
+}
+
+// Fonction utilitaire pour vérifier si une image est valide
+export function validateImage(file) {
+  // Vérification du type MIME
+  const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  if (!validTypes.includes(file.type)) {
+    throw new Error(`Type de fichier non supporté: ${file.type}`);
+  }
+
+  // Vérification de la taille (ex: 10MB max)
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  if (file.size > maxSize) {
+    throw new Error(
+      `Fichier trop volumineux (max: ${maxSize / 1024 / 1024}MB)`
     );
-    throw new Error("Échec du téléchargement de l'image sur Cloudinary");
+  }
+
+  return true;
+}
+
+// Utilisation
+export async function handleImageUpload(imageFile) {
+  try {
+    // Validation préalable
+    validateImage(imageFile);
+
+    // Upload
+    const result = await uploadImageToCloudinary(imageFile);
+    return result;
+  } catch (error) {
+    console.error("Erreur lors du processus d'upload:", error);
+    throw error;
   }
 }
 
@@ -268,7 +336,7 @@ export async function addVisit(visitData, existingVisits = []) {
 export async function updateVisit(visitId, visitData, tripId) {
   console.log("Mise à jour de la visite avec l'ID:", visitId);
   console.log("tripId reçu dans updateVisit:", tripId); // Log ajouté
-
+  console.log("visitData reçu dans updateVisit:", visitData); // Log ajouté
   try {
     if (!tripId) {
       console.error("tripId est manquant.");
@@ -279,7 +347,7 @@ export async function updateVisit(visitId, visitData, tripId) {
     const response = await fetch(
       `http://localhost:5000/api/me/trips/${tripId}/visits/${visitId}`,
       {
-        method: "PUT",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Cookies.get("token")}`,
@@ -308,17 +376,25 @@ export async function updateVisit(visitId, visitData, tripId) {
 }
 
 // Fonction pour supprimer une visite
-export async function deleteVisit(visitId, tripId) {
-  console.log("Suppression de la visite avec l'ID:", visitId);
-  console.log("tripId reçu dans deleteVisit:", tripId); // Log ajouté
+export async function deleteVisit(tripId, visitId) {
+  console.log(
+    "Suppression de la visite avec tripId:",
+    tripId,
+    "et visitId:",
+    visitId
+  );
 
   try {
     if (!tripId) {
       console.error("tripId est manquant.");
       throw new Error("tripId est manquant.");
     }
+    if (!visitId) {
+      console.error("visitId est manquant.");
+      throw new Error("visitId est manquant.");
+    }
 
-    console.log("Envoi de la requête pour supprimer la visite:", visitId);
+    // Envoi de la requête pour supprimer la visite
     const response = await fetch(
       `http://localhost:5000/api/me/trips/${tripId}/visits/${visitId}`,
       {

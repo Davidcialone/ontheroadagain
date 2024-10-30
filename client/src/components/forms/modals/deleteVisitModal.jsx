@@ -10,10 +10,10 @@ import {
 } from "@mui/material";
 
 
-export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId }) {
+export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId, tripId }) {
   const handleDelete = () => {
-    if (visitId) {
-      onDelete(visitId); // Passer l'ID du voyage à la fonction onDelete
+    if (visitId && tripId) { // Vérifier que visitId et tripId sont définis
+      onDelete(visitId, tripId); // Passer l'ID du voyage à la fonction onDelete
     }
     onClose(); // Fermer la modal après l'appel à onDelete
   };

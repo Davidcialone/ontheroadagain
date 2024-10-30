@@ -68,15 +68,15 @@ export function TripVisits() {
         setVisits((prevVisits) => [...prevVisits, visitData]);
         setSnackbarOpen(false);
         setOpenAddModal(false);
-    };
-        
+    };   
 
-    const handleVisitUpdated = (updatedVisit) => {
+    const handleVisitUpdated = (updatedVisitData) => {
+        console.log("Mise à jour de la visite:", updatedVisitData);
         setVisits((prevVisits) =>
             Array.isArray(prevVisits)
                 ? prevVisits.map((visit) =>
-                    visit.id === updatedVisit.id
-                        ? { ...updatedVisit, rating: Number(updatedVisit.rating) || 0 }
+                    visit.id === updatedVisitData.id
+                        ? { ...updatedVisitData, rating: Number(updatedVisitData.rating) || 0 }
                         : visit
                 )
                 : []
@@ -84,18 +84,15 @@ export function TripVisits() {
         setOpenUpdateModal(false);
     };
 
-    const handleVisitDeleted = async () => {
-        if (!visitToDelete) return;
-        try {
-            setVisits((prevVisits) =>
-                Array.isArray(prevVisits) ? prevVisits.filter((visit) => visit.id !== visitToDelete.id) : []
-            );
-            setOpenDeleteModal(false);
-        } catch (err) {
-            console.error('Erreur lors de la suppression de la visite:', err);
-            setError(`Erreur lors de la suppression de la visite: ${err.message}`);
-            setSnackbarOpen(true);
-        }
+    const handleVisitDeleted =  (id) => {
+       setVisits((prevVisits) => {
+            if (Array.isArray(prevVisits)) {
+                return prevVisits.filter((visit) => visit.id !== id);
+            } else {
+                return [];
+            }
+            
+        });
     };
 
     const handleSnackbarClose = (event, reason) => {
@@ -104,6 +101,8 @@ export function TripVisits() {
         }
         setSnackbarOpen(false);
     };
+
+
 
     console.log('openAddModal:', openAddModal);
 
@@ -169,14 +168,8 @@ export function TripVisits() {
                                         comment={visit.comment}
                                         rating={typeof visit.rating === 'number' && visit.rating >= 0 && visit.rating <= 5 ? visit.rating : 0} 
                                         geo={visit.geo}
-                                        onEditVisit={() => {
-                                            setUpdatedVisit(visit);
-                                            setOpenUpdateModal(true);
-                                        }}
-                                        onDeleteVisit={() => {
-                                            setVisitToDelete(visit);
-                                            setOpenDeleteModal(true);
-                                        }}
+                                        onVisitUpdated={handleVisitUpdated}
+                                        onVisitDeleted={handleVisitDeleted}
                                     />
                                 </Grid>
                             ))

@@ -71,7 +71,7 @@ export function App() {
               />
               {/* Route dynamique pour les visites avec le tripId */}
               <Route
-                path="/api/me/trips/:tripId"
+                path="/me/trips/:tripId"
                 element={isAuthenticated ? <TripVisits /> : <Navigate to="/login" />}
               />
               {/* Route vers la page de connexion */}

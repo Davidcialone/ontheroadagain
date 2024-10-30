@@ -4,8 +4,8 @@ import { Container, Button, Typography, Snackbar } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import MuiAlert from '@mui/material/Alert';
 import { AuthContext } from '../auth/authContext';
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode'; 
+// import Cookies from 'js-cookie';
+// import { jwtDecode } from 'jwt-decode'; 
 import { fetchTrips, addTrip } from '../../../../src/api/tripApi'; 
 import { Trip } from './trip'; 
 import { AddTripModal } from '../modals/addTripModal'; 
@@ -20,7 +20,7 @@ export function MyTrips() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
-    const [currentTripId, setCurrentTripId] = useState(null);
+    // const [currentTripId, setCurrentTripId] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     
     const [isAddTripModalOpen, setIsAddTripModalOpen] = useState(false); // State for AddTripModal
@@ -29,16 +29,6 @@ export function MyTrips() {
     const tripsFetched = useRef(false);
     const { isAuthenticated } = useContext(AuthContext);
     
-
-    const [newTripData, setNewTripData] = useState({
-        title: '',
-        description: '',
-        dateStart: '',
-        dateEnd: '',
-        photo: '',
-        rating: 0,
-    });
-
     useEffect(() => {
         const loadTrips = async () => {
             if (tripsFetched.current) {
@@ -76,10 +66,15 @@ export function MyTrips() {
         setTrips((prevTrips) => [...prevTrips, tripData]);
         setSnackbarOpen(true); // Affichage du snackbar de confirmation
         setIsAddTripModalOpen(false); // Ferme le modal
+    };   
+
+    const handleTripUpdated = (updatedTripData) => {
+        if (typeof updatedTripData === 'object' && updatedTripData !== null) {
+            setTrips((prevTrips) =>
+                Array.isArray(prevTrips) ? prevTrips.map(trip => (trip.id === updatedTripData.id ? { ...updatedTripData, rating: Number(updatedTripData.rating) } : trip)) : []
+        );
+    }
     };
-    
-    
-    
 
     const handleTripDeleted = (id) => {
         setTrips((prevTrips) => {
@@ -89,19 +84,6 @@ export function MyTrips() {
                 return [];
             }
         });
-    };
-
-    const handleTripUpdated = (updatedTripData) => {
-        if (typeof updatedTripData === 'object' && updatedTripData !== null) {
-            setTrips((prevTrips) =>
-                Array.isArray(prevTrips) ? prevTrips.map(trip => (trip.id === updatedTripData.id ? { ...updatedTripData, rating: Number(updatedTripData.rating) } : trip)) : []
-            );
-        }
-    };
-
-    const handleAddVisit = (tripId) => {
-        setCurrentTripId(tripId);
-        onOpenAddVisitModal(); // Open AddVisitModal
     };
 
     const handleSnackbarClose = (event, reason) => {
@@ -114,9 +96,7 @@ export function MyTrips() {
     // Modal control functions
     const onOpenAddTripModal = () => setIsAddTripModalOpen(true);
     const onCloseAddTripModal = () => setIsAddTripModalOpen(false);
-    const onOpenAddVisitModal = () => setIsAddVisitModalOpen(true);
-    const onCloseAddVisitModal = () => setIsAddVisitModalOpen(false);
-
+  
     return (
         <Container>
             <Typography variant="h4" gutterBottom>Mes voyages</Typography>
