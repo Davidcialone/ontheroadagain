@@ -33,6 +33,8 @@ export function TripVisits() {
     const [updatedVisit, setUpdatedVisit] = useState(null);
     const [visitToDelete, setVisitToDelete] = useState(null);
 
+    console.log('dans tripVisits tripId:', tripId);
+
     useEffect(() => {
         const loadVisits = async () => {
             if (visitsFetched.current) return;

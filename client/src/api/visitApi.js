@@ -89,6 +89,7 @@ export async function uploadImageToCloudinary(imageFile) {
   const formData = new FormData();
   formData.append("file", compressedImage);
   formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+  formData.append("context", "keep_metadata");
 
   // Log des données envoyées
   console.log("Upload preset:", CLOUDINARY_UPLOAD_PRESET);

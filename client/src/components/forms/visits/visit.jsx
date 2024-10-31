@@ -14,8 +14,11 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReactStars from "react-stars";
 import { deleteVisit } from "../../../api/visitApi";
+import { addPhotosToVisit, getPhotosForVisit } from "../../../api/photosApi";
+import { VisitPhotos } from "../../forms/visits/visitPhotosCarousel";
 import { UpdateVisitModal } from "../modals/updateVisitModal";
 import { DeleteVisitModal } from "../modals/deleteVisitModal";
+import { AddPhotosModal } from "../modals/addPhotosModal";
 import EXIF from "exif-js"; // Import EXIF library
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"; // Import Leaflet components
 import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
@@ -27,6 +30,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 // Import Leaflet
 import L from "leaflet";
+import { use } from "framer-motion/client";
 
 delete L.Icon.Default.prototype._getIconUrl; // Fix default icon not showing
 L.Icon.Default.mergeOptions({
@@ -45,20 +49,25 @@ export function Visit({
   comment,
   onVisitUpdated,
   onVisitDeleted,
-  visitId,
   tripId,
+  visitId,
   latitude,
   longitude,
 }) {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isAddPhotosOpen, setIsAddPhotosOpen] = useState(false);
   const [currentLatitude, setCurrentLatitude] = useState(latitude);
   const [currentLongitude, setCurrentLongitude] = useState(longitude);
   const [uploadedPhoto, setUploadedPhoto] = useState(null);
+  const [visitPhotos, setVisitPhotos] = useState([]);
   const [exifData, setExifData] = useState({}); // State to hold EXIF data
   const [loadingExif, setLoadingExif] = useState(false); // Loading state for EXIF processing
 
-  useEffect(() => {
+  console.log("tripId:", tripId, "type:", typeof tripId); // Doit afficher le type de tripId
+
+
+   useEffect(() => {
     if (photo) {
       const img = new Image();
       img.src = photo;
@@ -100,8 +109,22 @@ export function Visit({
     }
   }, [photo]);
   
+  useEffect(() => {
+    async function fetchVisitPhotos() {
+  console.log("dans visit ,visitId:", visitId);
 
-  
+      try {
+        const photos = await getPhotosForVisit(visitId);
+        console.log("Type de photos récupérées:", Array.isArray(photos)); // Vérifier si c'est un tableau
+        setVisitPhotos(photos); // Assurez-vous que photos est un tableau
+      } catch (error) {
+        console.error("Erreur lors de la récupération des photos :", error);
+      }
+    }
+    fetchVisitPhotos();
+  }, [visitId]);
+
+
   const handleUpdateClick = () => setIsUpdateOpen(true);
 
   const handleUpdateVisit = (updatedVisitData) => {
@@ -128,11 +151,23 @@ export function Visit({
       console.error("Error deleting visit:", error);
     }
   };
-  
-  
-  
-  
 
+  const handleAddPhotosClick = () => {   
+    console.log("Open photos moadal for visit:", visitId, "for trip:", tripId);
+    setIsAddPhotosOpen(true);
+  };
+
+  const handleAddVisitsPhotos = async (visitId, tripId) => {
+    console.log("Attempting to add photos to visit:", visitId, "for trip:", tripId);
+    
+    try {
+      await addPhotosToVisit(visitId); // Assurez-vous que `addPhotosToVisit` est importé correctement
+      console.log("Photos added successfully to visit:", visitId);
+    } catch (error) {
+      console.error("Error adding photos to visit:", error);
+    }
+  };
+  
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -227,16 +262,17 @@ export function Visit({
           <CardMedia>
             <input accept="image/*" style={{ display: "none" }} id="upload-button" type="file" onChange={handlePhotoUpload} />
             <label htmlFor="upload-button">
-              <Button sx={{ variant: "contained", color: "black", component: "span", boxShadow: "8" }}>
+              <Button onClick={handleAddPhotosClick} sx={{ variant: "contained", color: "black", component: "span", boxShadow: "8" }}>
                 Ajouter des photos
               </Button>
             </label>
+            <VisitPhotos photos={visitPhotos}/>
           </CardMedia>
         </Grid>
       </Grid>
 
       {/* EXIF Data Display */}
-      <Box sx={{ marginTop: 2 }}>
+      {/* <Box sx={{ marginTop: 2 }}>
         <Typography variant="subtitle1">Informations de la photo :</Typography>
         {loadingExif ? (
           <Typography variant="body2">Chargement des données EXIF...</Typography>
@@ -255,7 +291,7 @@ export function Visit({
             )}
           </>
         )}
-      </Box>
+      </Box> */}
 
       {/* Update Visit Modal */}
       <UpdateVisitModal
@@ -272,6 +308,15 @@ export function Visit({
         visitId={visitId}
         tripId={tripId}
         onDelete={handleDeleteVisit}
+      />
+
+      {/* Add Photos Modal */}
+      <AddPhotosModal
+        isOpen={isAddPhotosOpen}
+        onClose={() => {setIsAddPhotosOpen(false)}}
+        onAddPhotos={() => handleAddVisitsPhotos(visitId, tripId)} // Utilisation de la fonction
+        visitId={visitId}
+        tripId={tripId}
       />
     </Card>
   );

@@ -25,7 +25,7 @@ const PreviousArrow = ({ onClick }) => (
       zIndex: 2,
     }}
   >
-    <ChevronLeftIcon fontSize="large" />
+    <ChevronLeftIcon fontSize="small" />
   </IconButton>
 );
 
@@ -47,11 +47,11 @@ const NextArrow = ({ onClick }) => (
       zIndex: 2,
     }}
   >
-    <ChevronRightIcon fontSize="large" />
+    <ChevronRightIcon fontSize="small" />
   </IconButton>
 );
 
-export function VisitPhotos({ photos = [] }) {
+export function VisitPhotos({ photos}) {
   // Carousel settings (from react-slick)
   const settings = {
     dots: true,
