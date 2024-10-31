@@ -10,7 +10,12 @@ export default defineConfig({
   build: {
     outDir: "dist",
     rollupOptions: {
-      external: ["jwt-decode", "exif-js", "react-leaflet", "leaflet"],
+      external: [
+        "jwt-decode",
+        "exif-js",
+        "react-leaflet",
+        "leaflet/dist/leaflet.css",
+      ],
       plugins: [
         // Enable rollup polyfills plugin
         // used during production bundling
