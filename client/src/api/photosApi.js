@@ -234,13 +234,19 @@ export async function getPhotosForVisit(visitId) {
 
     // Lire directement le corps de la réponse en tant que JSON
     const photosData = await response.json();
+
+    // Vérifiez si des photos ont été retournées
+    if (!Array.isArray(photosData) || photosData.length === 0) {
+      console.log("Aucune photo trouvée pour cette visite.");
+      return []; // Retourner un tableau vide si aucune photo n'est trouvée
+    }
+
     const photoUrls = photosData.map((photo) => photo.photo); // Transformer en tableau de chaînes d'URL
 
-    // console.log("Photos récupérées avec succès:", photoUrls);
     return photoUrls;
   } catch (error) {
     console.error("Erreur lors de la récupération des photos:", error);
-    throw error;
+    throw error; // Propager l'erreur
   }
 }
 

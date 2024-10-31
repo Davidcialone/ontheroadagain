@@ -15,6 +15,7 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ReactStars from "react-stars";
 import { addVisit, uploadImageToCloudinary } from "../../../api/visitApi";
 import { useParams } from "react-router-dom";
 
@@ -32,7 +33,6 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit }) {
     tomorrow.setDate(tomorrow.getDate() + 1);
     return !isNaN(tomorrow) ? tomorrow : null;
   });
-  
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const [dateStartOpen, setDateStartOpen] = useState(false);
@@ -236,6 +236,15 @@ const handleSave = async () => {
     onCalendarClose={() => setDateEndOpen(false)}
   />
 </FormControl>
+<FormControl fullWidth margin="normal">
+          <Typography>Note</Typography>
+          <ReactStars
+            count={5}
+            size={24}
+            value={rating}
+            onChange={(newRating) => setRating(Number(newRating))}
+          />
+        </FormControl>
 
 
         {/* Commentaire */}
