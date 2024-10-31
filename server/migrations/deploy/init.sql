@@ -1,25 +1,25 @@
 BEGIN;
 
-CREATE TABLE "role"(
+CREATE TABLE "role" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" TEXT NOT NULL,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE "user"(
+CREATE TABLE "user" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "email" TEXT NOT NULL UNIQUE,
   "lastname" TEXT NOT NULL,
   "firstname" TEXT NOT NULL,
   "pseudo" TEXT NOT NULL,
   "password" TEXT NOT NULL,
-  "role_id" INT NOT NULL REFERENCES "role"("id"),
+  "role_id" INT NOT NULL REFERENCES "role"("id") ON DELETE CASCADE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE "place"(
+CREATE TABLE "place" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "city" TEXT NOT NULL,
   "cityLatitude" NUMERIC(9,6) NOT NULL,
@@ -32,45 +32,45 @@ CREATE TABLE "place"(
   "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE "trip"(
+CREATE TABLE "trip" (
    "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
    "dateStart" DATE NOT NULL,
    "dateEnd" DATE NOT NULL,
    "photo" TEXT,
    "title" TEXT NOT NULL,
    "description" TEXT,
-   "rating" DECIMAL(2, 1),  -- Changement de "rating" à DECIMAL(2, 1)
-   "user_id" INT NOT NULL REFERENCES "user"("id"),
+   "rating" DECIMAL(2, 1),
+   "user_id" INT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
    "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
    "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE "visit"(
+CREATE TABLE "visit" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "title" TEXT NOT NULL,
   "photo" TEXT,
   "dateStart" DATE NOT NULL,
   "dateEnd" DATE NOT NULL,
   "comment" TEXT,
-  "rating" DECIMAL(2, 1),  -- Changement de "rating" à DECIMAL(2, 1)
+  "rating" DECIMAL(2, 1),
   "geo" TEXT,
-  "place_id" INT REFERENCES "place"("id"),
-  "trip_id" INT NOT NULL REFERENCES "trip"("id"),
+  "place_id" INT REFERENCES "place"("id") ON DELETE CASCADE,
+  "trip_id" INT NOT NULL REFERENCES "trip"("id") ON DELETE CASCADE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE "visit_photos"(
+CREATE TABLE "visit_photos" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "photo" TEXT NOT NULL,
-  "visit_id" INT NOT NULL REFERENCES "visit"("id"),
+  "visit_id" INT NOT NULL REFERENCES "visit"("id") ON DELETE CASCADE,
   "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
   "updated_at" TIMESTAMPTZ
 );
 
-CREATE TABLE "user_has_follower"(
-  "user_id" INT NOT NULL REFERENCES "user"("id"),
-  "follower_id" INT NOT NULL REFERENCES "user"("id"),
+CREATE TABLE "user_has_follower" (
+  "user_id" INT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
+  "follower_id" INT NOT NULL REFERENCES "user"("id") ON DELETE CASCADE,
   PRIMARY KEY ("user_id", "follower_id")
 );
 

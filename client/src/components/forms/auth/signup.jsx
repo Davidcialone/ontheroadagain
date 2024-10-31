@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Typography,
+  Snackbar,
+  Container,
+} from '@mui/material';
 
 export function Signup() {
   const [lastname, setName] = useState('');
@@ -7,7 +17,7 @@ export function Signup() {
   const [pseudo, setPseudo] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmation, setConfirmation] = useState(''); // Changement ici
+  const [confirmation, setConfirmation] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -20,30 +30,32 @@ export function Signup() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ lastname, firstname, pseudo, email, password, confirmation }), // Changement ici
+        body: JSON.stringify({ lastname, firstname, pseudo, email, password, confirmation }),
       });
 
       if (!response.ok) {
-        const errorText = await response.json(); // Récupérer le JSON pour afficher l'erreur
+        const errorText = await response.json();
         throw new Error(`Erreur: ${response.status} - ${errorText.error || 'Erreur inconnue'}`);
       }
 
       const data = await response.json();
       console.log('Inscription réussie:', data);
-      navigate('/login'); 
+      navigate('/login');
     } catch (err) {
-      setError(err.message); 
+      setError(err.message);
       console.error('Erreur lors de l\'inscription:', err);
     }
   };
 
   return (
-    <ChakraProvider>
+    <Container maxWidth="sm">
       <Box p={5}>
-        <h1>Inscription</h1>
-        {error && <div style={{ color: 'red' }}>{error}</div>}
+        <Typography variant="h4" gutterBottom>
+          Inscription
+        </Typography>
+        {error && <Typography color="error">{error}</Typography>}
         <form onSubmit={handleSignup}>
-          <FormControl id="lastname" isRequired>
+          <FormControl margin="normal" fullWidth>
             <FormLabel>Nom</FormLabel>
             <Input
               type="text"
@@ -51,7 +63,7 @@ export function Signup() {
               onChange={(e) => setName(e.target.value)}
             />
           </FormControl>
-          <FormControl id="firstname" isRequired>
+          <FormControl margin="normal" fullWidth>
             <FormLabel>Prénom</FormLabel>
             <Input
               type="text"
@@ -59,7 +71,7 @@ export function Signup() {
               onChange={(e) => setFirstname(e.target.value)}
             />
           </FormControl>
-          <FormControl id="pseudo" isRequired>
+          <FormControl margin="normal" fullWidth>
             <FormLabel>Pseudo</FormLabel>
             <Input
               type="text"
@@ -67,7 +79,7 @@ export function Signup() {
               onChange={(e) => setPseudo(e.target.value)}
             />
           </FormControl>
-          <FormControl id="email" isRequired>
+          <FormControl margin="normal" fullWidth>
             <FormLabel>Email</FormLabel>
             <Input
               type="email"
@@ -75,7 +87,7 @@ export function Signup() {
               onChange={(e) => setEmail(e.target.value)}
             />
           </FormControl>
-          <FormControl id="password" isRequired>
+          <FormControl margin="normal" fullWidth>
             <FormLabel>Mot de passe</FormLabel>
             <Input
               type="password"
@@ -83,22 +95,25 @@ export function Signup() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </FormControl>
-          <FormControl id="confirmation" isRequired>
+          <FormControl margin="normal" fullWidth>
             <FormLabel>Confirmer le mot de passe</FormLabel>
             <Input
               type="password"
               value={confirmation}
-              onChange={(e) => setConfirmation(e.target.value)} // Changement ici
+              onChange={(e) => setConfirmation(e.target.value)}
             />
           </FormControl>
-          <Button mt={4} colorScheme="teal" type="submit">
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            style={{ marginTop: '16px' }}
+          >
             S'inscrire
           </Button>
         </form>
       </Box>
-    </ChakraProvider>
+    </Container>
   );
 }
-
-
-

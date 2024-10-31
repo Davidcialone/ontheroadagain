@@ -236,7 +236,7 @@ export async function getPhotosForVisit(visitId) {
     const photosData = await response.json();
     const photoUrls = photosData.map((photo) => photo.photo); // Transformer en tableau de chaînes d'URL
 
-    console.log("Photos récupérées avec succès:", photoUrls);
+    // console.log("Photos récupérées avec succès:", photoUrls);
     return photoUrls;
   } catch (error) {
     console.error("Erreur lors de la récupération des photos:", error);
@@ -247,6 +247,8 @@ export async function getPhotosForVisit(visitId) {
 // Fonction pour ajouter des photos à une visite
 export async function addPhotosToVisit(visitId, photos) {
   // Validation de l'ID de visite
+  console.log(`Début de l'ajout de photos pour la visite: ${visitId}`);
+  console.log("Photos à ajouter:", photos, "type", typeof photos);
   if (!visitId || isNaN(visitId) || !Number.isInteger(Number(visitId))) {
     console.error("Erreur: ID de visite invalide", { visitId });
     throw new Error("ID de visite invalide");
@@ -275,18 +277,19 @@ export async function addPhotosToVisit(visitId, photos) {
 
     // Vérifiez si la réponse est correcte
     if (!response.ok) {
+      const errorText = await response.text(); // Récupération de la réponse en texte si la requête échoue
       console.error(
         `Erreur lors de l'ajout de photos:`,
         response.statusText,
-        responseText
+        errorText
       );
       throw new Error(
-        `Erreur lors de l'ajout de photos: ${response.statusText} - ${responseText}`
+        `Erreur lors de l'ajout de photos: ${response.statusText} - ${errorText}`
       );
     }
 
     // Analyser le texte de réponse en JSON
-    const photoResponseData = JSON.parse(responseText);
+    const photoResponseData = await response.json(); // Récupération de la réponse en JSON si elle est réussie
     console.log("Photos ajoutées avec succès:", photoResponseData);
 
     return photoResponseData; // Retourne les photos ajoutées avec succès

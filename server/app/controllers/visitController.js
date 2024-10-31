@@ -111,17 +111,16 @@ export async function updateVisit(req, res) {
 // DELETE /api/me/trips/:tripId/visits/:visitId
 export async function deleteVisit(req, res) {
   const visitId = parseInt(req.params.visitId);
-  const tripId = parseInt(req.params.tripId);
-  console.log("Visit ID reçu:", visitId); // Ajout pour déboguer
-  console.log("Trip ID reçu:", tripId); // Ajout pour déboguer
 
-  if (isNaN(visitId) || isNaN(tripId)) {
+  console.log("Visit ID reçu:", visitId); // Ajout pour déboguer
+
+  if (isNaN(visitId)) {
     return res.status(400).json({ error: "Paramètres invalides." });
   }
 
   try {
     const visit = await Visit.findByPk(visitId);
-    if (!visit || visit.trip_id !== tripId) {
+    if (!visit) {
       return res
         .status(404)
         .json({ error: "Visite non trouvée pour ce voyage." });

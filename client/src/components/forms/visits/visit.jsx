@@ -59,13 +59,10 @@ export function Visit({
   const [isAddPhotosOpen, setIsAddPhotosOpen] = useState(false);
   const [currentLatitude, setCurrentLatitude] = useState(latitude);
   const [currentLongitude, setCurrentLongitude] = useState(longitude);
-  const [uploadedPhoto, setUploadedPhoto] = useState(null);
+  const [uploadedPhoto, setUploadedPhoto] = useState([]);
+  const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [visitPhotos, setVisitPhotos] = useState([]);
   const [exifData, setExifData] = useState({}); // State to hold EXIF data
-  const [loadingExif, setLoadingExif] = useState(false); // Loading state for EXIF processing
-
-  console.log("tripId:", tripId, "type:", typeof tripId); // Doit afficher le type de tripId
-
 
    useEffect(() => {
     if (photo) {
@@ -141,10 +138,10 @@ export function Visit({
     setIsDeleteOpen(true);
   };
   
-  const handleDeleteVisit = async (visitId, tripId) => {
-    console.log("Attempting to delete visit:", visitId, "for trip:", tripId);
+  const handleDeleteVisit = async (visitId) => {
+    console.log("Attempting to delete visit:", visitId);
     try {
-      await deleteVisit(tripId, visitId); // Assurez-vous que `deleteVisit` est importé correctement
+      await deleteVisit( visitId); // Assurez-vous que `deleteVisit` est importé correctement
       console.log("Visit deleted successfully:", visitId);
       onVisitDeleted(visitId);
     } catch (error) {
@@ -155,26 +152,57 @@ export function Visit({
   const handleAddPhotosClick = () => {   
     console.log("Open photos moadal for visit:", visitId, "for trip:", tripId);
     setIsAddPhotosOpen(true);
-  };
+      };
 
-  const handleAddVisitsPhotos = async (visitId, tripId) => {
-    console.log("Attempting to add photos to visit:", visitId, "for trip:", tripId);
-    
-    try {
-      await addPhotosToVisit(visitId); // Assurez-vous que `addPhotosToVisit` est importé correctement
-      console.log("Photos added successfully to visit:", visitId);
-    } catch (error) {
-      console.error("Error adding photos to visit:", error);
+const handlePhotosUpload = (event) => {
+    console.log("handlePhotoUpload a été appelée"); // Log pour confirmer que la fonction est appelée
+    const files = event.target.files; // Obtenez les fichiers
+    console.log("Fichiers sélectionnés:", files); // Log des fichiers sélectionnés
+
+    if (files && files.length > 0) {
+        const photosArray = Array.from(files).map(file => ({
+            url: URL.createObjectURL(file),
+            publicId: file.name
+        }));
+        console.log("handlePhotoUpload, Photos à ajouter:", photosArray); // Vérifiez les photos ajoutées
+
+        // Mise à jour de l'état avec les nouvelles photos
+        setUploadedPhotos(prevPhotos => [...prevPhotos, ...photosArray]); // Ajoute à l'état existant
+
+        console.log("Valeur de uploadedPhotos juste après setUploadedPhotos:", uploadedPhotos); // Vérifiez la valeur juste après
+    } else {
+        console.error("Aucune photo sélectionnée"); // Log pour déboguer
     }
-  };
+};
+
+
+// Dans la fonction handleAddVisitsPhotos, utilisez uploadedPhotos
+const handleAddVisitsPhotos = async (uploadedPhotos) => {
+  console.log("Valeur de `uploadedPhotos` avant envoi:", uploadedPhotos);
+
+  try {
+      // Vérification de la valeur de `uploadedPhotos`
+      if (!uploadedPhotos || uploadedPhotos.length === 0) {
+          console.error("Aucune photo valide à ajouter");
+          return;
+      }
+
+      console.log("Tentative d'ajouter des photos à la visite:", visitId);
+      console.log("Photos à ajouter:", uploadedPhotos);
+
+      const result = await addPhotosToVisit(visitId, uploadedPhotos);
+      console.log("Photos ajoutées avec succès:", result);
+
+      // Réinitialisation de l'état après ajout
+      setUploadedPhotos([]); 
+      setIsAddPhotosOpen(false); // Fermer le modal après l'ajout
+  } catch (error) {
+      console.error("Erreur lors de l'ajout de photos:", error.message);
+  }
+};
+
   
-  const handlePhotoUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setUploadedPhoto(URL.createObjectURL(file)); // Create a local URL for the uploaded photo
-      extractExifData(file); // Extract EXIF data from the uploaded file
-    }
-  };
+  
   
   return (
     <Card
@@ -202,17 +230,19 @@ export function Visit({
           {/* Dates Section */}
           <CardContent sx={{ mt: 2 }}>
             <CardMedia
-              component="img"
-              height="200"
-              image={uploadedPhoto || photo} // Display uploaded photo or existing photo
-              sx={{ objectFit: "cover", transition: 'transform 0.3s ease-in-out', '&:hover': { transform: 'scale(1.1)' } }}
+                component="img"
+                height="200"
+                image={uploadedPhoto.length > 0 ? uploadedPhoto[0].url : photo} // Utilisez la première photo téléchargée ou la photo existante
+                sx={{ objectFit: "cover", transition: 'transform 0.3s ease-in-out', '&:hover': { transform: 'scale(1.1)' } }}
             />
             <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: "1px 8px", borderRadius: "8px" }}>
-              Dates
+                Dates
             </Badge>
             <Typography variant="body2" mt={1}>
-              Du {new Date(dateStart).toLocaleDateString("fr-FR")} au {new Date(dateEnd).toLocaleDateString("fr-FR")}
+                Du {new Date(dateStart).toLocaleDateString("fr-FR")} au {new Date(dateEnd).toLocaleDateString("fr-FR")}
             </Typography>
+
+
 
             {/* Rating Section */}
             <Badge color="gray" sx={{ mr: 1, backgroundColor: "#f4f4f4", padding: "1px 8px", borderRadius: "8px", mt: 2 }}>
@@ -260,7 +290,7 @@ export function Visit({
         {/* Right Section - Image Upload */}
         <Grid item xs={12} md={8} sx={{ padding: 2 }}>
           <CardMedia>
-            <input accept="image/*" style={{ display: "none" }} id="upload-button" type="file" onChange={handlePhotoUpload} />
+            <input accept="image/*" style={{ display: "none" }} id="upload-button" type="file" multiple onChange={handlePhotosUpload} />
             <label htmlFor="upload-button">
               <Button onClick={handleAddPhotosClick} sx={{ variant: "contained", color: "black", component: "span", boxShadow: "8" }}>
                 Ajouter des photos
@@ -314,10 +344,10 @@ export function Visit({
       <AddPhotosModal
         isOpen={isAddPhotosOpen}
         onClose={() => {setIsAddPhotosOpen(false)}}
-        onAddPhotos={() => handleAddVisitsPhotos(visitId, tripId)} // Utilisation de la fonction
+        onAddPhotos={handleAddVisitsPhotos} // Passez directement la fonction
         visitId={visitId}
         tripId={tripId}
-      />
+    />
     </Card>
   );
 }

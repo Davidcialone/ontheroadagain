@@ -377,12 +377,9 @@ export async function updateVisit(visitId, visitData, tripId) {
 }
 
 // Fonction pour supprimer une visite
-export async function deleteVisit(tripId, visitId) {
+export async function deleteVisit(visitId) {
+  console.log("Suppression de la visite avec l'ID:", visitId);
   // Vérifier si les identifiants de visite et de voyage sont bien fournis
-  if (!tripId) {
-    console.error("tripId est manquant.");
-    throw new Error("tripId est manquant.");
-  }
   if (!visitId) {
     console.error("visitId est manquant.");
     throw new Error("visitId est manquant.");
@@ -391,7 +388,7 @@ export async function deleteVisit(tripId, visitId) {
   try {
     // Envoi de la requête pour supprimer la visite
     const response = await fetch(
-      `http://localhost:5000/api/me/trips/${tripId}/visits/${visitId}`,
+      `http://localhost:5000/api/me/visits/${visitId}`,
       {
         method: "DELETE",
         headers: {

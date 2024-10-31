@@ -67,9 +67,9 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit }) {
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const validTypes = ["image/jpeg", "image/png", "image/gif"];
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
       if (!validTypes.includes(file.type)) {
-        setError("Veuillez télécharger une image (JPEG, PNG, GIF).");
+        setError("Veuillez télécharger une image (JPEG, PNG, GIF et webp).");
         console.log('Invalid file type:', file.type); // Log de type de fichier invalide
         return;
       }

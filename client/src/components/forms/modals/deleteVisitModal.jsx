@@ -10,13 +10,13 @@ import {
 } from "@mui/material";
 
 
-export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId, tripId }) {
+export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId }) {
   const handleDelete = () => {
-    if (visitId && tripId) {
-        console.log(`Deleting visit with ID: ${visitId} and trip ID: ${tripId}`);
-        onDelete(visitId, tripId);
+    if (visitId ) {
+        console.log(`Deleting visit with ID: ${visitId}`);
+        onDelete(visitId);
     } else {
-        console.error("visitId or tripId is missing");
+        console.error("visitId is missing");
     }
     onClose(); 
 };
