@@ -33,6 +33,7 @@ export default defineConfig({
         "leaflet/dist/leaflet.css",
         "piexifjs",
         "@mui/icons-material/Edit",
+        "@mui/icons-material/Delete",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
