@@ -39,14 +39,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       process: "process/browser",
       buffer: "buffer",
-      leaflet: path.resolve(
-        __dirname,
-        "node_modules/leaflet/dist/leaflet-src.esm.js"
-      ),
-      "leaflet/dist/leaflet.css": path.resolve(
-        __dirname,
-        "node_modules/leaflet/dist/leaflet.css"
-      ),
+      leaflet: path.resolve(__dirname, "node_modules/leaflet"),
     },
   },
   optimizeDeps: {
