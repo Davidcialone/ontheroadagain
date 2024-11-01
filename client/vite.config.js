@@ -26,7 +26,8 @@ export default defineConfig({
         "exif-js",
         "react-leaflet",
         "framer-motion/client",
-        "@mui/material", // Ajoutez ici pour exclure explicitement
+        "@mui/material",
+        "@mui/material/styles/shadows",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({

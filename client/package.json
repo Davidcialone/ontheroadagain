@@ -13,7 +13,7 @@
     "@esbuild-plugins/node-globals-polyfill": "^0.2.2",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@mui/icons-material": "^6.1.5",
-    "@mui/material": "^6.1.5",
+    "@mui/material": "^6.1.6",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "compressorjs": "^1.2.1",
