@@ -21,17 +21,28 @@ export default defineConfig({
   build: {
     outDir: "dist",
     rollupOptions: {
-      // Externalisation plus large pour MUI
       external: [
-        /^@mui\/material\//, // Externaliser tout `@mui/material`
-        /^@mui\/icons-material\//, // Externaliser tout `@mui/icons-material`
-        "leaflet/dist/leaflet.css", // Inclure le fichier CSS Leaflet
         "jwt-decode",
         "exif-js",
         "react-leaflet",
         "framer-motion/client",
+        "@mui/material",
+        "@mui/material/styles/shadows",
+        "@mui/material/Grid2",
+        "@mui/material/Alert",
+        "leaflet/dist/leaflet.css",
         "piexifjs",
+        "@mui/icons-material/Edit",
+        "@mui/icons-material/Delete",
+        "@mui/icons-material",
+        "@mui/icons-material/Visibility",
+        "@mui/icons-material/CalendarToday",
+        "@mui/icons-material/AnotherIcon",
       ],
+      esbuildOptions: {
+        define: {
+          global: "globalThis",
+        },
       plugins: [
         NodeGlobalsPolyfillPlugin({
           process: true,
