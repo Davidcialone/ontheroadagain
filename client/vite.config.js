@@ -21,7 +21,12 @@ export default defineConfig({
   build: {
     outDir: "dist",
     rollupOptions: {
-      external: ["jwt-decode", "exif-js", "react-leaflet"],
+      external: [
+        "jwt-decode",
+        "exif-js",
+        "react-leaflet",
+        "framer-motion/client",
+      ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
           process: true,

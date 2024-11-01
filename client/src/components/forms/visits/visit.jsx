@@ -22,6 +22,8 @@ import { AddPhotosModal } from "../modals/addPhotosModal";
 import EXIF from "exif-js"; // Import EXIF library
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"; // Import Leaflet components
 import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
+import { motion } from "framer-motion";
+
 
 // Configuration des icônes par défaut
 delete L.Icon.Default.prototype._getIconUrl;
