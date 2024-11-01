@@ -41,6 +41,7 @@ export default defineConfig({
         "leaflet/dist/leaflet.css",
         "@mui/icons-material/Edit",
         "@mui/icons-material/Delete",
+        "@mui/icons-material/Visibility",
       ],
       output: {
         assetFileNames: (assetInfo) => {
