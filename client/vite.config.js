@@ -28,6 +28,7 @@ export default defineConfig({
         "framer-motion/client",
         "@mui/material",
         "@mui/material/styles/shadows",
+        "@mui/material/Grid2",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
