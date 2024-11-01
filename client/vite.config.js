@@ -35,6 +35,9 @@ export default defineConfig({
         "@mui/icons-material/Edit",
         "@mui/icons-material/Delete",
         "@mui/icons-material",
+        "@mui/icons-material/Visibility",
+        "@mui/icons-material/CalendarToday",
+        "@mui/icons-material/AnotherIcon",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
