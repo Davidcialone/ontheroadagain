@@ -29,6 +29,7 @@ export default defineConfig({
         "@mui/material",
         "@mui/material/styles/shadows",
         "@mui/material/Grid2",
+        "@mui/material/Alert",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
