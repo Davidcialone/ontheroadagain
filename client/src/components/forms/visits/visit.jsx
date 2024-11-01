@@ -24,20 +24,14 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"; // Impor
 import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
 import L from "leaflet";
 
-// Import marker images
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import markerIconUrl from 'leaflet/dist/images/marker-icon.png';
+import markerIconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import markerShadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
-// Import Leaflet
-
-import { use } from "framer-motion/client";
-
-delete L.Icon.Default.prototype._getIconUrl; // Fix default icon not showing
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
+const markerIcon = L.icon({
+  iconUrl: markerIconUrl,
+  iconRetinaUrl: markerIconRetinaUrl,
+  shadowUrl: markerShadowUrl,
 });
 
 export function Visit({
