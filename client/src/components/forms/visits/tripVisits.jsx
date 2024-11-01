@@ -4,7 +4,8 @@ import { AuthContext } from '../auth/authContext';
 import { addVisit, getVisitsForTrip } from '../../../api/visitApi'; 
 import { fetchTrips } from '../../../api/tripApi';
 import { Button, Typography, CircularProgress, Snackbar, Alert as MuiAlert } from '@mui/material';
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
+
 import { AddVisitModal } from '../modals/addVisitModal';
 import { UpdateVisitModal } from '../modals/updateVisitModal';
 import { DeleteVisitModal } from '../modals/deleteVisitModal';
