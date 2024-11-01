@@ -38,6 +38,8 @@ export default defineConfig({
         "@mui/icons-material/Visibility",
         "@mui/icons-material/CalendarToday",
         "@mui/icons-material/AnotherIcon",
+        "@mui/icons-material/ChevronLeft",
+        "@mui/icons-material/ChevronRight",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
