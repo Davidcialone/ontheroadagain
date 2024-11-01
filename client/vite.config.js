@@ -39,6 +39,7 @@ export default defineConfig({
         "@mui/icons-material",
         "@mui/icons-material/CalendarToday",
         "leaflet/dist/leaflet.css",
+        "@mui/icons-material/CalendarToday",
       ],
       output: {
         assetFileNames: (assetInfo) => {
