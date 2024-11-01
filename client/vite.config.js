@@ -41,6 +41,7 @@ export default defineConfig({
         "piexifjs",
         "@mui/icons-material",
         "@mui/icons-material/CalendarToday",
+        "leaflet/dist/leaflet.css",
       ],
       output: {
         assetFileNames: (assetInfo) => {
