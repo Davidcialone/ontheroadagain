@@ -42,6 +42,8 @@ export default defineConfig({
         "@mui/icons-material/Edit",
         "@mui/icons-material/Delete",
         "@mui/icons-material/Visibility",
+        "@mui/icons-material/ChevronLeft",
+        "@mui/icons-material/ChevronRight",
       ],
       output: {
         assetFileNames: (assetInfo) => {
