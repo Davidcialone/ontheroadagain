@@ -15,6 +15,8 @@ export default defineConfig({
         "exif-js",
         "react-leaflet",
         "leaflet/dist/leaflet.css",
+        "leaflet/dist/images/marker-icon.png",
+        "leaflet/dist/images/marker-shadow.png",
       ],
       plugins: [
         // Enable rollup polyfills plugin
@@ -46,6 +48,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       process: "process/browser",
       buffer: "buffer",
+      "leaflet/dist/images": "leaflet/dist/images",
     },
   },
   optimizeDeps: {
