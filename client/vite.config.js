@@ -10,17 +10,9 @@ export default defineConfig({
   build: {
     outDir: "dist",
     rollupOptions: {
-      external: [
-        "jwt-decode",
-        "exif-js",
-        "react-leaflet",
-        "leaflet/dist/leaflet.css",
-        "leaflet/dist/images/marker-icon.png",
-        "leaflet/dist/images/marker-shadow.png",
-      ],
+      // Retirez leaflet des externals car nous voulons qu'il soit inclus dans le bundle
+      external: ["jwt-decode", "exif-js", "react-leaflet"],
       plugins: [
-        // Enable rollup polyfills plugin
-        // used during production bundling
         NodeGlobalsPolyfillPlugin({
           process: true,
           buffer: true,
@@ -28,8 +20,8 @@ export default defineConfig({
         NodeModulesPolyfillPlugin(),
       ],
     },
-    optimizeDeps: {
-      include: ["leaflet"],
+    commonjsOptions: {
+      include: [/node_modules/],
     },
   },
   server: {
@@ -48,16 +40,15 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       process: "process/browser",
       buffer: "buffer",
-      "leaflet/dist/images": "leaflet/dist/images",
+      // Modifiez l'alias de leaflet pour pointer vers le bon fichier
+      leaflet: "leaflet/dist/leaflet-src.esm.js",
     },
   },
   optimizeDeps: {
     esbuildOptions: {
-      // Node.js global to browser globalThis
       define: {
         global: "globalThis",
       },
-      // Enable esbuild polyfill plugins
       plugins: [
         NodeGlobalsPolyfillPlugin({
           process: true,
@@ -66,5 +57,6 @@ export default defineConfig({
         NodeModulesPolyfillPlugin(),
       ],
     },
+    include: ["leaflet"], // Assurez-vous que leaflet est inclus ici
   },
 });

@@ -30,6 +30,7 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 // Import Leaflet
 import L from "leaflet";
+import 'leaflet/dist/leaflet.css';
 import { use } from "framer-motion/client";
 
 delete L.Icon.Default.prototype._getIconUrl; // Fix default icon not showing
