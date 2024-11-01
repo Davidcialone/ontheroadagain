@@ -1,4 +1,3 @@
-import 'leaflet/dist/leaflet.css'; // Importation du CSS de Leaflet
 import { useState, useEffect } from 'react'; 
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { Home } from './components/forms/home/home';
@@ -7,6 +6,7 @@ import { Login } from './components/forms/auth/login';
 import { Signup } from './components/forms/auth/signup';
 import { NavbarSite } from './components/forms/home/navbar';
 import { Box, CssBaseline, Container, Typography } from "@mui/material"; // Importations MUI
+import 'leaflet/dist/leaflet.css'; // Importation du CSS de Leaflet
 import '../src/style/app.css';
 import '../src/style/trip.css';
 import '../src/style/visit.css';
