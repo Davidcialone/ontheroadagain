@@ -29,9 +29,9 @@ import markerIconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import markerShadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
 const markerIcon = L.icon({
-  iconUrl: markerIconUrl,
-  iconRetinaUrl: markerIconRetinaUrl,
-  shadowUrl: markerShadowUrl,
+  iconUrl: '/assets/images/marker-icon.png',
+  iconRetinaUrl: '/assets/images/marker-icon-2x.png',
+  shadowUrl: '/assets/images/marker-shadow.png',
 });
 
 export function Visit({
