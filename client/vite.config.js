@@ -27,17 +27,10 @@ export default defineConfig({
         "react-leaflet",
         "framer-motion/client",
         "@mui/material",
-        "@mui/material/styles/shadows",
-        "@mui/material/Grid2",
-        "@mui/material/Alert",
+        "@mui/icons-material",
+        /^@mui\/icons-material\//, // Externalisatioin générique pour les icônes MUI
         "leaflet/dist/leaflet.css",
         "piexifjs",
-        "@mui/icons-material/Edit",
-        "@mui/icons-material/Delete",
-        "@mui/icons-material",
-        "@mui/icons-material/Visibility",
-        "@mui/icons-material/CalendarToday",
-        "@mui/icons-material/AnotherIcon",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
