@@ -14,6 +14,10 @@ export default defineConfig({
           src: "node_modules/leaflet/dist/leaflet.css",
           dest: "assets",
         },
+        {
+          src: "node_modules/leaflet/dist/images/*", // Ajout pour les images
+          dest: "assets/images",
+        },
       ],
     }),
   ],
@@ -22,25 +26,16 @@ export default defineConfig({
     outDir: "dist",
     rollupOptions: {
       external: [
-        "jwt-decode",
-        "exif-js",
-        "react-leaflet",
-        "framer-motion/client",
-        "@mui/material",
-        "@mui/material/styles/shadows",
-        "@mui/material/Grid2",
-        "@mui/material/Alert",
-        "leaflet/dist/leaflet.css",
-        "piexifjs",
-        "@mui/icons-material/Edit",
-        "@mui/icons-material/Delete",
-        "@mui/icons-material",
-        "@mui/icons-material/Visibility",
-        "@mui/icons-material/CalendarToday",
-        "@mui/icons-material/AnotherIcon",
-        "@mui/icons-material/ChevronLeft",
-        "@mui/icons-material/ChevronRight",
+        // Liste des modules externes
       ],
+      output: {
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name.endsWith(".png")) {
+            return "assets/images/[name]-[hash][extname]"; // Chemin des images
+          }
+          return "assets/[name]-[hash][extname]"; // Chemin par défaut
+        },
+      },
       plugins: [
         NodeGlobalsPolyfillPlugin({
           process: true,
@@ -49,20 +44,10 @@ export default defineConfig({
         NodeModulesPolyfillPlugin(),
       ],
     },
-    commonjsOptions: {
-      include: [/node_modules/],
-    },
+    // ... autres options
   },
   server: {
-    port: 3000,
-    proxy: {
-      "/api": {
-        target: process.env.VITE_API_URL || "http://localhost:3000",
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
+    // Configuration du serveur
   },
   resolve: {
     alias: {
@@ -73,25 +58,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: [
-      "@mui/material",
-      "@mui/icons-material",
-      "react-leaflet",
-      "jwt-decode",
-      "framer-motion",
-      "piexifjs",
-    ],
-    esbuildOptions: {
-      define: {
-        global: "globalThis",
-      },
-      plugins: [
-        NodeGlobalsPolyfillPlugin({
-          process: true,
-          buffer: true,
-        }),
-        NodeModulesPolyfillPlugin(),
-      ],
-    },
+    // Optimisation des dépendances
   },
-}); // <- Assurez-vous que cette accolade finale est bien la dernière du fichier
+});
