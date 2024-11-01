@@ -1,3 +1,4 @@
+import 'leaflet/dist/leaflet.css';
 import { useState, useEffect } from 'react'; 
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { Home } from './components/forms/home/home';
@@ -9,7 +10,6 @@ import { Box, CssBaseline, Container, Typography } from "@mui/material"; // Impo
 import '../src/style/app.css';
 import '../src/style/trip.css';
 import '../src/style/visit.css';
-import 'leaflet/dist/leaflet.css';
 import { AuthProvider } from './components/forms/auth/authContext';
 import { TripVisits } from './components/forms/visits/tripVisits';
 import shadows from '@mui/material/styles/shadows';
