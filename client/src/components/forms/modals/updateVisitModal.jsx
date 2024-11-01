@@ -16,6 +16,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Importer l'icône de calendrier
+import CalendarToday from '@mui/icons-material/CalendarToday';
 import { updateVisit } from "../../../api/visitApi"; // Assuming you have an API function for updating visits
 import { useParams } from "react-router-dom";
 
