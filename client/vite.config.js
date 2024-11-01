@@ -10,7 +10,6 @@ export default defineConfig({
   build: {
     outDir: "dist",
     rollupOptions: {
-      // Retirez leaflet des externals car nous voulons qu'il soit inclus dans le bundle
       external: ["jwt-decode", "exif-js", "react-leaflet"],
       plugins: [
         NodeGlobalsPolyfillPlugin({
@@ -40,8 +39,14 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       process: "process/browser",
       buffer: "buffer",
-      // Modifiez l'alias de leaflet pour pointer vers le bon fichier
-      leaflet: "leaflet/dist/leaflet-src.esm.js",
+      leaflet: path.resolve(
+        __dirname,
+        "node_modules/leaflet/dist/leaflet-src.esm.js"
+      ),
+      "leaflet/dist/leaflet.css": path.resolve(
+        __dirname,
+        "node_modules/leaflet/dist/leaflet.css"
+      ),
     },
   },
   optimizeDeps: {
@@ -57,6 +62,13 @@ export default defineConfig({
         NodeModulesPolyfillPlugin(),
       ],
     },
-    include: ["leaflet"], // Assurez-vous que leaflet est inclus ici
+    include: ["leaflet"],
+  },
+  css: {
+    preprocessorOptions: {
+      css: {
+        includePaths: [path.resolve(__dirname, "node_modules")],
+      },
+    },
   },
 });

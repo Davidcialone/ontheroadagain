@@ -23,10 +23,13 @@ import EXIF from "exif-js"; // Import EXIF library
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"; // Import Leaflet components
 import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
 
-// Import marker images
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
+// Configuration des icônes par défaut
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 // Import Leaflet
 import L from "leaflet";
