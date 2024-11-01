@@ -32,6 +32,7 @@ export default defineConfig({
         "@mui/material/Alert",
         "leaflet/dist/leaflet.css",
         "piexifjs",
+        "@mui/icons-material/Edit",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
