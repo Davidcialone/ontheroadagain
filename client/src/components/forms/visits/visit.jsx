@@ -24,15 +24,21 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"; // Impor
 import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
 import L from "leaflet";
 
-import markerIconUrl from 'leaflet/dist/images/marker-icon.png';
-import markerIconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import markerShadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import React from "react";
+import L from "leaflet";
 
+// Importation explicite des images
+import markerIconUrl from '/assets/images/marker-icon.png';
+import markerIconRetinaUrl from 'assets/images/marker-icon-2x.png';
+import markerShadowUrl from 'assets/images/marker-shadow.png';
+
+// Définir l'icône du marqueur
 const markerIcon = L.icon({
-  iconUrl: '/assets/images/marker-icon.png',
-  iconRetinaUrl: '/assets/images/marker-icon-2x.png',
-  shadowUrl: '/assets/images/marker-shadow.png',
+  iconUrl: markerIconUrl,
+  iconRetinaUrl: markerIconRetinaUrl,
+  shadowUrl: markerShadowUrl,
 });
+
 
 export function Visit({
   id,
