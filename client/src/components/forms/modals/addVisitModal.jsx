@@ -15,6 +15,8 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CalendarToday from '@mui/icons-material/CalendarToday';
+
 import ReactStars from "react-stars";
 import { addVisit, uploadImageToCloudinary } from "../../../api/visitApi";
 import { useParams } from "react-router-dom";
