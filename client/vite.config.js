@@ -27,6 +27,16 @@ export default defineConfig({
     rollupOptions: {
       external: [
         // Liste des modules externes
+        "jwt-decode",
+        "exif-js",
+        "react-leaflet",
+        "framer-motion/client",
+        "@mui/material",
+        "@mui/material/styles/shadows",
+        "@mui/material/Grid2",
+        "@mui/material/Alert",
+        "piexifjs",
+        "@mui/icons-material",
       ],
       output: {
         assetFileNames: (assetInfo) => {
@@ -44,10 +54,20 @@ export default defineConfig({
         NodeModulesPolyfillPlugin(),
       ],
     },
-    // ... autres options
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
   },
   server: {
-    // Configuration du serveur
+    port: 3000, // Assurez-vous que c'est le port que vous souhaitez
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_URL || "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
   resolve: {
     alias: {
@@ -58,6 +78,25 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    // Optimisation des dépendances
+    include: [
+      "@mui/material",
+      "@mui/icons-material",
+      "react-leaflet",
+      "jwt-decode",
+      "framer-motion",
+      "piexifjs",
+    ],
+    esbuildOptions: {
+      define: {
+        global: "globalThis",
+      },
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          process: true,
+          buffer: true,
+        }),
+        NodeModulesPolyfillPlugin(),
+      ],
+    },
   },
 });
