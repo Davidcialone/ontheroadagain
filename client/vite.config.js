@@ -40,6 +40,7 @@ export default defineConfig({
         "@mui/material/Alert",
         "piexifjs",
         "@mui/icons-material",
+        "@mui/icons-material/CalendarToday",
       ],
       output: {
         assetFileNames: (assetInfo) => {
