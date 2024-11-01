@@ -21,15 +21,15 @@ export default defineConfig({
   build: {
     outDir: "dist",
     rollupOptions: {
+      // Externalisation plus large pour MUI
       external: [
+        /^@mui\/material\//, // Externaliser tout `@mui/material`
+        /^@mui\/icons-material\//, // Externaliser tout `@mui/icons-material`
+        "leaflet/dist/leaflet.css", // Inclure le fichier CSS Leaflet
         "jwt-decode",
         "exif-js",
         "react-leaflet",
         "framer-motion/client",
-        "@mui/material",
-        "@mui/icons-material",
-        /^@mui\/icons-material\//, // Externalisatioin générique pour les icônes MUI
-        "leaflet/dist/leaflet.css",
         "piexifjs",
       ],
       plugins: [
