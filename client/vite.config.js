@@ -55,13 +55,5 @@ export default defineConfig({
         NodeModulesPolyfillPlugin(),
       ],
     },
-    include: ["leaflet"],
-  },
-  css: {
-    preprocessorOptions: {
-      css: {
-        includePaths: [path.resolve(__dirname, "node_modules")],
-      },
-    },
   },
 });
