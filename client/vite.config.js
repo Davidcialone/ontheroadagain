@@ -39,10 +39,6 @@ export default defineConfig({
         "@mui/icons-material/CalendarToday",
         "@mui/icons-material/AnotherIcon",
       ],
-      esbuildOptions: {
-        define: {
-          global: "globalThis",
-        },
       plugins: [
         NodeGlobalsPolyfillPlugin({
           process: true,
@@ -75,6 +71,14 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
+    include: [
+      "@mui/material",
+      "@mui/icons-material",
+      "react-leaflet",
+      "jwt-decode",
+      "framer-motion",
+      "piexifjs",
+    ],
     esbuildOptions: {
       define: {
         global: "globalThis",
@@ -88,4 +92,4 @@ export default defineConfig({
       ],
     },
   },
-});
+}); // <- Assurez-vous que cette accolade finale est bien la dernière du fichier
