@@ -1,4 +1,4 @@
-import 'leaflet/dist/leaflet.css?url';
+import 'leaflet/dist/leaflet.css'; // Importation du CSS de Leaflet
 import { useState, useEffect } from 'react'; 
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { Home } from './components/forms/home/home';
