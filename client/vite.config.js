@@ -30,6 +30,7 @@ export default defineConfig({
         "@mui/material/styles/shadows",
         "@mui/material/Grid2",
         "@mui/material/Alert",
+        "leaflet/dist/leaflet.css",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
