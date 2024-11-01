@@ -31,6 +31,7 @@ export default defineConfig({
         "@mui/material/Grid2",
         "@mui/material/Alert",
         "leaflet/dist/leaflet.css",
+        "piexifjs",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
