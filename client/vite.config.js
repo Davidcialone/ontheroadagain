@@ -21,6 +21,9 @@ export default defineConfig({
       ],
     }),
   ],
+  optimizeDeps: {
+    include: ["@mui/icons-material"],
+  },
   root: path.resolve(__dirname, ""),
   build: {
     outDir: "dist",
