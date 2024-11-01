@@ -34,6 +34,7 @@ export default defineConfig({
         "piexifjs",
         "@mui/icons-material/Edit",
         "@mui/icons-material/Delete",
+        "@mui/icons-material",
       ],
       plugins: [
         NodeGlobalsPolyfillPlugin({
