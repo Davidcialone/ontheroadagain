@@ -21,20 +21,20 @@ import { DeleteVisitModal } from "../modals/deleteVisitModal";
 import { AddPhotosModal } from "../modals/addPhotosModal";
 import EXIF from "exif-js"; // Import EXIF library
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"; // Import Leaflet components
-import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
-import L from "leaflet";
+// import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
+// import L from "leaflet";
 
-// Importation explicite des images
-import markerIconUrl from '../../../../node_modules/leaflet/dist/images/marker-icon.png';
-import markerIconRetinaUrl from   '../../../../node_modules/leaflet/dist/images/marker-icon-2x.png';
-import markerShadowUrl from   '../../../../node_modules/leaflet/dist/images/marker-shadow.png';
+// // Importation explicite des images
+// import markerIconUrl from '../../../../node_modules/leaflet/dist/images/marker-icon.png';
+// import markerIconRetinaUrl from   '../../../../node_modules/leaflet/dist/images/marker-icon-2x.png';
+// import markerShadowUrl from   '../../../../node_modules/leaflet/dist/images/marker-shadow.png';
 
-// Définir l'icône du marqueur
-const markerIcon = L.icon({
-  iconUrl: markerIconUrl,
-  iconRetinaUrl: markerIconRetinaUrl,
-  shadowUrl: markerShadowUrl,
-});
+// // Définir l'icône du marqueur
+// const markerIcon = L.icon({
+//   iconUrl: markerIconUrl,
+//   iconRetinaUrl: markerIconRetinaUrl,
+//   shadowUrl: markerShadowUrl,
+// });
 
 
 export function Visit({
