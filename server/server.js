@@ -14,6 +14,8 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.use(express.static(path.join(__dirname, "client/dist")));
+
 // Configurer CORS pour permettre uniquement les requêtes de ton frontend
 const corsOptions = {
   origin: "http://localhost:3000", // Remplace par l'URL de ton frontend
