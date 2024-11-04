@@ -5,6 +5,9 @@ import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfil
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 // import { viteStaticCopy } from "vite-plugin-static-copy"; // Comment or remove this import
 
+console.log("Current working directory:", process.cwd());
+console.log("Output directory:", path.resolve(__dirname, "dist"));
+
 export default defineConfig({
   plugins: [
     react(),
