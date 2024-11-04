@@ -29,24 +29,24 @@ export default defineConfig({
   build: {
     outDir: "dist",
     rollupOptions: {
-      external: [
-        "jwt-decode",
-        "exif-js",
-        "react-leaflet",
-        "framer-motion/client",
-        "@mui/material",
-        "@mui/material/styles/shadows",
-        "@mui/material/Grid2",
-        "@mui/material/Alert",
-        "piexifjs",
-        "@mui/icons-material",
-        "@mui/icons-material/CalendarToday",
-        "@mui/icons-material/Edit",
-        "@mui/icons-material/Delete",
-        "@mui/icons-material/Visibility",
-        "@mui/icons-material/ChevronLeft",
-        "@mui/icons-material/ChevronRight",
-      ],
+      // external: [
+      //   "jwt-decode",
+      //   "exif-js",
+      //   "react-leaflet",
+      //   "framer-motion/client",
+      //   "@mui/material",
+      //   "@mui/material/styles/shadows",
+      //   "@mui/material/Grid2",
+      //   "@mui/material/Alert",
+      //   "piexifjs",
+      //   "@mui/icons-material",
+      //   "@mui/icons-material/CalendarToday",
+      //   "@mui/icons-material/Edit",
+      //   "@mui/icons-material/Delete",
+      //   "@mui/icons-material/Visibility",
+      //   "@mui/icons-material/ChevronLeft",
+      //   "@mui/icons-material/ChevronRight",
+      // ],
       output: {
         assetFileNames: (assetInfo) => {
           if (assetInfo.name.endsWith(".png")) {
