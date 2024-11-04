@@ -13,12 +13,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = () => {
+    Cookies.set('token', token, { expires: 7, sameSite: 'Lax' });
     setIsAuthenticated(true);
   };
 
   const logout = () => {
     Cookies.remove("token");
     setIsAuthenticated(false);
+    navigate("/login");
   };
 
   return (

@@ -25,9 +25,9 @@ import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
 import L from "leaflet";
 
 // Importation explicite des images
-import markerIconUrl from '/assets/images/marker-icon.png';
-import markerIconRetinaUrl from 'assets/images/marker-icon-2x.png';
-import markerShadowUrl from 'assets/images/marker-shadow.png';
+import markerIconUrl from '../../../../node_modules/leaflet/dist/images/marker-icon.png';
+import markerIconRetinaUrl from   '../../../../node_modules/leaflet/dist/images/marker-icon-2x.png';
+import markerShadowUrl from   '../../../../node_modules/leaflet/dist/images/marker-shadow.png';
 
 // Définir l'icône du marqueur
 const markerIcon = L.icon({
@@ -61,64 +61,68 @@ export function Visit({
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [visitPhotos, setVisitPhotos] = useState([]);
   const [exifData, setExifData] = useState({}); // State to hold EXIF data
-
-   useEffect(() => {
-    if (photo) {
-      const img = new Image();
-      img.src = photo;
-
-      img.onload = () => {
-        EXIF.getData(img, function() {
-          const allExifData = EXIF.getAllTags(this);
-          // console.log("Données EXIF complètes:", allExifData);  // Debugging
-
-          // Récupération des données GPS
-          const lat = EXIF.getTag(this, "GPSLatitude");
-          const latRef = EXIF.getTag(this, "GPSLatitudeRef");
-          const lon = EXIF.getTag(this, "GPSLongitude");
-          const lonRef = EXIF.getTag(this, "GPSLongitudeRef");
-
-          // Calcul des coordonnées
-          let latitude = null;
-          let longitude = null;
-
-          if (lat !== undefined && lon !== undefined) {
-            latitude = lat * (latRef === "N" ? 1 : -1);
-            longitude = lon * (lonRef === "E" ? 1 : -1);
-            console.log("Extracted Latitude:", latitude);
-            console.log("Extracted Longitude:", longitude);
-          } else {
-            console.warn("Aucune donnée GPS trouvée.");
-          }
-
-          // Stocker les données EXIF dans l'état
-          const dateTime = EXIF.getTag(this, "DateTimeOriginal");
-          const cameraModel = EXIF.getTag(this, "Model");
-          setExifData({ lat, lon, dateTime, cameraModel });
-
-          // Mettre à jour les états de latitude et longitude
-          setCurrentLatitude(latitude);
-          setCurrentLongitude(longitude);
-        });
-      };
-    }
-  }, [photo]);
   
-  useEffect(() => {
-    async function fetchVisitPhotos() {
-  console.log("dans visit ,visitId:", visitId);
 
-      try {
+  //  useEffect(() => {
+  //   if (photo) {
+  //     const img = new Image();
+  //     img.src = photo;
+
+  //     img.onload = () => {
+  //       EXIF.getData(img, function() {
+  //         const allExifData = EXIF.getAllTags(this);
+  //         // console.log("Données EXIF complètes:", allExifData);  // Debugging
+
+  //         // Récupération des données GPS
+  //         const lat = EXIF.getTag(this, "GPSLatitude");
+  //         const latRef = EXIF.getTag(this, "GPSLatitudeRef");
+  //         const lon = EXIF.getTag(this, "GPSLongitude");
+  //         const lonRef = EXIF.getTag(this, "GPSLongitudeRef");
+
+  //         // Calcul des coordonnées
+  //         let latitude = null;
+  //         let longitude = null;
+
+  //         if (lat !== undefined && lon !== undefined) {
+  //           latitude = lat * (latRef === "N" ? 1 : -1);
+  //           longitude = lon * (lonRef === "E" ? 1 : -1);
+  //           console.log("Extracted Latitude:", latitude);
+  //           console.log("Extracted Longitude:", longitude);
+  //         } else {
+  //           console.warn("Aucune donnée GPS trouvée.");
+  //         }
+
+  //         // Stocker les données EXIF dans l'état
+  //         const dateTime = EXIF.getTag(this, "DateTimeOriginal");
+  //         const cameraModel = EXIF.getTag(this, "Model");
+  //         setExifData({ lat, lon, dateTime, cameraModel });
+
+  //         // Mettre à jour les états de latitude et longitude
+  //         setCurrentLatitude(latitude);
+  //         setCurrentLongitude(longitude);
+  //       });
+  //     };
+  //   }
+  // }, [photo]);
+  
+//  Fetch visit photos on mount
+
+  const fetchVisitPhotos = async () => {
+    try {
+      if (visitId) {
         const photos = await getPhotosForVisit(visitId);
-        console.log("Type de photos récupérées:", Array.isArray(photos)); // Vérifier si c'est un tableau
-        setVisitPhotos(photos); // Assurez-vous que photos est un tableau
-      } catch (error) {
-        console.error("Erreur lors de la récupération des photos :", error);
+        setVisitPhotos(photos); // Cela peut déclencher un nouveau rendu
       }
+    } catch (error) {
+      console.error("Error fetching photos:", error);
     }
+  };
+
+  useEffect(() => {
+    console.log("visitId a changé:", visitId); // Log l'ID de visite
     fetchVisitPhotos();
   }, [visitId]);
-
+  
 
   const handleUpdateClick = () => setIsUpdateOpen(true);
 
@@ -162,7 +166,7 @@ const handlePhotosUpload = (event) => {
             url: URL.createObjectURL(file),
             publicId: file.name
         }));
-        console.log("handlePhotoUpload, Photos à ajouter:", photosArray); // Vérifiez les photos ajoutées
+        console.log("handlePhotoUpload, Photos à ajouter:", photosArray, "type", typeof photosArray); // Vérifiez les photos ajoutées
 
         // Mise à jour de l'état avec les nouvelles photos
         setUploadedPhotos(prevPhotos => [...prevPhotos, ...photosArray]); // Ajoute à l'état existant
@@ -174,33 +178,25 @@ const handlePhotosUpload = (event) => {
 };
 
 
-// Dans la fonction handleAddVisitsPhotos, utilisez uploadedPhotos
 const handleAddVisitsPhotos = async (uploadedPhotos) => {
-  console.log("Valeur de `uploadedPhotos` avant envoi:", uploadedPhotos);
-
   try {
-      // Vérification de la valeur de `uploadedPhotos`
-      if (!uploadedPhotos || uploadedPhotos.length === 0) {
-          console.error("Aucune photo valide à ajouter");
-          return;
-      }
+    if (!uploadedPhotos || uploadedPhotos.length === 0) {
+      console.error("Aucune photo valide à ajouter");
+      return;
+    }
 
-      console.log("Tentative d'ajouter des photos à la visite:", visitId);
-      console.log("Photos à ajouter:", uploadedPhotos);
+    await addPhotosToVisit(visitId, uploadedPhotos);
+    console.log("Photos ajoutées avec succès" , uploadedPhotos);
 
-      const result = await addPhotosToVisit(visitId, uploadedPhotos);
-      console.log("Photos ajoutées avec succès:", result);
-
-      // Réinitialisation de l'état après ajout
-      setUploadedPhotos([]); 
-      setIsAddPhotosOpen(false); // Fermer le modal après l'ajout
-  } catch (error) {
-      console.error("Erreur lors de l'ajout de photos:", error.message);
+    setIsAddPhotosOpen(false);
+    fetchVisitPhotos();
+    setUploadedPhotos(); // Mise à jour de l'état avec les photos téléchargées
+   } catch (error) {
+    console.error("Erreur lors de l'ajout de photos:", error.message);
   }
 };
 
-  
-  
+ 
   
   return (
     <Card

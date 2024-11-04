@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import { addPhotosToVisit, uploadImageToCloudinary } from "../../../api/photosApi";
+import { uploadImageToCloudinary } from "../../../api/photosApi";
 
 export function AddPhotosModal({ isOpen, onClose, onAddPhotos, visitId }) {
   const [error, setError] = useState(null);
@@ -27,7 +27,7 @@ export function AddPhotosModal({ isOpen, onClose, onAddPhotos, visitId }) {
   };
 
   const handlePhotosUpload = (e) => {
-    const files = Array.from(e.target.files); // Support for multiple files
+    const files = Array.from(e.target.files);
     const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
     const filteredFiles = files.filter((file) =>
       validTypes.includes(file.type)
@@ -39,8 +39,8 @@ export function AddPhotosModal({ isOpen, onClose, onAddPhotos, visitId }) {
     }
 
     setImageFiles(filteredFiles);
-    setError(null); // Clear any previous errors
-    };
+    setError(null);
+  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -49,29 +49,18 @@ export function AddPhotosModal({ isOpen, onClose, onAddPhotos, visitId }) {
         setError("Veuillez sélectionner au moins une image.");
         return;
       }
-  
-      const uploadedPhotos = [];
-      for (const file of imageFiles) {
-        const result = await uploadImageToCloudinary(file);
-        uploadedPhotos.push({
-          url: result.secure_url,
-          publicId: result.public_id,
-        });
-      }
-    
-      console.log("visitId:", visitId); // Doit afficher un nombre
-      console.log("modal add photo, photos à ajouter", uploadedPhotos); // Affichez le tableau de photos
 
-      // Assurez-vous que la fonction est appelée avec le bon paramètre
-      await addPhotosToVisit(visitId, uploadedPhotos); // Retirer le tripId
+      const uploadedPhotos = await Promise.all(
+        imageFiles.map(file => uploadImageToCloudinary(file))
+      );
 
-      if (!Array.isArray(uploadedPhotos) || uploadedPhotos.length === 0) {
-        console.error("Les photos à ajouter ne sont pas un tableau valide", uploadedPhotos);
-        return; // Sortir si les photos ne sont pas valides
-      }
+      const photosData = uploadedPhotos.map(result => ({
+        url: result.secure_url,
+        publicId: result.public_id,
+      }));
 
-      onAddPhotos(uploadedPhotos);
-      resetForm(); // Réinitialise le formulaire
+      onAddPhotos(photosData);
+      resetForm();
     } catch (error) {
       setError(`Erreur lors de l'ajout des photos : ${error.message}`);
     } finally {
@@ -89,7 +78,6 @@ export function AddPhotosModal({ isOpen, onClose, onAddPhotos, visitId }) {
           multiple
           onChange={handlePhotosUpload}
         />
-        {/* Display previews of selected photos */}
         {imageFiles.length > 0 && (
           <div style={{ display: "flex", gap: "8px", marginTop: "10px", flexWrap: "wrap" }}>
             {imageFiles.map((file, index) => (
