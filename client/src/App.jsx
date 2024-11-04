@@ -12,7 +12,7 @@ import '../src/style/trip.css';
 import '../src/style/visit.css';
 import { AuthProvider } from './components/forms/auth/authContext';
 import { TripVisits } from './components/forms/visits/tripVisits';
-import shadows from '@mui/material/styles/shadows';
+
 
 export function App() {
   // État pour gérer l'authentification de l'utilisateur

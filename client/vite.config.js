@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
+// import { viteStaticCopy } from "vite-plugin-static-copy"; // Comment or remove this import
 
 console.log("Current working directory:", process.cwd());
 console.log("Output directory:", path.resolve(__dirname, "dist"));
@@ -10,7 +11,7 @@ console.log("Output directory:", path.resolve(__dirname, "dist"));
 export default defineConfig({
   plugins: [
     react(),
-    // Vous pouvez décommenter cette section si vous avez besoin de copier des fichiers statiques
+    // Remove the viteStaticCopy plugin configuration for Leaflet
     // viteStaticCopy({
     //   targets: [
     //     {
@@ -24,6 +25,7 @@ export default defineConfig({
     //   ],
     // }),
   ],
+  root: path.resolve(__dirname, ""),
   build: {
     outDir: "dist",
     rollupOptions: {
