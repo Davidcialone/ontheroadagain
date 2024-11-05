@@ -38,6 +38,7 @@ export function Trip({
   const [updatedTrip, setUpdatedTrip] = useState({});
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [tridDates, setTripDates] = useState({dateStart: new Date(dateStart), dateEnd: new Date(dateEnd)});
 
   // Actions
   const handleUpdateTrip = (updatedTripData) => {

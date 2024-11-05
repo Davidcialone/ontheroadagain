@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/authContext';
-import { getVisitsForTrip } from '../../../api/visitApi'; 
+import { addVisit, getVisitsForTrip } from '../../../api/visitApi'; 
+import { fetchTrips } from '../../../api/tripApi';
 import { Button, Typography, CircularProgress, Snackbar, Alert as MuiAlert } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+
 import { AddVisitModal } from '../modals/addVisitModal';
 import { UpdateVisitModal } from '../modals/updateVisitModal';
 import { DeleteVisitModal } from '../modals/deleteVisitModal';
@@ -15,6 +17,7 @@ export function TripVisits() {
     const { tripId } = useParams(); // Récupérer tripId
     const numericTripId = Number(tripId);
     const [trips, setTrips] = useState([]);
+    const [trip, setTrip] = useState({}); // Initialize trip state
     const [visits, setVisits] = useState([]);
     const [tripTitle, setTripTitle] = useState('');
     const [error, setError] = useState(null);
@@ -32,8 +35,23 @@ export function TripVisits() {
     const [updatedVisit, setUpdatedVisit] = useState(null);
     const [visitToDelete, setVisitToDelete] = useState(null);
 
-    console.log('dans tripVisits tripId:', tripId);
+    // Chargez les voyages à l'initialisation
+    useEffect(() => {
+        const loadTrips = async () => {
+            try {
+                const tripsData = await fetchTrips(); // Assurez-vous que cette fonction est définie
+                setTrips(tripsData);
+                console.log("Trips Data:", tripsData); // Vérifiez ici les données des voyages
+            } catch (err) {
+                setError(`Erreur lors du chargement des voyages: ${err.message}`);
+                setSnackbarOpen(true);
+            }
+        };
 
+        loadTrips();
+    }, []);
+
+    // Chargez les visites pour le voyage correspondant
     useEffect(() => {
         const loadVisits = async () => {
             if (visitsFetched.current) return;
@@ -45,12 +63,12 @@ export function TripVisits() {
                     return;
                 }
 
-                console.log(`Fetching visits for tripId: ${numericTripId}`);
                 const visitsData = await getVisitsForTrip(numericTripId);
-                console.log('Visits data:', visitsData);
-
                 setVisits(Array.isArray(visitsData) ? visitsData : []);
+                
+                // Chargez le voyage correspondant
                 const trip = trips.find((trip) => trip.id === numericTripId);
+                setTrip(trip || {});
                 setTripTitle(trip ? trip.title : 'Nom du voyage inconnu');
 
             } catch (err) {
@@ -65,14 +83,12 @@ export function TripVisits() {
     }, [numericTripId, isAuthenticated, navigate, trips]);
 
     const handleAddVisit = async (visitData) => {
-       // Ajout des données de la visite sans appel réseau
         setVisits((prevVisits) => [...prevVisits, visitData]);
-        setSnackbarOpen(false);
+        setSnackbarOpen(true);
         setOpenAddModal(false);
     };   
 
     const handleVisitUpdated = (updatedVisitData) => {
-        console.log("Mise à jour de la visite:", updatedVisitData);
         setVisits((prevVisits) =>
             Array.isArray(prevVisits)
                 ? prevVisits.map((visit) =>
@@ -85,14 +101,13 @@ export function TripVisits() {
         setOpenUpdateModal(false);
     };
 
-    const handleVisitDeleted =  (id) => {
-       setVisits((prevVisits) => {
+    const handleVisitDeleted = (id) => {
+        setVisits((prevVisits) => {
             if (Array.isArray(prevVisits)) {
                 return prevVisits.filter((visit) => visit.id !== id);
             } else {
                 return [];
             }
-            
         });
     };
 
@@ -103,13 +118,18 @@ export function TripVisits() {
         setSnackbarOpen(false);
     };
 
-
-
-    console.log('openAddModal:', openAddModal);
+    // Vous pouvez maintenant utiliser `trips` ici ou dans le rendu
+    console.log("Liste des voyages:", trips);
+    const currentTrip = trips.find((trip) => trip.id === numericTripId);
 
     return (
         <div>
-            <Typography variant="h5" gutterBottom>Visites du voyage <strong>{tripTitle}</strong></Typography>
+            <Typography variant="h5" gutterBottom>
+                Visites du voyage <strong>{currentTrip ? currentTrip.title : 'Nom du voyage inconnu'}</strong>
+            </Typography>
+            <Typography variant="subtitle1" gutterBottom>
+                Dates : {currentTrip?.dateStart ? new Date(currentTrip.dateStart).toLocaleDateString() : 'Inconnue'} - {currentTrip?.dateEnd ? new Date(currentTrip.dateEnd).toLocaleDateString() : 'Inconnue'}
+            </Typography>
             <div className='tripVisits'>
                 <div className='add-visit-button-layout'>
                     <Button 
@@ -138,6 +158,8 @@ export function TripVisits() {
                         isOpen={openAddModal} 
                         onClose={() => setOpenAddModal(false)} 
                         onAddVisit={handleAddVisit} 
+                        tripDateStart={currentTrip?.dateStart ? new Date(currentTrip.dateStart) : null} 
+                        tripDateEnd={currentTrip?.dateEnd ? new Date(currentTrip.dateEnd) : null} 
                     />
                     <UpdateVisitModal 
                         isOpen={openUpdateModal} 
@@ -173,7 +195,7 @@ export function TripVisits() {
                                         geo={visit.geo}
                                         onVisitUpdated={handleVisitUpdated}
                                         onVisitDeleted={handleVisitDeleted}
-                                        onDeleteClick={() => handleDeleteClick(visit.id, visit.tripId)} // Passer les IDs lors du clic
+                                        onDeleteClick={() => handleVisitDeleted(visit.id)} // Passer les IDs lors du clic
                                     />
                                 </Grid>
                             ))
