@@ -8,11 +8,11 @@ import { router as visitPhotosRouter } from "./visitPhotosRouter.js";
 export const router = Router();
 
 // Préfixer les routes
-router.use("/users", userRouter);
-router.use("/uploads", uploadRouter);
-router.use("/me/trips", tripRouter); // Assurez-vous que ceci est correct
-router.use("/me", visitRouter); // Ceci peut être correct si le visitRouter gère des sous-routes
-router.use("/me", visitPhotosRouter);
+router.use("/api/users", userRouter);
+router.use("/api/uploads", uploadRouter);
+router.use("/api/me/trips", tripRouter); // Assurez-vous que ceci est correct
+router.use("/api/me", visitRouter); // Ceci peut être correct si le visitRouter gère des sous-routes
+router.use("/api/me", visitPhotosRouter);
 
 // Middleware 404 (API)
 router.use((req, res) => {
