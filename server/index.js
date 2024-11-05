@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 // Use your API router
-app.use(apiRouter);
+app.use("/api", apiRouter);
 
 // Serve static files from the client
 app.use(express.static(path.join(process.cwd(), "client/dist")));
