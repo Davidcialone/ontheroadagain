@@ -18,8 +18,8 @@ import ReactStars from "react-stars";
 import { deleteTrip } from "../../../api/tripApi";
 import { UpdateTripModal } from "../modals/updateTripModal";
 import { DeleteTripModal } from "../modals/deleteTripModal";
-import Edit from '@mui/icons-material/Edit';
-import Delete from '@mui/icons-material/Delete';
+// import Edit from '@mui/icons-material/Edit';
+// import Delete from '@mui/icons-material/Delete';
 
 
 
