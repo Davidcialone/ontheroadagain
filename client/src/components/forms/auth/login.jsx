@@ -13,20 +13,23 @@ export function Login() {
   const navigate = useNavigate();
   const [snackbarOpen, setSnackbarOpen] = useState(false); // État pour gérer la snackbar
 
-  // Vérifier si un token est déjà présent
+  const [hasRedirected, setHasRedirected] = useState(false);
+
   useEffect(() => {
     const token = Cookies.get('token');
-    if (token) {
+    if (token && !hasRedirected) {
       try {
         const decodedToken = jwtDecode(token);
         console.log('Token déjà présent:', decodedToken);
+        setHasRedirected(true);
         navigate(`/me/trips`); // Redirige l'utilisateur si déjà connecté
       } catch (err) {
         console.error("Erreur lors du décodage du token:", err);
         Cookies.remove('token'); // Supprimer le token si invalide
       }
     }
-  }, [navigate]);
+  }, [navigate, hasRedirected]); // Assurez-vous que `navigate` et `hasRedirected` sont dans les dépendances
+  
 
   // Fonction pour gérer la soumission du formulaire de connexion
   const handleSubmit = async (e) => {
