@@ -5,7 +5,7 @@ import { MyTrips } from './components/forms/trips/myTrips';
 import { Login } from './components/forms/auth/login';
 import { Signup } from './components/forms/auth/signup';
 import { NavbarSite } from './components/forms/home/navbar';
-import { Box, CssBaseline, Container, Typography } from "@mui/material";
+import { Box, Container, Typography } from "@mui/material";
 import 'leaflet/dist/leaflet.css';
 import '../src/style/app.css';
 import '../src/style/trip.css';
