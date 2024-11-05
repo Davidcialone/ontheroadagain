@@ -2,18 +2,30 @@
   "version": 2,
   "builds": [
     {
-      "src": "server/index.js"
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "root": "client",
+        "buildCommand": "npm install && npm run build",
+        "outputDirectory": "dist"
+      }
+    },
+    {
+      "src": "server/index.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server/index.js"     
+      "dest": "server/index.js"
     },
     {
       "src": "/(.*)",
       "dest": "client/dist/index.html"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
-
