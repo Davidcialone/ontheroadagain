@@ -2,31 +2,39 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/authContext';
 import { addVisit, getVisitsForTrip } from '../../../api/visitApi'; 
-import { ChakraProvider, useDisclosure } from "@chakra-ui/react";
+import { fetchTrips } from '../../../api/tripApi';
+import { Button, Typography, CircularProgress, Snackbar, Alert as MuiAlert } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+
 import { AddVisitModal } from '../modals/addVisitModal';
-import { UpdateVisitModal } from '../modals/updateVisitModal'; 
-import { DeleteVisitModal } from '../modals/deleteVisitModal'; 
-import { Visit } from './visit';
-import { SimpleGrid } from "@chakra-ui/react";
-import { AddVisitButton } from '../buttons/addVisitButton';
-import { UpdateVisitButton } from '../buttons/updateVisitButton';
-import { DeleteVisitButton } from '../buttons/deleteVisitButton';
+import { UpdateVisitModal } from '../modals/updateVisitModal';
+import { DeleteVisitModal } from '../modals/deleteVisitModal';
+import { Visit } from '../visits/visit';    
+
+const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
 
 export function TripVisits() {
-    const { tripId } = useParams();
-    const numericTripId = Number(tripId); // Convertir en nombre
-    const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure();
-    const { isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose } = useDisclosure();
-    const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+    const { tripId } = useParams(); // Récupérer tripId
+    const numericTripId = Number(tripId);
+    const [trips, setTrips] = useState([]);
     const [visits, setVisits] = useState([]);
+    const [tripTitle, setTripTitle] = useState('');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isAdding, setIsAdding] = useState(false); 
+    const [isAdding, setIsAdding] = useState(false);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     const visitsFetched = useRef(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
-    const [updatedVisit, setUpdatedVisit] = useState(null); // État pour la visite à mettre à jour
-    const [visitToDelete, setVisitToDelete] = useState(null); // État pour la visite à supprimer
+    
+    // State pour gérer les modaux
+    const [openAddModal, setOpenAddModal] = useState(false); 
+    const [openUpdateModal, setOpenUpdateModal] = useState(false); 
+    const [openDeleteModal, setOpenDeleteModal] = useState(false); 
+    const [updatedVisit, setUpdatedVisit] = useState(null);
+    const [visitToDelete, setVisitToDelete] = useState(null);
+
+    console.log('dans tripVisits tripId:', tripId);
 
     useEffect(() => {
         const loadVisits = async () => {
@@ -39,157 +47,150 @@ export function TripVisits() {
                     return;
                 }
 
+                console.log(`Fetching visits for tripId: ${numericTripId}`);
                 const visitsData = await getVisitsForTrip(numericTripId);
-                setVisits(Array.isArray(visitsData) ? visitsData : []); // Assure que visitsData est un tableau
+                console.log('Visits data:', visitsData);
+
+                setVisits(Array.isArray(visitsData) ? visitsData : []);
+                const trip = trips.find((trip) => trip.id === numericTripId);
+                setTripTitle(trip ? trip.title : 'Nom du voyage inconnu');
+
             } catch (err) {
-                setError("Erreur lors du chargement des visites: " + err.message);
+                setError(`Erreur lors du chargement des visites: ${err.message}`);
+                setSnackbarOpen(true); 
             } finally {
                 setLoading(false);
             }
         };
 
         loadVisits();
-    }, [numericTripId, isAuthenticated, navigate]);
+    }, [numericTripId, isAuthenticated, navigate, trips]);
 
     const handleAddVisit = async (visitData) => {
-        setIsAdding(true);
-    
-        if (!numericTripId) {
-            setError("tripId est manquant.");
-            setIsAdding(false);
+       // Ajout des données de la visite sans appel réseau
+        setVisits((prevVisits) => [...prevVisits, visitData]);
+        setSnackbarOpen(false);
+        setOpenAddModal(false);
+    };   
+
+    const handleVisitUpdated = (updatedVisitData) => {
+        console.log("Mise à jour de la visite:", updatedVisitData);
+        setVisits((prevVisits) =>
+            Array.isArray(prevVisits)
+                ? prevVisits.map((visit) =>
+                    visit.id === updatedVisitData.id
+                        ? { ...updatedVisitData, rating: Number(updatedVisitData.rating) || 0 }
+                        : visit
+                )
+                : []
+        );
+        setOpenUpdateModal(false);
+    };
+
+    const handleVisitDeleted =  (id) => {
+       setVisits((prevVisits) => {
+            if (Array.isArray(prevVisits)) {
+                return prevVisits.filter((visit) => visit.id !== id);
+            } else {
+                return [];
+            }
+            
+        });
+    };
+
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
             return;
         }
-
-        // Vérifie que visitData est un objet valide
-        if (typeof visitData !== 'object' || visitData === null) {
-            setError("Données de visite invalides.");
-            setIsAdding(false);
-            return;
-        }
-
-        try {
-            const visitWithTripId = {
-                ...visitData,
-                tripId: numericTripId,
-                rating: Number(visitData.rating) || 0,
-            };
-    
-            const response = await addVisit(visitWithTripId);
-    
-            setVisits((prevVisits) => Array.isArray(prevVisits) ? [
-                ...prevVisits,
-                { ...response, rating: Number(response.rating) || 0 }
-            ] : [{ ...response, rating: Number(response.rating) || 0 }]); // Assure que prevVisits est un tableau
-    
-            onAddClose();
-        } catch (err) {
-            setError("Erreur lors de l'ajout de la visite: " + err.message);
-        } finally {
-            setIsAdding(false);
-        }
+        setSnackbarOpen(false);
     };
 
-    const handleVisitUpdated = (updatedVisit) => {
-        // Vérifie que updatedVisit est un objet valide
-        if (typeof updatedVisit === 'object' && updatedVisit !== null) {
-            setVisits((prevVisits) =>
-                Array.isArray(prevVisits) ? prevVisits.map((visit) => 
-                    visit.id === updatedVisit.id ? { ...updatedVisit, rating: Number(updatedVisit.rating) || 0 } : visit
-                ) : []
-            );
-            onUpdateClose(); // Fermer la modale de mise à jour après l'édition
-        } else {
-            console.error("Erreur: updatedVisit n'est pas un objet valide.", updatedVisit);
-        }
-    };
 
-    const handleVisitDeleted = async () => {
-        if (!visitToDelete) return; // Assurez-vous qu'il y a une visite à supprimer
-        console.log("Tentative de suppression de la visite avec l'ID:", visitToDelete.id);
-        try {
-            // Ici, vous pourriez également appeler une API pour supprimer la visite du serveur
-            setVisits((prevVisits) => 
-                Array.isArray(prevVisits) ? prevVisits.filter((visit) => visit.id !== visitToDelete.id) : []
-            );
-            console.log("Visite supprimée avec succès:", visitToDelete.id);
-            onDeleteClose(); // Fermez la modale après la suppression
-        } catch (err) {
-            console.error("Erreur lors de la suppression de la visite:", err);
-            setError("Erreur lors de la suppression de la visite: " + err.message);
-        }
-    };
+
+    console.log('openAddModal:', openAddModal);
 
     return (
-        <ChakraProvider>
-            <h1>Visites du voyage</h1>
+        <div>
+            <Typography variant="h5" gutterBottom>Visites du voyage <strong>{tripTitle}</strong></Typography>
             <div className='tripVisits'>
                 <div className='add-visit-button-layout'>
-                    <AddVisitButton onClick={onAddOpen} disabled={isAdding} />
-                    {error && <div className="error-message">{error}</div>}
-
+                    <Button 
+                        variant="contained" 
+                        sx={{ 
+                            color: '#333',
+                            backgroundColor: '#87CEEB',
+                            margin: '1rem',
+                            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.4)',
+                            borderRadius: '4px',
+                            transition: 'background-color 0.3s, box-shadow 0.3s',
+                            '&:hover': {
+                                color: 'black',
+                                backgroundColor: '#bdbdbd',
+                                boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)',
+                            },
+                        }}
+                        onClick={() => setOpenAddModal(true)} 
+                        disabled={isAdding}
+                    >
+                        Ajouter une visite
+                    </Button>
+                    {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>}
+                    
                     <AddVisitModal 
-                        isOpen={isAddOpen} 
-                        onClose={onAddClose}
+                        isOpen={openAddModal} 
+                        onClose={() => setOpenAddModal(false)} 
                         onAddVisit={handleAddVisit} 
-                        tripId={numericTripId} 
                     />
-
-                    {/* Afficher le bouton de mise à jour uniquement si une visite est sélectionnée */}
-                    {updatedVisit && (
-                        <UpdateVisitModal
-                            isOpen={isUpdateOpen}
-                            onClose={onUpdateClose}
-                            onUpdateVisit={handleVisitUpdated}
-                            visit={updatedVisit}
-                        />
-                    )}
-
-                    {/* Gérer la suppression de la visite */}
-                    {visitToDelete && (
-                        <DeleteVisitModal
-                            isOpen={isDeleteOpen}
-                            onClose={onDeleteClose}
-                            onDeleteVisit={handleVisitDeleted}
-                            visit={visitToDelete}
-                        />
-                    )}
+                    <UpdateVisitModal 
+                        isOpen={openUpdateModal} 
+                        onClose={() => setOpenUpdateModal(false)} 
+                        visit={updatedVisit} 
+                        onUpdateVisit={handleVisitUpdated} 
+                    />
+                    <DeleteVisitModal 
+                        isOpen={openDeleteModal} 
+                        onClose={() => setOpenDeleteModal(false)} 
+                        visit={visitToDelete} 
+                        onDelete={handleVisitDeleted} 
+                    />
                 </div>
-
-                Affichage des visites
-                <SimpleGrid columns={[1, 1, 1, 2, 3]} spacing={5} className='tripsRoadbook'>
+    
+                <Grid container sx={{ display: 'flex', width: '100%' }} spacing={3}>
                     {loading ? (
-                        <p>Chargement des visites...</p>
+                        <CircularProgress />
                     ) : (
                         Array.isArray(visits) && visits.length > 0 ? (
-                            visits.map(visit => {
-                                // Log each visit to debug
-                                console.log('Visit:', visit);
-                                return (
+                            visits.map((visit) => (
+                                <Grid item xs={12} sm={12} md={12} key={visit.id}>
                                     <Visit
-                                        key={visit.id}
+                                        id={visit.id}
+                                        visitId={visit.id} 
+                                        tripId={numericTripId}
                                         title={visit.title}
-                                        photos={visit.photo ? [visit.photo] : []} 
-                                        startDate={visit.dateStart}
-                                        endDate={visit.dateEnd}
-                                        rating={Number(visit.rating) || 0}
-                                        comment={visit.comment || ""}
-                                        onUpdate={() => {
-                                            setUpdatedVisit(visit); // Met à jour la visite sélectionnée
-                                            onUpdateOpen(); // Ouvre la modale de mise à jour
-                                        }}
-                                        onDelete={() => {
-                                            setVisitToDelete(visit); // Définit la visite à supprimer
-                                            onDeleteOpen(); // Ouvre la modale de suppression
-                                        }}
+                                        photo={visit.photo}
+                                        dateStart={visit.dateStart}
+                                        dateEnd={visit.dateEnd}
+                                        comment={visit.comment}
+                                        rating={typeof visit.rating === 'number' && visit.rating >= 0 && visit.rating <= 5 ? visit.rating : 0} 
+                                        geo={visit.geo}
+                                        onVisitUpdated={handleVisitUpdated}
+                                        onVisitDeleted={handleVisitDeleted}
+                                        onDeleteClick={() => handleDeleteClick(visit.id, visit.tripId)} // Passer les IDs lors du clic
                                     />
-                                );
-                            })
+                                </Grid>
+                            ))
                         ) : (
-                            <p>Aucune visite trouvée.</p>
+                            <Typography variant="body1">Aucune visite trouvée pour ce voyage.</Typography>
                         )
                     )}
-                </SimpleGrid>
+                </Grid>
             </div>
-        </ChakraProvider>
+    
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+                    {error}
+                </Alert>
+            </Snackbar>
+        </div>
     );
 }

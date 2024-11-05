@@ -1,56 +1,106 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Navbar, Container, Nav } from 'react-bootstrap';
-import { AuthContext } from '../auth/authContext'; // Assurez-vous d'importer le bon AuthContext
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Container,
+} from '@mui/material';
+import { AuthContext } from '../auth/authContext';
 
 export function NavbarSite() {
-  const { isAuthenticated, logout } = useContext(AuthContext); // Consommer le contexte d'authentification
+  const { isAuthenticated, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  // État pour gérer le menu déroulant
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   // Fonction de déconnexion
   const handleLogout = () => {
-    logout(); // Appeler la fonction de déconnexion depuis le contexte
-    navigate('/login'); // Rediriger l'utilisateur vers la page de connexion
+    logout();
+    navigate('/login');
   };
 
+  // Styles des boutons
+ const buttonStyles = {
+    color: '#333',                      // Couleur du texte (gris foncé)
+    backgroundColor: '#87CEEB',        // Couleur de fond (gris clair)
+    margin: '1rem',                    // Marges
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.4)', // Ombre portée
+    borderRadius: '4px',               // Bords arrondis (optionnel)
+    transition: 'background-color 0.3s, box-shadow 0.3s', // Transition pour l'effet hover
+    '&:hover': {
+      color:'black',
+      backgroundColor: '#bdbdbd',      // Couleur de fond au survol (gris plus foncé)
+      boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)', // Ombre plus forte au survol
+    },
+  };
+  
   return (
-    <Navbar bg="light" expand="lg" className="mb-4">
+    <AppBar position="static" sx={{ backgroundColor: '#f5deb3', borderRadius: '8px' }}>
       <Container>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Item>
-              <Nav.Link as={Link} to="/">Accueil</Nav.Link>
-            </Nav.Item>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          {/* Boutons à gauche */}
+          <div>
             {isAuthenticated && (
               <>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/me/trips">Mes voyages</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/me/trips/projects">Mes projets de voyages</Nav.Link>
-                </Nav.Item>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/"
+                >
+                 Accueil
+                </Button>
+               
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/me/trips"
+                >
+                  Mes voyages
+                </Button>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/me/trips/projects"
+                >
+                  Mes projets de voyages
+                </Button>
               </>
             )}
-          </Nav>
-          <Nav>
+          </div>
+          
+          {/* Bouton de déconnexion à droite */}
+          <div>
             {isAuthenticated ? (
-              <Nav.Item>
-                <Nav.Link as="button" onClick={handleLogout} className="me-2">Déconnexion</Nav.Link>
-              </Nav.Item>
+              <Button 
+                sx={buttonStyles}  // Appliquer ici avec sx
+                onClick={handleLogout}
+              >
+                Déconnexion
+              </Button>
             ) : (
               <>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/login" className="me-2">Connexion</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link as={Link} to="/signup">Inscription</Nav.Link>
-                </Nav.Item>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/login"
+                >
+                  Connexion
+                </Button>
+                <Button 
+                  sx={buttonStyles}  // Appliquer ici avec sx
+                  component={Link} 
+                  to="/signup"
+                >
+                  Inscription
+                </Button>
               </>
             )}
-          </Nav>
-        </Navbar.Collapse>
+          </div>
+        </Toolbar>
       </Container>
-    </Navbar>
+    </AppBar>
   );
 }

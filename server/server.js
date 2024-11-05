@@ -80,7 +80,7 @@ app.post("/upload", upload.single("image"), (req, res) => {
 });
 
 // Utiliser les routes principales de ton application
-app.use("/ontheroadagain", router);
+app.use("/", router);
 
 // Synchroniser la base de données
 const startServer = async () => {

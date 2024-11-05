@@ -2,22 +2,21 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Text,
-  Input,
-  Textarea,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Typography,
   FormControl,
-  FormLabel,
-} from "@chakra-ui/react";
+  FormHelperText,
+  IconButton,
+} from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import ReactStars from "react-stars";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday'; // Importer l'icône de calendrier
+import CalendarToday from '@mui/icons-material/CalendarToday';
 import { updateTrip, uploadImageToCloudinary } from "../../../api/tripApi";
 
 export function UpdateTripModal({
@@ -27,170 +26,210 @@ export function UpdateTripModal({
   tripId,
   title: initialTitle,
   photo: initialPhoto,
-  startDate: initialStartDate,
-  endDate: initialEndDate,
+  dateStart: initialdateStart,
+  dateEnd: initialdateEnd,
   rating: initialRating,
   description: initialDescription,
 }) {
   const [title, setTitle] = useState(initialTitle || "");
   const [photo, setPhoto] = useState(initialPhoto || null);
-  const [startDate, setStartDate] = useState(initialStartDate || null);
-  const [endDate, setEndDate] = useState(initialEndDate || null);
+  const [dateStart, setDateStart] = useState(initialdateStart || null);
+  const [dateEnd, setDateEnd] = useState(initialdateEnd || null);
   const [rating, setRating] = useState(initialRating || 3);
   const [description, setDescription] = useState(initialDescription || "");
   const [imageFile, setImageFile] = useState(null);
   const [error, setError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [dateStartOpen, setDateStartOpen] = useState(false); // État pour l'ouverture du DatePicker de date de début
+  const [dateEndOpen, setDateEndOpen] = useState(false); // État pour l'ouverture du DatePicker de date de fin
 
-  // Réinitialiser les champs lorsque la modale s'ouvre
   useEffect(() => {
     if (isOpen) {
       setTitle(initialTitle || "");
       setPhoto(initialPhoto || null);
-      setStartDate(initialStartDate || null);
-      setEndDate(initialEndDate || null);
-      setRating(Number(initialRating) || 3); // Assurez-vous que c'est un nombre
+      setDateStart(initialdateStart || null);
+      setDateEnd(initialdateEnd || null);
+      setRating(Number(initialRating) || 3);
       setDescription(initialDescription || "");
       setImageFile(null);
       setError(null);
     }
-  }, [isOpen, initialTitle, initialPhoto, initialStartDate, initialEndDate, initialRating, initialDescription]);
+  }, [isOpen, initialTitle, initialPhoto, initialdateStart, initialdateEnd, initialRating, initialDescription]);
 
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/png", "image/gif"];
       if (!validTypes.includes(file.type)) {
-        console.error("Type de fichier non valide:", file.type);
         setError("Veuillez télécharger une image (JPEG, PNG, GIF).");
         return;
       }
       setPhoto(URL.createObjectURL(file));
       setImageFile(file);
       setError(null);
-      console.log("Fichier image sélectionné:", file);
-    } else {
-      setError("Aucun fichier sélectionné");
     }
   };
 
   const handleSave = async () => {
     setError(null);
 
-    if (!title || !startDate || !endDate || !description || !imageFile) {
+    if (!title || !dateStart || !dateEnd || !description) {
       setError("Veuillez remplir tous les champs requis.");
       return;
     }
 
-    try {
-      // Conversion des dates au format ISO avant de les envoyer
-      const isoStartDate = startDate ? new Date(startDate).toISOString() : null;
-      const isoEndDate = endDate ? new Date(endDate).toISOString() : null;
+    if (isSubmitting) {
+      return; // Empêche une double soumission
+    }
 
-      // Upload de l'image vers Cloudinary
-      const imageUrl = await uploadImageToCloudinary(imageFile);
+    setIsSubmitting(true);
+
+    try {
+      const isodateStart = dateStart ? new Date(dateStart).toISOString() : null;
+      const isodateEnd = dateEnd ? new Date(dateEnd).toISOString() : null;
+
+      let imageUrl = initialPhoto; // Garde l'ancienne photo par défaut
+      if (imageFile) {
+        imageUrl = await uploadImageToCloudinary(imageFile);
+      }
 
       const tripUpdateDetails = {
         title,
-        photo: imageUrl, // URL de l'image uploadée
-        dateStart: isoStartDate,
-        dateEnd: isoEndDate,
-        rating: Number(rating), // Conversion en nombre
+        photo: imageUrl,
+        dateStart: isodateStart,
+        dateEnd: isodateEnd,
+        rating: Number(rating),
         description,
       };
 
-      // Envoi de la mise à jour à l'API
       const updatedTripData = await updateTrip(tripId, tripUpdateDetails);
 
-      // Vérifiez si les données mises à jour sont définies
       if (updatedTripData) {
-        onUpdateTrip(updatedTripData); // Assurez-vous que cette fonction reçoit les bonnes données
-        onClose(); // Fermer la modale
+        onUpdateTrip(updatedTripData);
+        onClose();
       } else {
-        console.error("Données mises à jour non disponibles après la mise à jour.");
+       setError("Les données mises à jour ne sont pas disponibles après la mise à jour.");
       }
     } catch (error) {
-      console.error("Erreur lors de la modification du voyage:", error);
-      setError("Une erreur s'est produite lors de la modification du voyage.");
+      
+      setError("Une erreur est survenue lors de la mise à jour du voyage.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Modifier un voyage</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {error && <Text color="red.500">{error}</Text>}
-          <FormControl>
-            <FormLabel>Titre</FormLabel>
-            <Input
-              placeholder="Titre du voyage"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Photo</FormLabel>
-            <Input type="file" onChange={handlePhotoUpload} />
-          </FormControl>
+    <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>Modifier le voyage</DialogTitle>
+      <DialogContent>
+        {error && <Typography color="error">{error}</Typography>}
+        
+        <FormControl fullWidth margin="normal" error={!!error}>
+          <TextField
+            label="Titre"
+            variant="outlined"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Date de départ</FormLabel>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => {
-                setStartDate(date);
-                if (endDate && date > endDate) {
-                  setEndDate(null); // Réinitialiser endDate si startDate est modifiée
-                }
-              }}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Sélectionnez une date de départ"
-            />
-          </FormControl>
+        <FormControl fullWidth margin="normal">
+          <Typography>Photo actuelle</Typography>
+          {photo && <img src={photo} alt="Voyage actuel" style={{ width: "100%", marginBottom: "1em" }} />}
+          <input type="file" onChange={handlePhotoUpload} />
+          <FormHelperText>Importer une nouvelle image (JPEG, PNG, GIF)</FormHelperText>
+        </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Date de fin</FormLabel>
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Sélectionnez une date de fin"
-              minDate={startDate} // Empêche la sélection de dates antérieures à startDate
-            />
-          </FormControl>
+        {/* Date de début avec icône */}
+        <FormControl fullWidth margin="normal">
+          <Typography>Date de départ</Typography>
+          <TextField
+            variant="outlined"
+            placeholder="Sélectionner une date"
+            value={dateStart ? dateStart.toLocaleDateString() : ""}
+            readOnly
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={() => setDateStartOpen(true)}>
+                  <CalendarTodayIcon />
+                </IconButton>
+              ),
+            }}
+            onClick={() => setDateStartOpen(true)} // Ouvre le calendrier
+          />
+          <DatePicker
+            selected={dateStart}
+            onChange={(date) => {
+              setDateStart(date);
+              if (dateEnd && date > dateEnd) {
+                setDateEnd(null); // Réinitialise dateEnd si dateStart change
+              }
+            }}
+            dateFormat="dd/MM/yyyy"
+            open={dateStartOpen}
+            onClickOutside={() => setDateStartOpen(false)}
+            onCalendarClose={() => setDateStartOpen(false)}
+          />
+        </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Évaluation</FormLabel>
-            <ReactStars
-              count={5}
-              size={24}
-              value={rating}
-              onChange={(newRating) => setRating(newRating)} // Assurez-vous que `newRating` est un nombre
-            />
-          </FormControl>
+        {/* Date de fin avec icône */}
+        <FormControl fullWidth margin="normal">
+          <Typography>Date de fin</Typography>
+          <TextField
+            variant="outlined"
+            placeholder="Sélectionner une date"
+            value={dateEnd ? dateEnd.toLocaleDateString() : ""}
+            readOnly
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={() => setDateEndOpen(true)}>
+                  <CalendarTodayIcon />
+                </IconButton>
+              ),
+            }}
+            onClick={() => setDateEndOpen(true)} // Ouvre le calendrier
+          />
+          <DatePicker
+            selected={dateEnd}
+            onChange={(date) => setDateEnd(date)}
+            dateFormat="dd/MM/yyyy"
+            minDate={dateStart} // Empêche de sélectionner des dates avant dateStart
+            open={dateEndOpen}
+            onClickOutside={() => setDateEndOpen(false)}
+            onCalendarClose={() => setDateEndOpen(false)}
+          />
+        </FormControl>
 
-          <FormControl mt={4}>
-            <FormLabel>Commentaire</FormLabel>
-            <Textarea
-              placeholder="Ajoutez un commentaire"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </FormControl>
-        </ModalBody>
+        <FormControl fullWidth margin="normal">
+          <Typography>Évaluation</Typography>
+          <ReactStars
+            count={5}
+            size={24}
+            value={rating}
+            onChange={(newRating) => setRating(newRating)}
+          />
+        </FormControl>
 
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleSave}>
-            Sauvegarder
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Fermer
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        <FormControl fullWidth margin="normal">
+          <TextField
+            label="Commentaire"
+            variant="outlined"
+            multiline
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+        <Button color="primary" onClick={handleSave}>
+          Sauvegarder
+        </Button>
+        <Button onClick={onClose} color="secondary">
+          Fermer
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
@@ -199,10 +238,12 @@ UpdateTripModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onUpdateTrip: PropTypes.func.isRequired,
   tripId: PropTypes.number.isRequired,
-  title: PropTypes.string, // Titre du voyage
-  photo: PropTypes.string, // URL de la photo
-  startDate: PropTypes.instanceOf(Date), // Date de début
-  endDate: PropTypes.instanceOf(Date), // Date de fin
-  rating: PropTypes.number, // Note du voyage
-  description: PropTypes.string, // Description du voyage
+  title: PropTypes.string,
+  photo: PropTypes.string,
+  dateStart: PropTypes.instanceOf(Date),
+  dateEnd: PropTypes.instanceOf(Date),
+  rating: PropTypes.number,
+  description: PropTypes.string,
 };
+
+export default UpdateTripModal;

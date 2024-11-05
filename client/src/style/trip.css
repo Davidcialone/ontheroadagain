@@ -76,8 +76,13 @@
 .roadbook .responsive-card {
   width: 30%;
 }
+.css-ipzchf-MuiGrid2-root {
+  display: flex;
+justify-content: center;
+}
 
-@media (max-width: 800px) {
+
+@media (max-width: 1000px) {
   .roadbook .responsive-card{
     width: 100%;
     flex-direction: column;
@@ -100,6 +105,11 @@
     flex: 1 1 100%; 
     margin-bottom: 1rem;
   }
+  /* .css-ipzchf-MuiGrid2-root {
+    display: flex;
+  justify-content: center;
+  } */
+
  }
 
  .trip img {

@@ -1,165 +1,289 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Input,
-  Textarea,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
   FormControl,
-  FormLabel,
-} from "@chakra-ui/react";
+  FormHelperText,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CalendarToday from '@mui/icons-material/CalendarToday';
+
 import ReactStars from "react-stars";
-import { addVisit } from "../../../api/visitApi"; // Assurez-vous que cette fonction existe dans l'API visit
+import { addVisit, uploadImageToCloudinary } from "../../../api/visitApi";
+import { useParams } from "react-router-dom";
 
-export function AddVisitModal({ isOpen, onClose, onAddVisit, tripId }) {
+export function AddVisitModal({ isOpen, onClose, onAddVisit }) {
+  const { tripId } = useParams(); // Récupérer tripId depuis l'URL
   const [title, setTitle] = useState("");
-  const [dateStart, setDateStart] = useState(null);
-  const [dateEnd, setDateEnd] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [dateStart, setDateStart] = useState(() => {
+    const today = new Date();
+    return !isNaN(today) ? today : null;
+  });
+  
+  const [dateEnd, setDateEnd] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return !isNaN(tomorrow) ? tomorrow : null;
+  });
   const [comment, setComment] = useState("");
-  const [rating, setRating] = useState(3);
-  const [geo, setGeo] = useState("");
   const [error, setError] = useState(null);
+  const [dateStartOpen, setDateStartOpen] = useState(false);
+  const [dateEndOpen, setDateEndOpen] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rating, setRating] = useState(3);
 
-  const handleSave = async () => {
+  useEffect(() => {
+    if (isOpen) {
+      resetForm();
+    }
+  }, [isOpen]);
+
+  
+
+  const resetForm = () => {
+    setTitle("");
+    setPhoto(null);
+    setDateStart(new Date());
+    setDateEnd(new Date(new Date().setDate(new Date().getDate() + 1)));
+    setRating(3);
+    setComment("");
+    setImageFile(null);
     setError(null);
-    console.log("Tentative d'enregistrement de la visite...");
+    setIsSubmitting(false);
+    console.log('Form reset'); // Log de réinitialisation
+  };
 
-    // Vérifie que tous les champs requis sont remplis
-    if (!title || !dateStart || !dateEnd || !comment) {
-      setError("Veuillez remplir tous les champs requis.");
-      console.warn("Champs requis manquants:", { title, dateStart, dateEnd, comment });
-      return;
-    }
 
-    // Vérifie que la date de fin est après la date de début
-    if (dateEnd <= dateStart) {
-      setError("La date de fin doit être après la date de début.");
-      console.warn("Validation des dates échouée:", { dateStart, dateEnd });
-      return;
-    }
 
-    // Vérifie que tripId est valide
-    if (!tripId) {
-      setError("Le tripId est manquant. Veuillez sélectionner un voyage.");
-      console.warn("tripId est manquant");
-      return;
-    }
-
-    try {
-      const newVisit = {
-        title,
-        dateStart,
-        dateEnd,
-        comment,
-        rating,
-        geo,
-        tripId, // Assurez-vous que tripId est inclus
-      };
-
-      console.log("Données de la nouvelle visite:", newVisit);
-      const response = await addVisit(newVisit);
-      console.log("Nouvelle visite ajoutée:", response);
-      onAddVisit(response); // Passe la nouvelle visite ajoutée
-      onClose();
-    } catch (error) {
-      console.error("Erreur lors de l'ajout de la visite:", error);
-      setError("Une erreur est survenue lors de l'ajout de la visite.");
-      console.error("Détails de l'erreur:", error);
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        setError("Veuillez télécharger une image (JPEG, PNG, GIF et webp).");
+        console.log('Invalid file type:', file.type); // Log de type de fichier invalide
+        return;
+      }
+      setPhoto(URL.createObjectURL(file));
+      setImageFile(file);
+      setError(null);
+      console.log('Photo uploaded:', URL.createObjectURL(file)); // Log de photo téléchargée
     }
   };
 
-  // Met à jour le commentaire lorsque le titre change
+const handleSave = async () => {
+    setError(null);
+    console.log('Saving visit...'); // Log lors de la sauvegarde
+
+    // Validation des champs
+    if (!title || !dateStart || !dateEnd || !comment || !imageFile) {
+      setError("Veuillez remplir tous les champs requis.");
+      console.log('Validation failed: Required fields are missing'); // Log d'erreur de validation
+      return;
+    }
+
+    if (dateEnd <= dateStart) {
+      setError("La date de fin doit être après la date de début.");
+      console.log('Validation failed: End date must be after start date'); // Log d'erreur de date
+      return;
+    }
+
+    // Vérifier si la soumission a déjà eu lieu
+    if (isSubmitting) {
+      console.log('Already submitting'); // Log si la soumission est déjà en cours
+      return;
+    }
+
+    // Marquer comme soumis
+    setIsSubmitting(true);
+   
+
+    try {
+      const imageData = await uploadImageToCloudinary(imageFile); // Supposant que cette fonction soit définie ailleurs
+      console.log('Image data received:', imageData); // Log des données de l'image
+
+      const newVisit = {
+        title,
+        photo: imageData.secure_url,
+        dateStart: dateStart.toISOString(),
+        dateEnd: dateEnd.toISOString(),
+        rating: parseFloat(rating.toFixed(1)),
+        comment,
+        tripId // Ajout direct de tripId depuis l'URL
+      };
+      console.log('New visit data:', newVisit); // Log des données de la nouvelle visite
+
+      const addedVisit = await addVisit(newVisit);
+      console.log('Visit added:', addedVisit); // Log de la visite ajoutée
+      onAddVisit(addedVisit);
+      onClose();
+      resetForm();
+    } catch (error) {
+      console.error("Error adding visit:", error); // Log de l'erreur lors de l'ajout
+      if (error.message.includes("Un voyage avec le même titre et les mêmes dates existe déjà")) {
+        setError("Un voyage avec le même titre et les mêmes dates existe déjà.");
+      } else {
+        setError("Une erreur est survenue lors de l'ajout de la visite.");
+      }
+    } finally {
+      setIsSubmitting(false);
+      console.log('Submitting finished'); // Log de fin de soumission
+    }
+};
+
   const handleTitleChange = (e) => {
-    const newTitle = e.target.value;
-    setTitle(newTitle);
-    setComment(newTitle); // Met à jour le commentaire avec le titre
+    setTitle(e.target.value);
+    console.log('Title changed:', e.target.value); // Log du changement de titre
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Ajouter une visite</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          {error && <p style={{ color: "red" }}>{error}</p>}
-          <FormControl>
-            <FormLabel>Titre</FormLabel>
-            <Input
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="Titre de la visite"
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Date de début</FormLabel>
-            <DatePicker
-              selected={dateStart}
-              onChange={(date) => {
-                setDateStart(date);
-                if (dateEnd && date < dateEnd) {
-                  setDateEnd(null); // Réinitialiser dateEnd si dateStart est modifiée
-                }
-              }}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Sélectionnez une date de début"
-              isClearable // Ajoute une option pour effacer la sélection
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Date de fin</FormLabel>
-            <DatePicker
-              selected={dateEnd}
-              onChange={(date) => setDateEnd(date)}
-              dateFormat="dd/MM/yyyy"
-              placeholderText="Sélectionnez une date de fin"
-              minDate={dateStart} // Empêche la sélection de dates antérieures à dateStart
-              isClearable // Ajoute une option pour effacer la sélection
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Note</FormLabel>
-            <ReactStars
-              count={5}
-              value={rating}
-              onChange={(newRating) => setRating(newRating)}
-              size={24}
-              color2={"#ffd700"}
-            />
-          </FormControl>
-          <FormControl mt={4}>
-            <FormLabel>Commentaire</FormLabel>
-            <Textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Commentaire de la visite"
-            />
-          </FormControl>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleSave}>
-            Enregistrer
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Annuler
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Ajouter une visite</DialogTitle>
+      <DialogContent>
+        {error && <FormHelperText error>{error}</FormHelperText>}
+        
+        <FormControl fullWidth margin="normal">
+          <TextField
+            value={title}
+            onChange={handleTitleChange}
+            label="Titre"
+            placeholder="Titre de la visite"
+            variant="outlined"
+            required
+          />
+        </FormControl>
+        <FormControl fullWidth margin="normal">
+          <Typography>Photo actuelle</Typography>
+          {photo && <img src={photo} alt="Voyage actuel" style={{ width: "100%", marginBottom: "1em" }} />}
+          <input type="file" onChange={handlePhotoUpload} />
+          <FormHelperText>Importer une nouvelle image (JPEG, PNG, GIF)</FormHelperText>
+        </FormControl>
+
+        <FormControl fullWidth margin="normal">
+  <TextField
+    label="Date de début"
+    variant="outlined"
+    InputLabelProps={{ shrink: true }}
+    value={dateStart instanceof Date && !isNaN(dateStart) ? dateStart.toLocaleDateString("fr-FR") : ""}
+    onClick={() => setDateStartOpen(true)}
+    InputProps={{
+      readOnly: true,
+      endAdornment: (
+        <IconButton onClick={() => setDateStartOpen(true)}>
+          <CalendarTodayIcon />
+        </IconButton>
+      ),
+    }}
+  />
+  <DatePicker
+    selected={dateStart instanceof Date && !isNaN(dateStart) ? dateStart : null}
+    onChange={(date) => {
+      if (date && date instanceof Date && !isNaN(date)) {
+        setDateStart(date);
+        if (dateEnd && date > dateEnd) {
+          setDateEnd(null); // Réinitialise si la date de début est postérieure
+        }
+      } else {
+        setError("La date de début n'est pas valide");
+      }
+    }}
+    dateFormat="dd/MM/yyyy"
+    open={dateStartOpen}
+    onClickOutside={() => setDateStartOpen(false)}
+    onCalendarClose={() => setDateStartOpen(false)}
+  />
+</FormControl>
+
+{/* Date de fin */}
+<FormControl fullWidth margin="normal">
+  <TextField
+    label="Date de fin"
+    variant="outlined"
+    InputLabelProps={{ shrink: true }}
+    value={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd.toLocaleDateString("fr-FR") : ""}
+    onClick={() => setDateEndOpen(true)}
+    InputProps={{
+      readOnly: true,
+      endAdornment: (
+        <IconButton onClick={() => setDateEndOpen(true)}>
+          <CalendarTodayIcon />
+        </IconButton>
+      ),
+    }}
+  />
+  <DatePicker
+    selected={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd : null}
+    onChange={(date) => {
+      if (date && date instanceof Date && !isNaN(date)) {
+        setDateEnd(date);
+      } else {
+        setError("La date de fin n'est pas valide");
+      }
+    }}
+    dateFormat="dd/MM/yyyy"
+    minDate={dateStart instanceof Date && !isNaN(dateStart) ? dateStart : undefined}
+    open={dateEndOpen}
+    onClickOutside={() => setDateEndOpen(false)}
+    onCalendarClose={() => setDateEndOpen(false)}
+  />
+</FormControl>
+<FormControl fullWidth margin="normal">
+          <Typography>Note</Typography>
+          <ReactStars
+            count={5}
+            size={24}
+            value={rating}
+            onChange={(newRating) => setRating(Number(newRating))}
+          />
+        </FormControl>
+
+
+        {/* Commentaire */}
+        <FormControl fullWidth margin="normal">
+          <TextField
+            label="Commentaire"
+            variant="outlined"
+            multiline
+            rows={4}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Ajoutez un commentaire"
+          />
+        </FormControl>
+      </DialogContent>
+      <DialogActions>
+      <Button 
+        color="primary" 
+        onClick={(e) => {
+          e.preventDefault(); // Empêche le comportement par défaut
+          handleSave(); // Appel de votre fonction de sauvegarde
+        }}
+      >
+        Enregistrer
+      </Button>
+        <Button onClick={onClose} color="default">
+          Annuler
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
 AddVisitModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onAddVisit: PropTypes.func,
-  tripId: PropTypes.number, // Le tripId est maintenant requis
+  onAddVisit: PropTypes.func.isRequired,
 };
+
+export default AddVisitModal;

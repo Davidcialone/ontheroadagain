@@ -6,8 +6,15 @@ export function Home() {
     return (
       <div>
        <p>
-            Bienvenue sur notre site de voyage! Découvrez les voyages de nos
-            utilisateurs et partagez vos propres aventures.
+         Bienvenue sur notre site de voyage! 
+          Découvrez les aventures incroyables de notre communauté 
+          et laissez-vous inspirer pour vos prochaines escapades. 
+          Que vous soyez amateur de randonnées en montagne, de plages paradisiaques 
+          ou de road trips inoubliables, vous trouverez ici des récits captivants 
+          et des photos époustouflantes. Rejoignez-nous pour partager vos propres aventures, 
+          échanger des conseils de voyage, et planifier des souvenirs inoubliables. 
+          Laissez chaque destination vous surprendre et 
+          commencez dès aujourd'hui à rêver à votre prochaine exploration! 🌍
         </p>
         <HomeCarousel />
         <p>

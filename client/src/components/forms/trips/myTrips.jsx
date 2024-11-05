@@ -1,59 +1,48 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChakraProvider, SimpleGrid, useDisclosure } from "@chakra-ui/react";
+import { Container, Button, Typography, Snackbar } from '@mui/material';
+import Grid from '@mui/material/Grid2';
+import MuiAlert from '@mui/material/Alert';
 import { AuthContext } from '../auth/authContext';
-import Cookies from 'js-cookie';
-import { jwtDecode } from 'jwt-decode'; 
+// import Cookies from 'js-cookie';
+// import { jwtDecode } from 'jwt-decode'; 
 import { fetchTrips, addTrip } from '../../../../src/api/tripApi'; 
 import { Trip } from './trip'; 
 import { AddTripModal } from '../modals/addTripModal'; 
-import { AddVisitModal } from '../modals/addVisitModal';
-import { AddTripButton } from '../buttons/addTripButton'; 
+
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 export function MyTrips() {
     const [trips, setTrips] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
-    const [currentTripId, setCurrentTripId] = useState(null);
+    // const [currentTripId, setCurrentTripId] = useState(null);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
     
-    const { isOpen: isAddTripModalOpen, onOpen: onOpenAddTripModal, onClose: onCloseAddTripModal } = useDisclosure();
-    const { isOpen: isAddVisitModalOpen, onOpen: onOpenAddVisitModal, onClose: onCloseAddVisitModal } = useDisclosure();
+    const [isAddTripModalOpen, setIsAddTripModalOpen] = useState(false); // State for AddTripModal
     
     const navigate = useNavigate();
     const tripsFetched = useRef(false);
     const { isAuthenticated } = useContext(AuthContext);
-
-    const [newTripData, setNewTripData] = useState({
-        title: '',
-        description: '',
-        dateStart: '',
-        dateEnd: '',
-        photo: '',
-        rating: 0,
-    });
-
+    
     useEffect(() => {
         const loadTrips = async () => {
-            console.log("Début du chargement des voyages...");
             if (tripsFetched.current) {
-                console.log("Voyages déjà chargés, évitant le double appel.");
                 return; // Évite un fetch multiple
             }
             tripsFetched.current = true;
 
             try {
                 if (!isAuthenticated) {
-                    console.log("Utilisateur non authentifié, redirection vers la page de connexion.");
                     navigate('/login');
                     return;
                 }
 
-                console.log("Chargement des voyages...");
                 const tripsData = await fetchTrips(); 
-                console.log("Voyages chargés:", tripsData);
-
-                // Vérification et formatage des données
                 const formattedTripsData = Array.isArray(tripsData) ? tripsData.map(trip => ({
                     ...trip,
                     rating: Number(trip.rating).toFixed(1) || 0,
@@ -63,8 +52,8 @@ export function MyTrips() {
             } catch (err) {
                 console.error("Erreur lors du chargement des voyages:", err);
                 setError(err.message);
+                setSnackbarOpen(true);
             } finally {
-                console.log("Chargement des voyages terminé.");
                 setLoading(false);
             }
         };
@@ -72,105 +61,68 @@ export function MyTrips() {
         loadTrips();
     }, [isAuthenticated, navigate]);
 
-    const handleAddTrip = async (tripData) => {
-        console.log("handleAddTrip appelé avec tripData:", tripData);
-        if (isAdding) {
-            console.log("Ajout en cours, évitant un appel supplémentaire.");
-            return;
-        }
-        setIsAdding(true);
+    const handleAddTrip = (tripData) => {
+        // Ajout des données du voyage sans appel réseau
+        setTrips((prevTrips) => [...prevTrips, tripData]);
+        setSnackbarOpen(true); // Affichage du snackbar de confirmation
+        setIsAddTripModalOpen(false); // Ferme le modal
+    };   
 
-        try {
-            if (typeof tripData !== 'object' || tripData === null) {
-                throw new Error("tripData doit être un objet valide.");
-            }
-
-            // Vérification des doublons
-            const existingTrip = Array.isArray(trips) ? trips.find(trip =>
-                trip.title === tripData.title &&
-                trip.dateStart === tripData.dateStart &&
-                trip.dateEnd === tripData.dateEnd
-            ) : null;
-
-            if (existingTrip) {
-                console.log("Voyage existant trouvé:", existingTrip);
-                throw new Error("Un voyage avec le même titre et les mêmes dates existe déjà.");
-            }
-
-            const token = Cookies.get('token');
-            const decodedToken = jwtDecode(token);
-            const userId = decodedToken.id || decodedToken.user_id;
-
-            const tripWithUserId = {
-                ...tripData,
-                user_id: userId,
-                rating: Number(tripData.rating) || 0,
-            };
-
-            console.log("Appel API pour ajouter un voyage avec les données:", tripWithUserId);
-            const response = await addTrip(tripWithUserId);
-            console.log("Voyage ajouté:", response);
-
-            // Mise à jour des voyages localement
-            setTrips((prevTrips) => Array.isArray(prevTrips) ? [
-                ...prevTrips,
-                { ...response, rating: Number(response.rating) },
-            ] : [response]);
-
-            onCloseAddTripModal();
-            setNewTripData({
-                title: '',
-                description: '',
-                dateStart: '',
-                dateEnd: '',
-                photo: '',
-                rating: 0,
-            });
-            setError(null);
-        } catch (err) {
-            console.error("Erreur lors de l'ajout du voyage:", err);
-            setError("Erreur lors de l'ajout du voyage: " + err.message);
-        } finally {
-            console.log("Ajout terminé.");
-            setIsAdding(false);
-        }
+    const handleTripUpdated = (updatedTripData) => {
+        if (typeof updatedTripData === 'object' && updatedTripData !== null) {
+            setTrips((prevTrips) =>
+                Array.isArray(prevTrips) ? prevTrips.map(trip => (trip.id === updatedTripData.id ? { ...updatedTripData, rating: Number(updatedTripData.rating) } : trip)) : []
+        );
+    }
     };
 
     const handleTripDeleted = (id) => {
-        console.log("Suppression du voyage avec l'ID:", id);
         setTrips((prevTrips) => {
             if (Array.isArray(prevTrips)) {
                 return prevTrips.filter(trip => trip.id !== id);
             } else {
-                console.error("Erreur: prevTrips n'est pas un tableau.", prevTrips);
                 return [];
             }
         });
     };
 
-    const handleTripUpdated = (updatedTripData) => {
-        console.log("Mise à jour du voyage:", updatedTripData);
-        if (typeof updatedTripData === 'object' && updatedTripData !== null) {
-            setTrips((prevTrips) =>
-                Array.isArray(prevTrips) ? prevTrips.map(trip => (trip.id === updatedTripData.id ? { ...updatedTripData, rating: Number(updatedTripData.rating) } : trip)) : []
-            );
-        } else {
-            console.error("Erreur: updatedTripData n'est pas un objet valide.", updatedTripData);
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
         }
+        setSnackbarOpen(false);
     };
 
-    const handleAddVisit = (tripId) => {
-        setCurrentTripId(tripId);
-        onOpenAddVisitModal();
-    };
-
+    // Modal control functions
+    const onOpenAddTripModal = () => setIsAddTripModalOpen(true);
+    const onCloseAddTripModal = () => setIsAddTripModalOpen(false);
+  
     return (
-        <ChakraProvider>
-            <h1>Mes voyages</h1>
+        <Container>
+            <Typography variant="h4" gutterBottom>Mes voyages</Typography>
             <div className='roadbook'>
                 <div className='add-trip-button-layout'>
-                    <AddTripButton onClick={onOpenAddTripModal} disabled={isAdding} />
-                    {error && <div className="error-message">{error}</div>}
+                <Button 
+                    variant="contained" 
+                    sx={{ 
+                        color: '#333',                      // Couleur du texte (gris foncé)
+                        backgroundColor: '#87CEEB',        // Couleur de fond (bleu clair)
+                        margin: '1rem',                    // Marges
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.4)', // Ombre portée
+                        borderRadius: '4px',               // Bords arrondis
+                        transition: 'background-color 0.3s, box-shadow 0.3s', // Transition pour l'effet hover
+                        '&:hover': {
+                            color: 'black',                 // Couleur du texte au survol
+                            backgroundColor: '#bdbdbd',    // Couleur de fond au survol (gris plus foncé)
+                            boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)', // Ombre plus forte au survol
+                        },
+                    }}
+                    onClick={onOpenAddTripModal} 
+                    disabled={isAdding}
+                >
+                    Ajouter un voyage
+                </Button>
+                    {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>}
                     <AddTripModal
                         isOpen={isAddTripModalOpen}
                         onClose={onCloseAddTripModal}
@@ -178,39 +130,44 @@ export function MyTrips() {
                     />
                 </div>
 
-                <SimpleGrid columns={[1, 1, 1, 2, 3]} spacing={5} className='tripsRoadbook'>
+                <Grid container spacing={3}>
                     {loading ? (
-                        <p>Chargement des voyages...</p>
+                        <Typography>Chargement des voyages...</Typography>
                     ) : (
                         Array.isArray(trips) && trips.length > 0 ? (
                             trips.map(trip => (
-                                <Trip
-                                    key={trip.id}
-                                    id={trip.id}
-                                    photo={trip.photo}
-                                    title={trip.title}
-                                    dateStart={trip.dateStart}
-                                    dateEnd={trip.dateEnd}
-                                    description={trip.description}
-                                    rating={Number(trip.rating)}
-                                    onTripDeleted={handleTripDeleted}
-                                    onTripUpdated={handleTripUpdated}
-                                    onAddVisit={() => handleAddVisit(trip.id)}
-                                />
+                                <Grid 
+                                xs={12}          // 1 carte (plein écran sur mobile)
+                                sm={6}           // 2 cartes pour les écrans ≥ 1000px
+                                md={4}           // 3 cartes pour les écrans ≥ 1280px
+                                key={trip.id}>
+                                    <Trip
+                                        id={trip.id}
+                                        photo={trip.photo}
+                                        title={trip.title}
+                                        dateStart={trip.dateStart}
+                                        dateEnd={trip.dateEnd}
+                                        description={trip.description}
+                                        rating={Number(trip.rating)}
+                                        onTripDeleted={handleTripDeleted}
+                                        onTripUpdated={handleTripUpdated}
+                                        onAddVisit={() => handleAddVisit(trip.id)}
+                                    />
+                                </Grid>
                             ))
                         ) : (
-                            <p>Aucun voyage trouvé.</p>
+                            <Typography>Aucun voyage trouvé.</Typography>
                         )
                     )}
-                </SimpleGrid>
-
-                {/* Modale pour ajouter une visite */}
-                <AddVisitModal 
-                    tripId={currentTripId} 
-                    isOpen={isAddVisitModalOpen}
-                    onClose={onCloseAddVisitModal} 
-                />
+                </Grid>
             </div>
-        </ChakraProvider>
+
+            {/* Snackbar pour afficher les messages d'erreur */}
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity="error">
+                    {error}
+                </Alert>
+            </Snackbar>
+        </Container>
     );
 }
