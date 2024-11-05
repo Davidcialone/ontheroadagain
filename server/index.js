@@ -1,23 +1,49 @@
-import express from "express";
-import path from "path";
-import apiRouter from "./server.js"; // Import your API router
-
+const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-// Middleware to parse JSON
-app.use(express.json());
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
 
-// Use your API router
-app.use("/api", apiRouter);
+  // Log detailed error information
+  console.error({
+    timestamp: new Date().toISOString(),
+    path: req.path,
+    method: req.method,
+    body: req.body,
+    error: {
+      message: err.message,
+      stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    },
+  });
 
-// Serve static files from the client
-app.use(express.static(path.join(process.cwd(), "client/dist")));
-
-// Route to serve the frontend
-app.get("*", (req, res) => {
-  res.sendFile(path.join(process.cwd(), "client/dist", "index.html"));
+  res.status(500).json({
+    error: "Internal Server Error",
+    requestId: req.headers["x-vercel-id"],
+  });
 });
 
-// Export the Express app as a serverless function
-export default app;
+// Basic health check endpoint
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
+// Global error catcher for unhandled promises
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+// Express error handler for async routes
+const asyncHandler = (fn) => (req, res, next) => {
+  return Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+module.exports = app;
+
+// For local development
+if (require.main === module) {
+  const port = process.env.PORT || 3000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
