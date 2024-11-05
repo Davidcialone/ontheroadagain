@@ -1,17 +1,19 @@
+import Cookies from "js-cookie";
+
 export const getToken = () => {
-  return localStorage.getItem("token");
+  return Cookies.get("token");
 };
 
 export const setToken = () => {
-  localStorage.setItem("token");
+  Cookies.set("token");
 };
 
 export const removeToken = () => {
-  localStorage.removeItem("token");
+  Cookies.remove("token");
 };
 
 export const getUserIdFromToken = () => {
-  const token = localStorage.getItem("token");
+  const token = Cookies.get("token");
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
