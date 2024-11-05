@@ -12,6 +12,7 @@ import '../src/style/visit.css';
 import { Box } from "@chakra-ui/react";
 import { AuthProvider } from './components/forms/auth/authContext';
 import { TripVisits } from './components/forms/visits/tripVisits';
+import Cookies from 'js-cookie';
 
 export function App() {
   // État pour gérer l'authentification de l'utilisateur
@@ -19,7 +20,7 @@ export function App() {
 
   // Vérification de la présence d'un token à chaque chargement de la page
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = Cookies.get('token');
     if (token) {
       setIsAuthenticated(true); // Si un token est trouvé, l'utilisateur est authentifié
     }
@@ -28,7 +29,7 @@ export function App() {
   return (
     <AuthProvider>
       <Box width="100%" minHeight="100vh">
-        <Router basename="/ontheroadagain">
+        <Router >
           <div>
             <h1>ON THE ROAD AGAIN</h1>
             <NavbarSite />

@@ -6,7 +6,6 @@ import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfil
 
 export default defineConfig({
   plugins: [react()],
-  base: "/ontheroadagain/",
   root: path.resolve(__dirname, ""),
   build: {
     outDir: "dist", // Ensure the output directory is set to 'dist'
