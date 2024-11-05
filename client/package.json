@@ -37,6 +37,7 @@
     "react-stars": "^2.2.5",
     "rollup": "^4.24.2",
     "slick-carousel": "^1.8.1",
+    "stream-browserify": "^3.0.0",
     "yet-another-react-lightbox": "^3.21.6"
   },
   "devDependencies": {

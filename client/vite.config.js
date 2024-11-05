@@ -69,6 +69,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       process: "process/browser",
       buffer: "buffer",
+      util: "util/",
+      stream: "stream-browserify",
     },
   },
   optimizeDeps: {
@@ -81,6 +83,8 @@ export default defineConfig({
       "jwt-decode",
       "framer-motion",
       "piexifjs",
+      "inherits",
+      "util",
     ],
     esbuildOptions: {
       define: {
