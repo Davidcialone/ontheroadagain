@@ -1,6 +1,6 @@
 import express from "express";
 import path from "path";
-import apiRouter from "./server/server.js"; // Importez votre routeur API
+import apiRouter from "./server.js"; // Importez votre routeur API
 
 const app = express();
 const PORT = process.env.PORT || 5000;
