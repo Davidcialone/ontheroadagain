@@ -17,7 +17,7 @@ export default defineConfig({
       external: [
         // "jwt-decode",
         "exif-js",
-        // "react-leaflet",
+        "react-leaflet",
         // "framer-motion/client",
         // "@mui/material",
         // "@mui/material/styles/shadows",
