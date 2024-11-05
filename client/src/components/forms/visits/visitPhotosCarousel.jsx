@@ -1,54 +1,93 @@
-import React, { useState } from 'react';
-import { Carousel } from 'react-responsive-carousel';
-import { Modal, ModalOverlay, ModalContent, ModalBody, useDisclosure, Image } from '@chakra-ui/react';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import React from "react";
+import PropTypes from "prop-types";
+import Slider from "react-slick";
+import { Box, IconButton, Paper } from "@mui/material";
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-export function VisitPhotoCarousel({ photos }) {
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const [selectedPhoto, setSelectedPhoto] = useState(null);
+// Custom Previous Arrow
+const PreviousArrow = ({ onClick }) => (
+  <IconButton
+    onClick={onClick}
+    aria-label="Previous Slide"
+    sx={{
+      position: "absolute",
+      left: "-30px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      background: "black",
+      color: "white",
+      "&:hover": {
+        background: "gray.800",
+      },
+      zIndex: 2,
+    }}
+  >
+    <ChevronLeftIcon fontSize="small" />
+  </IconButton>
+);
 
-    const handleImageClick = (photo) => {
-        setSelectedPhoto(photo);
-        onOpen();
-    };
+// Custom Next Arrow
+const NextArrow = ({ onClick }) => (
+  <IconButton
+    onClick={onClick}
+    aria-label="Next Slide"
+    sx={{
+      position: "absolute",
+      right: "-30px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      background: "black",
+      color: "white",
+      "&:hover": {
+        background: "gray.800",
+      },
+      zIndex: 2,
+    }}
+  >
+    <ChevronRightIcon fontSize="small" />
+  </IconButton>
+);
 
-    return (
-        <>
-            <Carousel
-                showThumbs={false}
-                infiniteLoop={false}
-                showStatus={false}
-                autoPlay={false}
-                centerMode={true}
-                centerSlidePercentage={33.33}
-                showArrows={true}
-                emulateTouch={true}
-            >
-                {photos.map((photo, index) => (
-                    <div key={index} onClick={() => handleImageClick(photo)}>
-                        <img 
-                            src={photo} 
-                            alt={`Visit photo ${index + 1}`} 
-                            style={{
-                                width: '100%',
-                                height: '300px',
-                                objectFit: 'cover',
-                                cursor: 'pointer' // Change cursor to pointer to indicate it's clickable
-                            }}
-                        />
-                    </div>
-                ))}
-            </Carousel>
+export function VisitPhotos({ photos}) {
+  // Carousel settings (from react-slick)
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: true,
+    prevArrow: <PreviousArrow />,  // Custom Previous Arrow
+    nextArrow: <NextArrow />,      // Custom Next Arrow
+  };
 
-            {/* Modal for full-screen image */}
-            <Modal isOpen={isOpen} onClose={onClose} size="full">
-                <ModalOverlay />
-                <ModalContent backgroundColor="transparent" boxShadow="none">
-                    <ModalBody display="flex" justifyContent="center" alignItems="center">
-                        <Image src={selectedPhoto} alt="Full screen photo" maxHeight="90vh" maxWidth="90vw" />
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        </>
-    );
+  return (
+    <Box maxWidth="500px" mx="auto" mt={4} position="relative">
+      <Slider {...settings}>
+        {photos.map((photo, index) => (
+          <Box key={index}>
+            <Paper
+              component="img"
+              src={photo}
+              alt={`Visit photo ${index + 1}`}
+              sx={{
+                objectFit: "cover",
+                width: "100%",
+                height: "300px",  // Customize the height as needed
+              }}
+            />
+          </Box>
+        ))}
+      </Slider>
+    </Box>
+  );
 }
+
+VisitPhotos.propTypes = {
+  photos: PropTypes.arrayOf(PropTypes.string).isRequired,
+};

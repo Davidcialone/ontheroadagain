@@ -17,7 +17,7 @@ router.use(jwtService);
  * @returns {Error} 404 - Trip not found
  * @security JWT
  */
-router.get("/:tripId/visits", cw(visitController.getVisit));
+router.get("/trips/:tripId/visits", cw(visitController.getVisit));
 
 // Créer une nouvelle visite pour un voyage donné
 /**
@@ -28,7 +28,7 @@ router.get("/:tripId/visits", cw(visitController.getVisit));
  * @returns {Error} 400 - Bad request
  * @security JWT
  */
-router.post("/:tripId/visits", cw(visitController.createVisit));
+router.post("/trips/:tripId/visits", cw(visitController.createVisit));
 
 // Mettre à jour une visite spécifique
 /**
@@ -41,7 +41,7 @@ router.post("/:tripId/visits", cw(visitController.createVisit));
  * @returns {Error} 404 - Visit not found
  * @security JWT
  */
-router.patch("/:tripId/visits/:visitId", cw(visitController.updateVisit));
+router.patch("/trips/:tripId/visits/:visitId", cw(visitController.updateVisit));
 
 // Supprimer une visite spécifique
 /**
@@ -53,4 +53,4 @@ router.patch("/:tripId/visits/:visitId", cw(visitController.updateVisit));
  * @returns {Error} 404 - Visit not found
  * @security JWT
  */
-router.delete("/:tripId/visits/:visitId", cw(visitController.deleteVisit));
+router.delete("/visits/:visitId", cw(visitController.deleteVisit));

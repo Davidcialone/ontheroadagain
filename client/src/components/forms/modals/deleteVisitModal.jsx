@@ -2,49 +2,55 @@ import React from "react";
 import PropTypes from "prop-types";
 import {
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
-  Text,
-} from "@chakra-ui/react";
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from "@mui/material";
 
-export function DeleteVisitModal({ isOpen, onClose, onDelete }) {
+
+export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId }) {
   const handleDelete = () => {
-    onDelete();
-    onClose();
-  };
+    if (visitId ) {
+        console.log(`Deleting visit with ID: ${visitId}`);
+        onDelete(visitId);
+    } else {
+        console.error("visitId is missing");
+    }
+    onClose(); 
+};
+
+  
+
 
   return (
-    <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Supprimer la visite</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Text>
-            Êtes-vous sûr de vouloir supprimer cette visite ? <br />
-            Cette action est irréversible.
-          </Text>
-        </ModalBody>
-        <ModalFooter>
-          <Button colorScheme="red" mr={3} onClick={handleDelete}>
-            Supprimer
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Annuler
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <Dialog open={isOpen} onClose={onClose}>
+      <DialogTitle>Supprimer la visite</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Êtes-vous sûr de vouloir supprimer cette visite ? <br />
+          Cette action est irréversible.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleDelete} color="error">
+          Supprimer
+        </Button>
+        <Button onClick={onClose} variant="outlined">
+          Annuler
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
 DeleteVisitModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onDelete: PropTypes.func, // Ajout de cette prop
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  onDelete: PropTypes.func, // Assurez-vous que la fonction onDelete est une prop
+  visitId: PropTypes.number, 
+  tripId: PropTypes.number,
 };
+
+export default DeleteVisitModal;
