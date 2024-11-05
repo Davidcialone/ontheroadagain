@@ -1,51 +1,23 @@
 import express from "express";
+import path from "path";
+import apiRouter from "./server.js"; // Import your API router
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
+// Middleware to parse JSON
+app.use(express.json());
 
-  // Log detailed error information
-  console.error({
-    timestamp: new Date().toISOString(),
-    path: req.path,
-    method: req.method,
-    body: req.body,
-    error: {
-      message: err.message,
-      stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-    },
-  });
+// Use your API router
+app.use("/api", apiRouter);
 
-  res.status(500).json({
-    error: "Internal Server Error",
-    requestId: req.headers["x-vercel-id"],
-  });
+// Serve static files from the client
+app.use(express.static(path.join(process.cwd(), "client/dist")));
+
+// Route to serve the frontend
+app.get("*", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "client/dist", "index.html"));
 });
 
-// Basic health check endpoint
-app.get("/api/health", (req, res) => {
-  res.status(200).json({ status: "ok" });
-});
-
-// Global error catcher for unhandled promises
-process.on("unhandledRejection", (reason, promise) => {
-  console.error("Unhandled Rejection at:", promise, "reason:", reason);
-});
-
-// Express error handler for async routes
-const asyncHandler = (fn) => (req, res, next) => {
-  return Promise.resolve(fn(req, res, next)).catch(next);
-};
-
-// For local development
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const port = process.env.PORT || 3000;
-  app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-  });
-}
-
-// Export the Express app
+// Export the Express app as a serverless function
 export default app;

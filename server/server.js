@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import cors from "cors";
 import sequelize from "./db.js";
@@ -9,135 +8,98 @@ import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 import dotenv from "dotenv";
 
+// Charger les variables d'environnement
 dotenv.config();
 
-const apiRouter = express.Router();
+const app = express();
+const port = process.env.PORT || 5000;
 
-// Configure CORS with environment-aware origins
+// Configurer CORS pour permettre uniquement les requêtes de ton frontend
 const corsOptions = {
-  origin:
-    process.env.NODE_ENV === "production"
-      ? process.env.FRONTEND_URL
-      : "http://localhost:3000",
+  origin: "http://localhost:3000", // Remplace par l'URL de ton frontend
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true,
 };
 
-// Middleware
-apiRouter.use(cors(corsOptions));
-apiRouter.use(express.json({ limit: "10mb" }));
-apiRouter.use(express.urlencoded({ limit: "10mb", extended: true }));
+// Utiliser CORS avec les options définies
+app.use(cors(corsOptions));
 
-// Configure Cloudinary
+// Increase payload size limits
+app.use(express.json({ limit: "10mb" })); // Increase JSON body size limit
+app.use(express.urlencoded({ limit: "10mb", extended: true })); // Increase URL-encoded body size limit
+
+// Configurer Cloudinary avec tes informations d'authentification
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Configure multer with memory storage for serverless
+// Configurer Multer pour utiliser Cloudinary comme stockage
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "ontheroadagain",
-    allowed_formats: ["jpg", "png"],
-    transformation: [{ width: 1000, crop: "limit" }], // Optional: optimize uploads
+    folder: "ontheroadagain", // Dossier où les images seront stockées
+    allowedFormats: ["jpg", "png"], // Formats acceptés
   },
 });
 
+// Initialize Multer with storage and set limits for file size
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024,
+    fileSize: 5 * 1024 * 1024, // Set file size limit to 5 MB
   },
 });
 
-// Error handling middleware
-const errorHandler = (err, req, res, next) => {
-  console.error({
-    timestamp: new Date().toISOString(),
-    error: err.message,
-    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
-  });
-
-  if (err instanceof multer.MulterError) {
-    return res.status(400).json({
-      error: "File Upload Error",
-      message: err.message,
-    });
-  }
-
-  res.status(500).json({
-    error: "Internal Server Error",
-    message:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "An error occurred",
-  });
-};
-
-// Upload route with error handling
-apiRouter.post("/upload", async (req, res, next) => {
-  const uploadMiddleware = upload.single("image");
-
+// Route pour gérer l'upload d'une image
+app.post("/upload", upload.single("image"), (req, res) => {
   try {
-    await new Promise((resolve, reject) => {
-      uploadMiddleware(req, res, (err) => {
-        if (err) reject(err);
-        else resolve();
+    console.log(
+      "Taille du fichier:",
+      req.file ? req.file.size : "Aucun fichier"
+    );
+    if (req.file) {
+      res.status(200).json({
+        message: "Image téléchargée avec succès",
+        imageUrl: req.file.path,
       });
-    });
-
-    if (!req.file) {
-      return res.status(400).json({ message: "No image uploaded." });
+    } else {
+      res.status(400).json({ message: "Aucune image n'a été téléchargée." });
     }
-
-    res.status(200).json({
-      message: "Image uploaded successfully",
-      imageUrl: req.file.path,
-    });
   } catch (error) {
-    next(error);
+    console.error("Erreur lors de l'upload de l'image : ", error);
+    if (error instanceof multer.MulterError) {
+      res.status(400).json({ message: error.message });
+    } else {
+      res
+        .status(500)
+        .json({ message: "Erreur lors du téléchargement de l'image." });
+    }
   }
 });
 
-// Database initialization
-const initializeDb = async () => {
+// Utiliser les routes principales de ton application
+app.use("/", router);
+
+// Synchroniser la base de données
+const startServer = async () => {
   try {
-    await sequelize.authenticate();
+    // Synchroniser avec la base de données
     await sequelize.sync({ alter: true });
-    console.log("Database connected and synced");
+    console.log("Base de données synchronisée avec succès.");
+
+    // Lancer le serveur
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
   } catch (error) {
-    console.error("Database initialization error:", error);
-    throw error; // Let the error propagate
+    console.error(
+      "Erreur lors de la synchronisation avec la base de données :",
+      error
+    );
   }
 };
 
-// Main routes with database connection check
-apiRouter.use("/", async (req, res, next) => {
-  try {
-    // Ensure database is connected
-    await sequelize.authenticate();
-    router(req, res, next);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Initialize database on first request
-apiRouter.use(async (req, res, next) => {
-  if (!sequelize.initialized) {
-    try {
-      await initializeDb();
-      sequelize.initialized = true;
-    } catch (error) {
-      return next(error);
-    }
-  }
-  next();
-});
-
-// Error handling must be last
-apiRouter.use(errorHandler);
-
-export default apiRouter;
+// Démarrer le serveur
+startServer();
