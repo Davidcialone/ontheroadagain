@@ -16,7 +16,7 @@ export default defineConfig({
     rollupOptions: {
       external: [
         // "jwt-decode",
-        // "exif-js",
+        "exif-js",
         // "react-leaflet",
         // "framer-motion/client",
         // "@mui/material",
