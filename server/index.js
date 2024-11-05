@@ -1,4 +1,5 @@
-const express = require("express");
+import express from "express";
+
 const app = express();
 
 // Error handling middleware
@@ -38,12 +39,13 @@ const asyncHandler = (fn) => (req, res, next) => {
   return Promise.resolve(fn(req, res, next)).catch(next);
 };
 
-module.exports = app;
-
 // For local development
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   const port = process.env.PORT || 3000;
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
 }
+
+// Export the Express app
+export default app;
