@@ -39,6 +39,7 @@
         "express": "^4.21.1",
         "framer-motion": "^11.11.9",
         "google-map-react": "^2.2.1",
+        "inherits": "^2.0.4",
         "joi": "^17.13.3",
         "js-cookie": "^3.0.5",
         "jsonwebtoken": "^9.0.2",

@@ -13,6 +13,7 @@ export default defineConfig({
   root: path.resolve(__dirname, ""),
   build: {
     outDir: "dist",
+    sourcemap: true,
     rollupOptions: {
       external: [
         // "jwt-decode",
