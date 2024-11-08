@@ -11,32 +11,37 @@ import '../src/style/app.css';
 import '../src/style/trip.css';
 import '../src/style/visit.css';
 import { AuthProvider } from './components/forms/auth/authContext';
+import { ProtectedRoute } from '../src/components/forms/auth/protectedRoute';
 import { TripVisits } from './components/forms/visits/tripVisits';
 import Cookies from 'js-cookie';
 
-export function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const token = Cookies.get('token');
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
+export const App = () => {
   return (
-    <Router >
-    <AuthProvider>
-      <Box width="100%" minHeight="100vh">
-      <Container>
+    <Router>
+      <AuthProvider>
+        <Box width="100%" minHeight="100vh">
+          <Container>
             <h1>ON THE ROAD AGAIN</h1>
             <NavbarSite />
             <Routes>
-              <Route path="/" element={<Home/>} />
-              <Route path="/me/trips" element={isAuthenticated ? <MyTrips /> : <Navigate to="/login" />} />
-              <Route path="/me/trips/:tripId" element={isAuthenticated ? <TripVisits /> : <Navigate to="/login" />} />
+              {/* Routes publiques */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              
+              {/* Route d'accueil - peut être publique ou protégée selon vos besoins */}
+              <Route path="/" element={<Home />} />
+
+              {/* Routes protégées groupées */}
+              <Route path="/me/*" element={
+                <ProtectedRoute>
+                  <Routes>
+                    <Route path="trips" element={<MyTrips />} />
+                    <Route path="trips/:tripId" element={<TripVisits />} />
+                  </Routes>
+                </ProtectedRoute>
+              } />
+
+              {/* Route 404 */}
               <Route path="*" element={<Typography>404 - Page non trouvée</Typography>} />
             </Routes>
           </Container>
@@ -44,4 +49,4 @@ export function App() {
       </AuthProvider>
     </Router>
   );
-}
+};

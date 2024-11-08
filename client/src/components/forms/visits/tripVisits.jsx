@@ -27,7 +27,7 @@ export function TripVisits() {
     const visitsFetched = useRef(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
-    
+        
     // State pour gérer les modaux
     const [openAddModal, setOpenAddModal] = useState(false); 
     const [openUpdateModal, setOpenUpdateModal] = useState(false); 
@@ -50,7 +50,7 @@ export function TripVisits() {
 
         loadTrips();
     }, []);
-
+   
     // Chargez les visites pour le voyage correspondant
     useEffect(() => {
         const loadVisits = async () => {
@@ -158,8 +158,8 @@ export function TripVisits() {
                         isOpen={openAddModal} 
                         onClose={() => setOpenAddModal(false)} 
                         onAddVisit={handleAddVisit} 
-                        tripDateStart={currentTrip?.dateStart ? new Date(currentTrip.dateStart) : null} 
-                        tripDateEnd={currentTrip?.dateEnd ? new Date(currentTrip.dateEnd) : null} 
+                        // tripDateStart={currentTrip?.dateStart ? new Date(currentTrip.dateStart) : null} 
+                        // tripDateEnd={currentTrip?.dateEnd ? new Date(currentTrip.dateEnd) : null} 
                     />
                     <UpdateVisitModal 
                         isOpen={openUpdateModal} 

@@ -105,8 +105,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
       const newVisit = {
         title,
         photo: imageData.secure_url,
-        dateStart: dateStart.toISOString(),
-        dateEnd: dateEnd.toISOString(),
+        dateStart: dateStart.toLocaleDateString("fr-FR"),
+        dateEnd: dateEnd.toLocaleDateString("fr-FR"),
         rating: parseFloat(rating.toFixed(1)),
         comment,
         tripId // Ajout direct de tripId depuis l'URL

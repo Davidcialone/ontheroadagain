@@ -1,37 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Corriger l'import si nécessaire
+import { useNavigate, useLocation } from 'react-router-dom';
+import {jwtDecode} from 'jwt-decode'; // Corrected import
 import Cookies from 'js-cookie';
-import { AuthContext } from '../auth/authContext'; // Import du contexte d'authentification
+import { AuthContext } from '../auth/authContext'; // Import authentication context
 import { Container, TextField, Button, Typography, Box, Snackbar } from '@mui/material';
 
 export function Login() {
-  const { login } = useContext(AuthContext); // Récupérer la fonction de login du contexte
+  const { login } = useContext(AuthContext); // Retrieve the login function from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // État pour gérer la snackbar
+  const location = useLocation();
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // State to control snackbar
 
-  const [hasRedirected, setHasRedirected] = useState(false);
-
-  useEffect(() => {
-    const token = Cookies.get('token');
-    if (token && !hasRedirected) {
-      try {
-        const decodedToken = jwtDecode(token);
-        console.log('Token déjà présent:', decodedToken);
-        setHasRedirected(true);
-        navigate(`/me/trips`); // Redirige l'utilisateur si déjà connecté
-      } catch (err) {
-        console.error("Erreur lors du décodage du token:", err);
-        Cookies.remove('token'); // Supprimer le token si invalide
-      }
-    }
-  }, [navigate, hasRedirected]); // Assurez-vous que `navigate` et `hasRedirected` sont dans les dépendances
-  
-
-  // Fonction pour gérer la soumission du formulaire de connexion
+  // Handle form submission for login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -53,28 +36,29 @@ export function Login() {
       const data = await response.json();
 
       if (data.token) {
-        // Stocker le token dans les cookies
+        // Store token in cookies
         Cookies.set('token', data.token, { expires: 7, sameSite: 'Lax' });
         const decodedToken = jwtDecode(data.token);
 
         console.log('Decoded token:', decodedToken);
 
-        // Mettre à jour l'état global d'authentification via le contexte
+        // Update global auth state via context
         login(data.token);
 
-        // Rediriger l'utilisateur
-        navigate(`/me/trips`);
+        // Redirect to intended page or /me/trips by default
+        const from = location.state?.from || '/me/trips';
+        navigate(from, { replace: true });
       } else {
         throw new Error("Token non reçu dans la réponse.");
       }
     } catch (err) {
       console.error(err);
       setError(err.message);
-      setSnackbarOpen(true); // Ouvrir la snackbar en cas d'erreur
+      setSnackbarOpen(true); // Open snackbar in case of an error
     }
   };
 
-  // Fonction pour fermer la snackbar
+  // Close the snackbar
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
