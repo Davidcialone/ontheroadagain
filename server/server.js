@@ -40,7 +40,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "ontheroadagain", // Dossier où les images seront stockées
-    allowedFormats: ["jpg", "png"], // Formats acceptés
+    allowedFormats: ["jpg", "png", "webp"], // Formats acceptés
   },
 });
 
