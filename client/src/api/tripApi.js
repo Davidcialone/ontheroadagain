@@ -87,7 +87,8 @@ export async function fetchTrips() {
     const userId = getUserIdFromToken();
     console.log(`User ID récupéré pour fetchTrips: ${userId}`);
 
-    const response = await fetch(`http://localhost:5000/api/me/trips`, {
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Récupération de l'URL de base de l'API
+    const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -156,7 +157,8 @@ export async function addTrip(newTrip, existingTrips = []) {
 
   console.log("Appel de l'API pour ajouter un nouveau voyage.");
 
-  const response = await fetch("http://localhost:5000/api/me/trips", {
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Utilisation de l'URL de base
+  const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -182,16 +184,14 @@ export async function deleteTrip(tripId) {
     const userId = getUserIdFromToken();
     console.log(`User ID récupéré pour deleteTrip: ${userId}`);
 
-    const response = await fetch(
-      `http://localhost:5000/api/me/trips/${tripId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      }
-    );
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Utilisation de l'URL de base
+    const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
 
     console.log("Réponse de l'API pour deleteTrip reçue.");
 
@@ -225,17 +225,15 @@ export async function updateTrip(tripId, updatedTrip) {
 
     console.log("Appel de l'API pour mettre à jour le voyage.");
 
-    const response = await fetch(
-      `http://localhost:5000/api/me/trips/${tripId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify(tripData),
-      }
-    );
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Utilisation de l'URL de base
+    const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+      body: JSON.stringify(tripData),
+    });
 
     console.log("Réponse de l'API pour updateTrip reçue.");
 

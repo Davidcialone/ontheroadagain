@@ -22,30 +22,38 @@ export function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  
     try {
-      const response = await fetch('http://localhost:5000/api/users/signup', {
+      const response = await fetch(`${API_BASE_URL}/users/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ lastname, firstname, pseudo, email, password, confirmation }),
+        body: JSON.stringify({
+          lastname,
+          firstname,
+          pseudo,
+          email,
+          password,
+          confirmation,
+        }),
       });
-
+  
       if (!response.ok) {
-        const errorText = await response.json();
-        throw new Error(`Erreur: ${response.status} - ${errorText.error || 'Erreur inconnue'}`);
+        const errorData = await response.json();
+        throw new Error(`Erreur: ${response.status} - ${errorData.error || 'Erreur inconnue'}`);
       }
-
+  
       const data = await response.json();
       console.log('Inscription réussie:', data);
-      navigate('/login');
+      navigate('/login'); // Redirige vers la page de connexion en cas de succès
     } catch (err) {
-      setError(err.message);
+      setError(err.message); // Affiche l'erreur dans l'interface
       console.error('Erreur lors de l\'inscription:', err);
     }
   };
-
+  
   return (
     <Container maxWidth="sm">
       <Box p={5}>

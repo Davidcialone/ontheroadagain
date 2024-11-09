@@ -183,16 +183,14 @@ export async function getVisitsForTrip(tripId) {
       "Envoi de la requête pour récupérer les visites pour le tripId:",
       tripId
     );
-    const response = await fetch(
-      `http://localhost:5000/api/me/trips/${tripId}/visits`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      }
-    );
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}/visits`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
 
     // Log de la réponse brute pour le débogage
     const responseText = await response.text(); // Lire la réponse comme texte pour le log
@@ -295,19 +293,16 @@ export async function addVisit(visitData, existingVisits = []) {
     };
 
     console.log("Données de visite à envoyer:", visitDataToSend); // Log des données de visite
-
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     // Envoi de la requête POST
-    const response = await fetch(
-      `http://localhost:5000/api/me/trips/${tripId}/visits`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify(visitDataToSend),
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}/visits`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+      body: JSON.stringify(visitDataToSend),
+    });
 
     const responseText = await response.text(); // Lire la réponse comme texte pour le log
     console.log("Réponse brute du serveur:", responseText);
@@ -343,10 +338,10 @@ export async function updateVisit(visitId, visitData, tripId) {
       console.error("tripId est manquant.");
       throw new Error("tripId est manquant.");
     }
-
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
     console.log("Envoi de la requête pour mettre à jour la visite:", visitId);
     const response = await fetch(
-      `http://localhost:5000/api/me/trips/${tripId}/visits/${visitId}`,
+      `${API_BASE_URL}/me/trips/${tripId}/visits/${visitId}`,
       {
         method: "PATCH",
         headers: {
@@ -384,19 +379,16 @@ export async function deleteVisit(visitId) {
     console.error("visitId est manquant.");
     throw new Error("visitId est manquant.");
   }
-
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
   try {
     // Envoi de la requête pour supprimer la visite
-    const response = await fetch(
-      `http://localhost:5000/api/me/visits/${visitId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/me/visits/${visitId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+    });
 
     if (!response.ok) {
       console.error(

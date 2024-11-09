@@ -11,7 +11,7 @@ export function LoginForm({ onLogin }) {
     setError('');
 
     try {
-      const response = await fetch('/api/login', { // Remplacez par l'URL de votre API
+      const response = await fetch('/api/login', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
