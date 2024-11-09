@@ -31,8 +31,8 @@ app.use(express.urlencoded({ limit: "10mb", extended: true })); // Increase URL-
 // Configurer Cloudinary avec tes informations d'authentification
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  api_key: process.env.VITE_CLOUDINARY_API_KEY,
+  api_secret: process.env.VITE_CLOUDINARY_API_SECRET,
 });
 
 // Configurer Multer pour utiliser Cloudinary comme stockage

@@ -3,7 +3,7 @@ import Compressor from "compressorjs";
 import Cookies from "js-cookie";
 
 // Informations Cloudinary directement intégrées
-const CLOUDINARY_CLOUD_NAME = "dn1y58few";
+const VITE_CLOUDINARY_CLOUD_NAME = "dn1y58few";
 const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain";
 
 // Fonction pour vérifier si le token est expiré
@@ -60,7 +60,7 @@ export async function uploadImageToCloudinary(imageFile) {
   }
 
   // Vérification des variables d'environnement
-  if (!CLOUDINARY_UPLOAD_PRESET || !CLOUDINARY_CLOUD_NAME) {
+  if (!CLOUDINARY_UPLOAD_PRESET || !VITE_CLOUDINARY_CLOUD_NAME) {
     throw new Error("Configuration Cloudinary manquante");
   }
 
@@ -92,12 +92,12 @@ export async function uploadImageToCloudinary(imageFile) {
 
   // Log des données envoyées
   console.log("Upload preset:", CLOUDINARY_UPLOAD_PRESET);
-  console.log("Cloud name:", CLOUDINARY_CLOUD_NAME);
+  console.log("Cloud name:", VITE_CLOUDINARY_CLOUD_NAME);
 
   try {
     console.log("Début de l'upload vers Cloudinary...");
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      `https://api.cloudinary.com/v1_1/${VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
       {
         method: "POST",
         body: formData,

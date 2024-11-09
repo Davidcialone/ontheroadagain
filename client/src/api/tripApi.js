@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
 
-const CLOUDINARY_CLOUD_NAME = "dn1y58few";
+const VITE_CLOUDINARY_CLOUD_NAME = "dn1y58few";
 const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain";
 
 function isTokenExpired(decodedToken) {
@@ -54,7 +54,7 @@ export async function uploadImageToCloudinary(imageFile) {
 
   try {
     const response = await fetch(
-      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      `https://api.cloudinary.com/v1_1/${VITE_CLOUDINARY_CLOUD_NAME}/image/upload`,
       {
         method: "POST",
         body: formData,
@@ -217,7 +217,7 @@ export async function updateTrip(tripId, updatedTrip) {
     const tripData = {
       ...updatedTrip,
       photo: updatedTrip.photo.public_id
-        ? `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/${updatedTrip.photo.public_id}.jpeg`
+        ? `https://res.cloudinary.com/${VITE_CLOUDINARY_CLOUD_NAME}/image/upload/${updatedTrip.photo.public_id}.jpeg`
         : updatedTrip.photo.endsWith(".jpeg")
         ? updatedTrip.photo
         : `${updatedTrip.photo}.jpeg`,
