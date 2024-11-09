@@ -10,6 +10,15 @@ console.log("Output directory:", path.resolve(__dirname, "dist"));
 
 export default defineConfig({
   plugins: [react()],
+  define: {
+    "process.version": JSON.stringify("16.0.0"),
+    "process.env": {},
+  },
+  resolve: {
+    alias: {
+      semver: "semver/preload.js",
+    },
+  },
   root: path.resolve(__dirname, ""),
   build: {
     outDir: "dist",
