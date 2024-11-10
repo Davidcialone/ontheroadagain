@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
+import dotenv from "dotenv";
+dotenv.config();
 
 const VITE_CLOUDINARY_CLOUD_NAME = "dn1y58few";
 const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain";

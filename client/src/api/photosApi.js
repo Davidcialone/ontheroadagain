@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Informations Cloudinary directement intégrées
 const CLOUDINARY_CLOUD_NAME = "dn1y58few";

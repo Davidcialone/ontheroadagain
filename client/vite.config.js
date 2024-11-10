@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfill";
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
-// import { viteStaticCopy } from "vite-plugin-static-copy"; // Comment or remove this import
 
 console.log("Current working directory:", process.cwd());
 console.log("Output directory:", path.resolve(__dirname, "dist"));
@@ -17,6 +16,11 @@ export default defineConfig({
   resolve: {
     alias: {
       semver: "semver/preload.js",
+      "@": path.resolve(__dirname, "./src"),
+      process: "process/browser",
+      buffer: "buffer",
+      util: "util/",
+      stream: "stream-browserify",
     },
   },
   root: path.resolve(__dirname, ""),
@@ -71,15 +75,6 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
-    },
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-      process: "process/browser",
-      buffer: "buffer",
-      util: "util/",
-      stream: "stream-browserify",
     },
   },
   optimizeDeps: {

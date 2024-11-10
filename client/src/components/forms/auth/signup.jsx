@@ -9,6 +9,8 @@ import {
   Typography,
   Container,
 } from '@mui/material';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export function Signup() {
   const [lastname, setName] = useState('');

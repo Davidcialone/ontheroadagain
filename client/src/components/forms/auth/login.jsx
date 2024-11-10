@@ -4,6 +4,8 @@ import {jwtDecode} from 'jwt-decode'; // Corrected import
 import Cookies from 'js-cookie';
 import { AuthContext } from '../auth/authContext'; // Import authentication context
 import { Container, TextField, Button, Typography, Box, Snackbar } from '@mui/material';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export function Login() {
   const { login } = useContext(AuthContext); // Retrieve the login function from context

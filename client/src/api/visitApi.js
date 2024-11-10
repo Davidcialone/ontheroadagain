@@ -2,6 +2,8 @@ import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
 import { piexif } from "piexifjs";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Informations Cloudinary directement intégrées
 const VITE_CLOUDINARY_CLOUD_NAME = "dn1y58few";
