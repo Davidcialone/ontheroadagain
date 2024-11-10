@@ -72,6 +72,11 @@ app.post("/upload", upload.single("image"), (req, res) => {
 
 app.use("/", router);
 
+// Route de test
+apiRouter.get("/health", (req, res) => {
+  res.json({ status: "OK" });
+});
+
 // Initialisation de la base de données
 if (process.env.NODE_ENV !== "production") {
   const startServer = async () => {
