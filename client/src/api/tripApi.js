@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
-import dotenv from "dotenv";
-dotenv.config();
 
 const VITE_CLOUDINARY_CLOUD_NAME = "dn1y58few";
 const CLOUDINARY_UPLOAD_PRESET = "ontheroadagain";
@@ -89,7 +87,7 @@ export async function fetchTrips() {
     const userId = getUserIdFromToken();
     console.log(`User ID récupéré pour fetchTrips: ${userId}`);
 
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Récupération de l'URL de base de l'API
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
     const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
       method: "GET",
       headers: {
@@ -159,7 +157,7 @@ export async function addTrip(newTrip, existingTrips = []) {
 
   console.log("Appel de l'API pour ajouter un nouveau voyage.");
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Utilisation de l'URL de base
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
   const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
     method: "POST",
     headers: {
@@ -186,7 +184,7 @@ export async function deleteTrip(tripId) {
     const userId = getUserIdFromToken();
     console.log(`User ID récupéré pour deleteTrip: ${userId}`);
 
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Utilisation de l'URL de base
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
     const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
       method: "DELETE",
       headers: {
@@ -227,7 +225,7 @@ export async function updateTrip(tripId, updatedTrip) {
 
     console.log("Appel de l'API pour mettre à jour le voyage.");
 
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL; // Utilisation de l'URL de base
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
     const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
       method: "PATCH",
       headers: {

@@ -9,8 +9,7 @@ import {
   Typography,
   Container,
 } from '@mui/material';
-import dotenv from 'dotenv';
-dotenv.config();
+
 
 export function Signup() {
   const [lastname, setName] = useState('');
@@ -24,7 +23,7 @@ export function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   
     try {
       const response = await fetch(`${API_BASE_URL}/users/signup`, {

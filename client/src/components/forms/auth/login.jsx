@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // Corrected import
+import jwtDecode from 'jwt-decode'; // Corrected import (make sure jwt-decode is installed)
 import Cookies from 'js-cookie';
 import { AuthContext } from '../auth/authContext'; // Import authentication context
 import { Container, TextField, Button, Typography, Box, Snackbar } from '@mui/material';
-import dotenv from 'dotenv';
-dotenv.config();
 
 export function Login() {
   const { login } = useContext(AuthContext); // Retrieve the login function from context
@@ -20,7 +18,9 @@ export function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+    // Get the API base URL from the environment variables
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
     try {
       const response = await fetch(`${API_BASE_URL}/users/login`, {

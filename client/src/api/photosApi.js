@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
-import dotenv from "dotenv";
-dotenv.config();
 
 // Informations Cloudinary directement intégrées
 const CLOUDINARY_CLOUD_NAME = "dn1y58few";
@@ -211,7 +209,7 @@ export async function getPhotosForVisit(visitId) {
     }
 
     console.log("Envoi de la requête GET pour récupérer les photos...");
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const response = await fetch(
       `${API_BASE_URL}/me/visits/${visitId}/photos`, // Ajustez l'URL selon votre API
       {

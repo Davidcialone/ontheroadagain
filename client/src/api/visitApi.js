@@ -2,8 +2,6 @@ import jwt from "jsonwebtoken";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
 import { piexif } from "piexifjs";
-import dotenv from "dotenv";
-dotenv.config();
 
 // Informations Cloudinary directement intégrées
 const VITE_CLOUDINARY_CLOUD_NAME = "dn1y58few";
@@ -185,7 +183,7 @@ export async function getVisitsForTrip(tripId) {
       "Envoi de la requête pour récupérer les visites pour le tripId:",
       tripId
     );
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}/visits`, {
       method: "GET",
       headers: {
@@ -295,7 +293,7 @@ export async function addVisit(visitData, existingVisits = []) {
     };
 
     console.log("Données de visite à envoyer:", visitDataToSend); // Log des données de visite
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     // Envoi de la requête POST
     const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}/visits`, {
       method: "POST",
@@ -340,7 +338,7 @@ export async function updateVisit(visitId, visitData, tripId) {
       console.error("tripId est manquant.");
       throw new Error("tripId est manquant.");
     }
-    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     console.log("Envoi de la requête pour mettre à jour la visite:", visitId);
     const response = await fetch(
       `${API_BASE_URL}/me/trips/${tripId}/visits/${visitId}`,
@@ -381,7 +379,7 @@ export async function deleteVisit(visitId) {
     console.error("visitId est manquant.");
     throw new Error("visitId est manquant.");
   }
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   try {
     // Envoi de la requête pour supprimer la visite
     const response = await fetch(`${API_BASE_URL}/me/visits/${visitId}`, {
