@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import jwtDecode from 'jwt-decode'; // Corrected import (make sure jwt-decode is installed)
+import {jwtDecode} from 'jwt-decode'; // Corrected import (make sure jwt-decode is installed)
 import Cookies from 'js-cookie';
 import { AuthContext } from '../auth/authContext'; // Import authentication context
 import { Container, TextField, Button, Typography, Box, Snackbar } from '@mui/material';
