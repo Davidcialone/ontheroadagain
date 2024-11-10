@@ -1,22 +1,22 @@
 import express from "express";
+import path from "path";
 import cors from "cors";
 import sequelize from "./db.js";
-import { router } from "./app/routers/index.js";
+import { router as apiRouter } from "./app/routers/index.js";
 import cloudinaryPkg from "cloudinary";
-const { v2: cloudinary } = cloudinaryPkg;
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+const { v2: cloudinary } = cloudinaryPkg;
 const app = express();
 
-// Modifier les CORS options pour accepter votre frontend déployé
+// CORS configuration
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-    "https://ontheroadagain-client.vercel.app/", // Ajoutez l'URL de votre frontend déployé
+    "https://ontheroadagain-client.vercel.app/", // URL du frontend déployé
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true,
@@ -26,7 +26,7 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// Configuration Cloudinary
+// Cloudinary Configuration
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.VITE_CLOUDINARY_API_KEY,
@@ -43,9 +43,7 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({
   storage,
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  },
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 app.post("/upload", upload.single("image"), (req, res) => {
@@ -60,34 +58,34 @@ app.post("/upload", upload.single("image"), (req, res) => {
     }
   } catch (error) {
     console.error("Erreur lors de l'upload de l'image : ", error);
-    if (error instanceof multer.MulterError) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res
-        .status(500)
-        .json({ message: "Erreur lors du téléchargement de l'image." });
-    }
+    res.status(error instanceof multer.MulterError ? 400 : 500).json({
+      message: error.message || "Erreur lors du téléchargement de l'image.",
+    });
   }
 });
 
-app.use("/", router);
+// API routes
+app.use("/api", apiRouter);
 
-// Route de test
-apiRouter.get("/health", (req, res) => {
+// Serve static files from the client
+app.use(express.static(path.join(process.cwd(), "client/dist")));
+
+// Route to serve the frontend
+app.get("*", (req, res) => {
+  res.sendFile(path.join(process.cwd(), "client/dist", "index.html"));
+});
+
+// Health check route
+app.get("/api/health", (req, res) => {
   res.json({ status: "OK" });
 });
 
-// Initialisation de la base de données
+// Initialisation de la base de données (non exécutable en production)
 if (process.env.NODE_ENV !== "production") {
   const startServer = async () => {
     try {
       await sequelize.sync({ alter: true });
       console.log("Base de données synchronisée avec succès.");
-
-      const port = process.env.PORT || 5000;
-      app.listen(port, () => {
-        console.log(`Server is running on http://localhost:${port}`);
-      });
     } catch (error) {
       console.error("Erreur lors de la synchronisation :", error);
     }
@@ -95,5 +93,5 @@ if (process.env.NODE_ENV !== "production") {
   startServer();
 }
 
-// Export pour Vercel
+// Export the app for Vercel serverless function
 export default app;
