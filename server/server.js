@@ -8,57 +8,48 @@ import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 import dotenv from "dotenv";
 
-// Charger les variables d'environnement
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 5000;
 
-// Configurer CORS pour permettre uniquement les requêtes de ton frontend
+// Modifier les CORS options pour accepter votre frontend déployé
 const corsOptions = {
-  origin: "http://localhost:3000", // Remplace par l'URL de ton frontend
+  origin: [
+    "http://localhost:3000",
+    "https://ontheroadagain-client.vercel.app/", // Ajoutez l'URL de votre frontend déployé
+  ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
   credentials: true,
 };
 
-// Utiliser CORS avec les options définies
 app.use(cors(corsOptions));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// Increase payload size limits
-app.use(express.json({ limit: "10mb" })); // Increase JSON body size limit
-app.use(express.urlencoded({ limit: "10mb", extended: true })); // Increase URL-encoded body size limit
-
-// Configurer Cloudinary avec tes informations d'authentification
+// Configuration Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.VITE_CLOUDINARY_API_KEY,
   api_secret: process.env.VITE_CLOUDINARY_API_SECRET,
 });
 
-// Configurer Multer pour utiliser Cloudinary comme stockage
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "ontheroadagain", // Dossier où les images seront stockées
-    allowedFormats: ["jpg", "png", "webp"], // Formats acceptés
+    folder: "ontheroadagain",
+    allowedFormats: ["jpg", "png", "webp"],
   },
 });
 
-// Initialize Multer with storage and set limits for file size
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // Set file size limit to 5 MB
+    fileSize: 5 * 1024 * 1024,
   },
 });
 
-// Route pour gérer l'upload d'une image
 app.post("/upload", upload.single("image"), (req, res) => {
   try {
-    console.log(
-      "Taille du fichier:",
-      req.file ? req.file.size : "Aucun fichier"
-    );
     if (req.file) {
       res.status(200).json({
         message: "Image téléchargée avec succès",
@@ -79,27 +70,25 @@ app.post("/upload", upload.single("image"), (req, res) => {
   }
 });
 
-// Utiliser les routes principales de ton application
 app.use("/", router);
 
-// Synchroniser la base de données
-const startServer = async () => {
-  try {
-    // Synchroniser avec la base de données
-    await sequelize.sync({ alter: true });
-    console.log("Base de données synchronisée avec succès.");
+// Initialisation de la base de données
+if (process.env.NODE_ENV !== "production") {
+  const startServer = async () => {
+    try {
+      await sequelize.sync({ alter: true });
+      console.log("Base de données synchronisée avec succès.");
 
-    // Lancer le serveur
-    app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
-    });
-  } catch (error) {
-    console.error(
-      "Erreur lors de la synchronisation avec la base de données :",
-      error
-    );
-  }
-};
+      const port = process.env.PORT || 5000;
+      app.listen(port, () => {
+        console.log(`Server is running on http://localhost:${port}`);
+      });
+    } catch (error) {
+      console.error("Erreur lors de la synchronisation :", error);
+    }
+  };
+  startServer();
+}
 
-// Démarrer le serveur
-startServer();
+// Export pour Vercel
+export default app;
