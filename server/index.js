@@ -84,6 +84,10 @@ app.get("/", (req, res) => {
   res.send("API est en cours d'exécution");
 });
 
+app.get("/test", (req, res) => {
+  res.send("API est en cours d'exécution");
+});
+
 // Initialisation de la base de données (non exécutable en production)
 if (process.env.NODE_ENV !== "production") {
   const startServer = async () => {
