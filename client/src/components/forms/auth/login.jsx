@@ -21,6 +21,8 @@ export function Login() {
 
     // Get the API base URL from the environment variables
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+    console.log("API Base URL:", import.meta.env.VITE_API_BASE_URL);
+
 
     try {
       const response = await fetch(`${API_BASE_URL}/users/login`, {
@@ -30,6 +32,7 @@ export function Login() {
         },
         body: JSON.stringify({ email, password }),
       });
+     
 
       if (!response.ok) {
         const errorText = await response.text();

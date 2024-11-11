@@ -266,7 +266,7 @@ export async function addPhotosToVisit(visitId, photos) {
     throw new Error("photos doit être un tableau non vide.");
   }
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   try {
     console.log("Envoi de la requête POST pour ajouter plusieurs photos...");
 
