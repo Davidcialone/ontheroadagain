@@ -79,9 +79,8 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(process.cwd(), "client/dist", "index.html"));
 });
 
-// Route de vérification de l'état du serveur
 app.get("/", (req, res) => {
-  res.send("API est en cours d'exécution");
+  res.redirect("/api");
 });
 
 // Initialisation de la base de données (non exécutable en production)
