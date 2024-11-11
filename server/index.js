@@ -67,6 +67,14 @@ app.post("/upload", upload.single("image"), (req, res) => {
     });
   }
 });
+// Route de vérification de l'état du serveur
+app.get("/", (req, res) => {
+  res.send("API est en cours d'exécution");
+});
+
+app.get("/test", (req, res) => {
+  res.send("API est en cours d'exécution");
+});
 
 // Routes de l'API
 app.use("/api", apiRouter);
@@ -77,15 +85,6 @@ app.use(express.static(path.join(process.cwd(), "client/dist")));
 // Route pour servir l'application frontend pour toutes les routes non-API
 app.get("*", (req, res) => {
   res.sendFile(path.join(process.cwd(), "client/dist", "index.html"));
-});
-
-// Route de vérification de l'état du serveur
-app.get("/", (req, res) => {
-  res.send("API est en cours d'exécution");
-});
-
-app.get("/test", (req, res) => {
-  res.send("API est en cours d'exécution");
 });
 
 // Initialisation de la base de données (non exécutable en production)
