@@ -72,8 +72,13 @@ app.get("/", (req, res) => {
   res.send("API est en cours d'exécution");
 });
 
-app.get("/test", (req, res) => {
-  res.send("API est en cours d'exécution");
+// Route de test
+app.get("/api/test", (req, res) => {
+  console.log("Test route accessed");
+  res.json({
+    message: "Server is working",
+    timestamp: new Date().toISOString(),
+  });
 });
 
 // // Ajouter un log au démarrage
@@ -107,8 +112,9 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // Démarrage du serveur en local (uniquement si pas déployé sur Vercel)
+// Supprimer cette section pour éviter d'avoir un serveur en mode serverless sur Vercel
 if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Serveur backend démarré sur le port ${PORT}`);
   });
