@@ -1,0 +1,5 @@
+%syntax-version=1.0.0
+%project=OnTheRoadAgain
+
+init 2024-10-07T15:18:29Z cialo <cialo@OrdiDavid> # initialisation de la base de données
+seeding 2024-10-07T15:32:19Z cialo <cialo@OrdiDavid> # seeding de la base de données
