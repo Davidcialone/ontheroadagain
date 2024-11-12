@@ -10,7 +10,7 @@
       }
     },
     {
-      "src": "api/[...slug].js",
+      "src": "server/api/[...slug].js",
       "use": "@vercel/node",
       "config": {
         "includeFiles": ["server/**"]
@@ -20,7 +20,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/[...slug].js"
+      "dest": "/server/api/[...slug].js"
     },
     {
       "src": "/assets/(.*)",

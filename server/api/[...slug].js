@@ -1,4 +1,4 @@
-import app from "../server/index";
+import app from "../index";
 
 export default async function handler(req, res) {
   console.log("API Handler started:", {
