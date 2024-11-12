@@ -6,36 +6,33 @@
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "npm install && npm run build",
-        "distDir": "client/dist"
+        "distDir": "client/dist" 
       }
     },
     {
-      "src": "server/api/[...slug].js",
+      "src": "api/index.js", 
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["server/**"]
+        "includeFiles": ["api/**"]
       }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server/api/[...slug].js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/assets/(.*)",
-      "dest": "/client/dist/assets/$1"
+      "dest": "/client/dist/assets/$1" 
     },
     {
       "src": "/(.*)\\.(js|css|json|png|jpg|svg|ico)$",
-      "dest": "/client/dist/$1"
+      "dest": "/client/dist/$1" 
     },
     {
       "src": "/(.*)",
       "dest": "/client/dist/index.html"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
