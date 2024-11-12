@@ -21,6 +21,7 @@ const corsOptions = {
     "https://ontheroadagain-client.vercel.app/", // URL du frontend déployé
   ],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 app.use(cors(corsOptions));
