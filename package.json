@@ -12,7 +12,7 @@
         "build": "npm run build-client && npm run build-server",
         "build-client": "cd client && npm run build", 
         "build-server": "echo 'No build step needed for server'",  
-        "start": "node server/server.js", 
+        "start": "node server/index.js", 
         "lint": "cd client && npm run lint",
         "preview": "cd client && npm run preview"
     },
