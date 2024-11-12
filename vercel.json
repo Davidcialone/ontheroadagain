@@ -6,33 +6,33 @@
       "use": "@vercel/static-build",
       "config": {
         "buildCommand": "npm install && npm run build",
-        "distDir": "client/dist" 
+        "distDir": "client/dist"
       }
     },
     {
-      "src": "api/index.js", 
+      "src": "server/api/[...slug].js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["api/**"]
+        "includeFiles": ["server/**"]
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "source": "/api/(.*)",
+      "destination": "/server/api/[...slug].js"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "/client/dist/assets/$1" 
+      "source": "/assets/(.*)",
+      "destination": "/client/dist/assets/$1"
     },
     {
-      "src": "/(.*)\\.(js|css|json|png|jpg|svg|ico)$",
-      "dest": "/client/dist/$1" 
+      "source": "/(.*)\\.(js|css|json|png|jpg|svg|ico)",
+      "destination": "/client/dist/$1"
     },
     {
-      "src": "/(.*)",
-      "dest": "/client/dist/index.html"
+      "source": "/(.*)",
+      "destination": "/client/dist/index.html"
     }
   ]
 }
