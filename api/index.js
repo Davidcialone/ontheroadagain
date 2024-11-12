@@ -84,7 +84,7 @@ app.get("/api/test", (req, res) => {
 });
 
 // Routes de l'API
-app.use("/", apiRouter);
+app.use("/api", apiRouter);
 
 // Servir les fichiers statiques du frontend
 app.use(express.static(path.join(process.cwd(), "client/dist")));
