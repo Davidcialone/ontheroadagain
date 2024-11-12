@@ -76,11 +76,11 @@ app.get("/test", (req, res) => {
   res.send("API est en cours d'exécution");
 });
 
-// Ajouter un log au démarrage
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log("Déploiement réussi !"); // Log pour tester
-});
+// // Ajouter un log au démarrage
+// app.listen(PORT, () => {
+//   console.log(`Server is running on port ${PORT}`);
+//   console.log("Déploiement réussi !"); // Log pour tester
+// });
 
 // Routes de l'API
 app.use("/api", apiRouter);
