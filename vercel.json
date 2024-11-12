@@ -12,7 +12,10 @@
     },
     {
       "src": "server/index.js",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["server/**"]
+      }
     }
   ],
   "routes": [
@@ -21,8 +24,16 @@
       "dest": "/server/index.js"
     },
     {
+      "src": "/assets/(.*)",
+      "dest": "/client/dist/assets/$1"
+    },
+    {
+      "src": "/(.*)\\.(?:js|css|json|png|jpg|svg|ico)$",
+      "dest": "/client/dist/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "client/dist/index.html"
+      "dest": "/client/dist/index.html"
     }
   ],
   "env": {

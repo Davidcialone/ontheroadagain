@@ -94,7 +94,7 @@ app.get("*", (req, res) => {
 });
 
 // Initialisation de la base de données (non exécutable en production)
-if (process.env.VITE_NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") {
   const startServer = async () => {
     try {
       await sequelize.sync({ alter: true });
@@ -107,7 +107,7 @@ if (process.env.VITE_NODE_ENV !== "production") {
 }
 
 // Démarrage du serveur en local (uniquement si pas déployé sur Vercel)
-if (process.env.VITE_NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Serveur backend démarré sur le port ${PORT}`);
