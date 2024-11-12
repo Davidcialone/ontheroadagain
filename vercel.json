@@ -5,13 +5,12 @@
       "src": "client/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "root": "client",
         "buildCommand": "npm install && npm run build",
-        "outputDirectory": "dist"
+        "distDir": "client/dist"
       }
     },
     {
-      "src": "server/index.js",
+      "src": "api/[...slug].js",
       "use": "@vercel/node",
       "config": {
         "includeFiles": ["server/**"]
@@ -21,14 +20,14 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/server/index.js"
+      "dest": "/api/[...slug].js"
     },
     {
       "src": "/assets/(.*)",
       "dest": "/client/dist/assets/$1"
     },
     {
-      "src": "/(.*)\\.(?:js|css|json|png|jpg|svg|ico)$",
+      "src": "/(.*)\\.(js|css|json|png|jpg|svg|ico)$",
       "dest": "/client/dist/$1"
     },
     {
