@@ -7,6 +7,7 @@ import cloudinaryPkg from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 import dotenv from "dotenv";
+import { VercelRequest, VercelResponse } from "@vercel/node";
 
 // Chargement des variables d'environnement
 dotenv.config();
@@ -67,6 +68,7 @@ app.post("/upload", upload.single("image"), (req, res) => {
     });
   }
 });
+
 // Route de vérification de l'état du serveur
 app.get("/", (req, res) => {
   res.send("API est en cours d'exécution");
@@ -81,12 +83,6 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-// // Ajouter un log au démarrage
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-//   console.log("Déploiement réussi !"); // Log pour tester
-// });
-
 // Routes de l'API
 app.use("/api", apiRouter);
 
@@ -98,27 +94,7 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(process.cwd(), "client/dist", "index.html"));
 });
 
-// Initialisation de la base de données (non exécutable en production)
-if (process.env.NODE_ENV !== "production") {
-  const startServer = async () => {
-    try {
-      await sequelize.sync({ alter: true });
-      console.log("Base de données synchronisée avec succès.");
-    } catch (error) {
-      console.error("Erreur lors de la synchronisation :", error);
-    }
-  };
-  startServer();
-}
-
-// Démarrage du serveur en local (uniquement si pas déployé sur Vercel)
-// Supprimer cette section pour éviter d'avoir un serveur en mode serverless sur Vercel
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 5000;
-  app.listen(PORT, () => {
-    console.log(`Serveur backend démarré sur le port ${PORT}`);
-  });
-}
-
-// Export de l'application pour les fonctions serverless de Vercel
-export default app;
+// Exporter l'application pour Vercel
+export default (req, res) => {
+  app(req, res);
+};
