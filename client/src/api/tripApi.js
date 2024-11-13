@@ -88,7 +88,7 @@ export async function fetchTrips() {
     console.log(`User ID récupéré pour fetchTrips: ${userId}`);
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
-    const response = await fetch(`${API_BASE_URL}/me/trips`, {
+    const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -158,7 +158,7 @@ export async function addTrip(newTrip, existingTrips = []) {
   console.log("Appel de l'API pour ajouter un nouveau voyage.");
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
-  const response = await fetch(`${API_BASE_URL}/me/trips`, {
+  const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -185,7 +185,7 @@ export async function deleteTrip(tripId) {
     console.log(`User ID récupéré pour deleteTrip: ${userId}`);
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
-    const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -226,7 +226,7 @@ export async function updateTrip(tripId, updatedTrip) {
     console.log("Appel de l'API pour mettre à jour le voyage.");
 
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
-    const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

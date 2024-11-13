@@ -211,7 +211,7 @@ export async function getPhotosForVisit(visitId) {
     console.log("Envoi de la requête GET pour récupérer les photos...");
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const response = await fetch(
-      `${API_BASE_URL}/me/visits/${visitId}/photos`, // Ajustez l'URL selon votre API
+      `${API_BASE_URL}/api/me/visits/${visitId}/photos`, // Ajustez l'URL selon votre API
       {
         method: "GET",
         headers: {
@@ -270,7 +270,7 @@ export async function addPhotosToVisit(visitId, photos) {
   try {
     console.log("Envoi de la requête POST pour ajouter plusieurs photos...");
 
-    const url = `${API_BASE_URL}/me/visits/${visitId}/photos`;
+    const url = `${API_BASE_URL}/api/me/visits/${visitId}/photos`;
     console.log(`URL de la requête: ${url}`);
 
     const response = await fetch(url, {

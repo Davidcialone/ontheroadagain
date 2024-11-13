@@ -184,13 +184,16 @@ export async function getVisitsForTrip(tripId) {
       tripId
     );
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}/visits`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/me/trips/${tripId}/visits`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
 
     // Log de la réponse brute pour le débogage
     const responseText = await response.text(); // Lire la réponse comme texte pour le log
@@ -295,14 +298,17 @@ export async function addVisit(visitData, existingVisits = []) {
     console.log("Données de visite à envoyer:", visitDataToSend); // Log des données de visite
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     // Envoi de la requête POST
-    const response = await fetch(`${API_BASE_URL}/me/trips/${tripId}/visits`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Cookies.get("token")}`,
-      },
-      body: JSON.stringify(visitDataToSend),
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/me/trips/${tripId}/visits`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Cookies.get("token")}`,
+        },
+        body: JSON.stringify(visitDataToSend),
+      }
+    );
 
     const responseText = await response.text(); // Lire la réponse comme texte pour le log
     console.log("Réponse brute du serveur:", responseText);
@@ -382,7 +388,7 @@ export async function deleteVisit(visitId) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   try {
     // Envoi de la requête pour supprimer la visite
-    const response = await fetch(`${API_BASE_URL}/me/visits/${visitId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/me/visits/${visitId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
