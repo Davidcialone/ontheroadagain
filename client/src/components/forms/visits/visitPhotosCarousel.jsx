@@ -67,7 +67,7 @@ export function VisitPhotos({ photos}) {
   };
 
   return (
-    <Box maxWidth="500px" mx="auto" mt={4} position="relative">
+    <Box maxWidth="800px" mx="auto" mt={4} position="relative">
       <Slider {...settings}>
         {photos.map((photo, index) => (
           <Box key={index}>
@@ -78,7 +78,7 @@ export function VisitPhotos({ photos}) {
               sx={{
                 objectFit: "cover",
                 width: "100%",
-                height: "300px",  // Customize the height as needed
+                height: "500px",  // Customize the height as needed
               }}
             />
           </Box>

@@ -20,8 +20,18 @@ export const App = () => {
     <Router>
       <AuthProvider>
         <Box width="100%" minHeight="100vh">
-          <Container>
-            <h1>ON THE ROAD AGAIN</h1>
+          <Container >
+            {/* <h1>ON THE ROAD AGAIN</h1> */}
+            <Box 
+              borderRadius={4} 
+              backgroundColor="#8CCEE9" 
+              width="100%" 
+              mb={1} 
+              boxShadow="0px 4px 10px rgba(0, 0, 0, 0.4)" // Ombre personnalisée
+            >
+              <img src="../../public/titre6.png" alt="titre" />
+            </Box>
+
             <NavbarSite />
             <Routes>
               {/* Routes publiques */}

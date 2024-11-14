@@ -130,7 +130,7 @@ export function TripVisits() {
             <Typography variant="subtitle1" gutterBottom>
                 Dates : {currentTrip?.dateStart ? new Date(currentTrip.dateStart).toLocaleDateString() : 'Inconnue'} - {currentTrip?.dateEnd ? new Date(currentTrip.dateEnd).toLocaleDateString() : 'Inconnue'}
             </Typography>
-            <div className='tripVisits'>
+            <div className='tripVisits' >
                 <div className='add-visit-button-layout'>
                     <Button 
                         variant="contained" 
@@ -175,7 +175,7 @@ export function TripVisits() {
                     />
                 </div>
     
-                <Grid container sx={{ display: 'flex', width: '100%' }} spacing={3}>
+                <Grid container sx={{ display: 'flex', width: '100%', alignItems:"center", justifyContent:"center" }} spacing={3}>
                     {loading ? (
                         <CircularProgress />
                     ) : (
