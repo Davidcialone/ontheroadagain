@@ -20,7 +20,7 @@ export function MyTrips() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
-    // const [currentTripId, setCurrentTripId] = useState(null);
+    const [user, setUser] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     
     const [isAddTripModalOpen, setIsAddTripModalOpen] = useState(false); // State for AddTripModal
@@ -96,10 +96,26 @@ export function MyTrips() {
     // Modal control functions
     const onOpenAddTripModal = () => setIsAddTripModalOpen(true);
     const onCloseAddTripModal = () => setIsAddTripModalOpen(false);
+
+    // // Dans votre composant
+    // const token = Cookies.get('jwt');
+    // const decodedToken = jwtDecode(token);
+    // const userId = decodedToken.userId;
+
+    // // Assurez-vous que getUser est une fonction asynchrone qui récupère les informations utilisateur
+    // const fetchedUser = await getUser(userId);
+    // setUser(fetchedUser); // Met à jour l'état sans conflit
+
+
+
+    // const currentUser = user.find((user) => user.id === user.id);
+
   
     return (
         <Container>
-            <Typography variant="h4" gutterBottom>Mes voyages</Typography>
+            <Typography variant="h4" gutterBottom>Mes voyages 
+                {/* <strong>{currentUser ? currentUser.pseudo : 'Pas de pseudo'}</strong> */}
+                </Typography>
             <div className='roadbook'>
                 <div className='add-trip-button-layout'>
                 <Button 

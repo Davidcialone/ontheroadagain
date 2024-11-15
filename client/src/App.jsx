@@ -29,7 +29,7 @@ export const App = () => {
               mb={1} 
               boxShadow="0px 4px 10px rgba(0, 0, 0, 0.4)" // Ombre personnalisée
             >
-              <img src="../../public/titre6.png" alt="titre" />
+              <img src="/titre6.png" alt="titre" />
             </Box>
 
             <NavbarSite />

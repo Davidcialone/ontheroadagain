@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   AppBar,
+  Box,
   Toolbar,
   Button,
   Container,
@@ -9,7 +10,7 @@ import {
 import { AuthContext } from '../auth/authContext';
 
 export function NavbarSite() {
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   // État pour gérer le menu déroulant
@@ -20,6 +21,7 @@ export function NavbarSite() {
     logout();
     navigate('/login');
   };
+
 
   // Styles des boutons
  const buttonStyles = {
@@ -73,12 +75,20 @@ export function NavbarSite() {
           {/* Bouton de déconnexion à droite */}
           <div>
             {isAuthenticated ? (
-              <Button 
-                sx={buttonStyles}  // Appliquer ici avec sx
-                onClick={handleLogout}
-              >
-                Déconnexion
-              </Button>
+              <Box sx={{display:"flex", alignItems:"center"}}>
+                {/* Affichage du message de bienvenue avec le pseudo de l'utilisateur */}
+                <p style={{
+                  color: "black", // Couleur noire
+                  fontSize: "1.2rem", // Taille de la police
+                  fontWeight: "bold", // Texte en gras                      
+                }}>Bienvenue, {user?.pseudo || 'Utilisateur'}!</p> 
+                <Button 
+                  sx={buttonStyles}  // Appliquer les styles du bouton
+                  onClick={handleLogout}
+                >
+                  Déconnexion
+                </Button>
+              </Box>
             ) : (
               <>
                 <Button 

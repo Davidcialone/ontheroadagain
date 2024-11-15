@@ -2,11 +2,13 @@ import React, { createContext, useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { jwtDecode } from 'jwt-decode'; // Corriger l'import si nécessaire
 import { useNavigate } from "react-router-dom";
+import { fetchUser } from "../../../api/userApi";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,14 +19,24 @@ export const AuthProvider = ({ children }) => {
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000; // Temps actuel en secondes
 
-        // Si le jeton est expiré, redirigez vers la page de connexion
+        // Vérification de l'expiration du token
         if (decodedToken.exp < currentTime) {
           logout();
         } else {
           setIsAuthenticated(true);
+
+          // Récupération de l'utilisateur via `fetchUser`
+          fetchUser()
+            .then((data) => {
+              setUser(data); // Assignez les données utilisateur
+            })
+            .catch((error) => {
+              console.error("Erreur lors de la récupération de l'utilisateur:", error);
+              logout(); // Déconnecte si la récupération échoue
+            });
         }
       } catch (error) {
-        console.error("Erreur lors de la décodage du token", error);
+        console.error("Erreur lors du décodage du token:", error);
         logout();
       }
     }
@@ -35,14 +47,16 @@ export const AuthProvider = ({ children }) => {
     setIsAuthenticated(true);
   };
 
+
   const logout = () => {
     Cookies.remove("token");
     setIsAuthenticated(false);
+    setUser(null);
     navigate("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user,login, logout }}>
       {children}
     </AuthContext.Provider>
   );
