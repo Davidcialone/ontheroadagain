@@ -26,7 +26,7 @@ export default defineConfig({
   },
   root: path.resolve(__dirname, ""),
   build: {
-    outDir: "dist",
+    outDir: "client/dist",
     sourcemap: true,
     rollupOptions: {
       external: [
