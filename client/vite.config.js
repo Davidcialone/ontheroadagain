@@ -8,6 +8,7 @@ console.log("Current working directory:", process.cwd());
 console.log("Output directory:", path.resolve(__dirname, "dist"));
 
 export default defineConfig({
+  base: "/client/",
   plugins: [react()],
   define: {
     "process.version": JSON.stringify("16.0.0"),
