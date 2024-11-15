@@ -24,7 +24,6 @@ export default defineConfig({
     },
   },
   root: path.resolve(__dirname, ""),
-  base: "/client/",
   build: {
     outDir: "client/dist",
     sourcemap: true,
