@@ -4,24 +4,24 @@
     "version": "0.0.0",
     "type": "module",
     "workspaces": [
-        "client",
-        "server"
+    "client",
+    "api"
     ],
     "scripts": {
-       "install-all": "npm install && cd client && npm install && cd ../server && npm install",
-        "build": "npm run build-client && npm run build-server",
-        "build-client": "cd client && npm run build",
-        "build-server": "echo 'No build step needed for server'",
-        "lint": "cd client && npm run lint",
-        "preview": "cd client && npm run preview",
-        "dev": "concurrently \"npm run dev:client\" \"npm run dev:api\"",
-        "dev:client": "cd client && vite --mode development",
-        "dev:api": "dotenv -e api/.env.local -- node api/index.js",
-        "start": "concurrently \"npm run start:client\" \"npm run start:api\"",
-        "start:client": "cd client && vite --mode production",
-        "start:api": "dotenv -e api/.env.production -- node api/index.js"
-
+    "install-all": "npm install && cd client && npm install && cd ../api && npm install", 
+    "build": "npm run build-client && npm run build-api",
+    "build-client": "cd client && npm run build", 
+    "build-api": "echo 'No build step needed for API'", 
+    "lint": "cd client && npm run lint",
+    "preview": "cd client && npm run preview", 
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:api\"",
+    "dev:client": "cd client && vite --mode development", 
+    "dev:api": "dotenv -e api/.env.local -- node api/index.js",
+    "start": "concurrently \"npm run start:client\" \"npm run start:api\"",
+    "start:client": "cd client && vite --mode production", 
+    "start:api": "dotenv -e api/.env.production -- node api/index.js" 
     },
+
     "devDependencies": {
         "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
         "@types/jwt-decode": "^3.1.0",
@@ -29,6 +29,7 @@
         "concurrently": "^6.5.1",
         "dotenv-cli": "^7.4.2",
         "gh-pages": "^6.1.1",
+        "vite": "^5.4.11",
         "vite-plugin-static-copy": "^2.0.0"
     },
     "dependencies": {
