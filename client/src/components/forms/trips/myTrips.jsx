@@ -20,14 +20,13 @@ export function MyTrips() {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
-    const [user, setUser] = useState(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     
     const [isAddTripModalOpen, setIsAddTripModalOpen] = useState(false); // State for AddTripModal
     
     const navigate = useNavigate();
     const tripsFetched = useRef(false);
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, user } = useContext(AuthContext);
     
     useEffect(() => {
         const loadTrips = async () => {
@@ -113,8 +112,8 @@ export function MyTrips() {
   
     return (
         <Container>
-            <Typography variant="h4" gutterBottom>Mes voyages 
-                {/* <strong>{currentUser ? currentUser.pseudo : 'Pas de pseudo'}</strong> */}
+            <Typography variant="h4" gutterBottom>Les voyages de :   
+                <strong> {user ? user.pseudo : 'Pas de pseudo'}</strong>
                 </Typography>
             <div className='roadbook'>
                 <div className='add-trip-button-layout'>

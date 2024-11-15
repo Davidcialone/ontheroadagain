@@ -243,7 +243,7 @@ const handleAddVisitsPhotos = async (uploadedPhotos) => {
               Note
             </Badge>
             <Box display="flex" justifyContent="center" mt={1}>
-              <ReactStars count={5} value={rating} size={24} half={true} edit={false} color2={"#ffd700"} color1={"#a9a9a9"} />
+              <ReactStars count={5} value={parseFloat(rating.toFixed(1))} size={24} half={true} edit={false} color2={"#ffd700"} color1={"#a9a9a9"} />
             </Box>
 
             {/* Comment Section */}

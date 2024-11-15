@@ -309,7 +309,7 @@ export async function addVisit(visitData, existingVisits = []) {
         body: JSON.stringify(visitDataToSend),
       }
     );
-
+    console.log("Réponse de la requête POST:", response); // Log de la réponse brute
     const responseText = await response.text(); // Lire la réponse comme texte pour le log
     console.log("Réponse brute du serveur:", responseText);
 

@@ -93,7 +93,7 @@ export function TripVisits() {
             Array.isArray(prevVisits)
                 ? prevVisits.map((visit) =>
                     visit.id === updatedVisitData.id
-                        ? { ...updatedVisitData, rating: Number(updatedVisitData.rating) || 0 }
+                        ? { ...updatedVisitData, rating: parseFloat(updatedVisitData.rating) || 0 }
                         : visit
                 )
                 : []
@@ -180,25 +180,29 @@ export function TripVisits() {
                         <CircularProgress />
                     ) : (
                         Array.isArray(visits) && visits.length > 0 ? (
-                            visits.map((visit) => (
-                                <Grid item xs={12} sm={12} md={12} key={visit.id}>
-                                    <Visit
-                                        id={visit.id}
-                                        visitId={visit.id} 
-                                        tripId={numericTripId}
-                                        title={visit.title}
-                                        photo={visit.photo}
-                                        dateStart={visit.dateStart}
-                                        dateEnd={visit.dateEnd}
-                                        comment={visit.comment}
-                                        rating={typeof visit.rating === 'number' && visit.rating >= 0 && visit.rating <= 5 ? visit.rating : 0} 
-                                        geo={visit.geo}
-                                        onVisitUpdated={handleVisitUpdated}
-                                        onVisitDeleted={handleVisitDeleted}
-                                        onDeleteClick={() => handleVisitDeleted(visit.id)} // Passer les IDs lors du clic
-                                    />
-                                </Grid>
-                            ))
+                            visits.map((visit) => {
+                                const rating = Number(visit.rating); // Convertir en nombre
+                                const validRating = !isNaN(rating) && rating >= 0 && rating <= 5 ? rating : 0; // Vérifier la validité
+                        
+                                return (
+                                    <Grid item xs={12} sm={12} md={12} key={visit.id}>
+                                        <Visit
+                                            id={visit.id}
+                                            visitId={visit.id}
+                                            tripId={numericTripId}
+                                            title={visit.title}
+                                            photo={visit.photo}
+                                            dateStart={visit.dateStart}
+                                            dateEnd={visit.dateEnd}
+                                            comment={visit.comment}
+                                            rating={validRating} // Passer la note validée
+                                            geo={visit.geo}
+                                            onVisitUpdated={handleVisitUpdated}
+                                            onVisitDeleted={handleVisitDeleted}
+                                            onDeleteClick={() => handleVisitDeleted(visit.id)} // Passer les IDs lors du clic
+                                        />
+                                    </Grid>
+                            )})
                         ) : (
                             <Typography variant="body1">Aucune visite trouvée pour ce voyage.</Typography>
                         )

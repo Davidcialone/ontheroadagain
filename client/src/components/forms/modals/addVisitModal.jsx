@@ -23,8 +23,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
   const { tripId } = useParams(); // Récupérer tripId depuis l'URL
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [dateStart, setDateStart] = useState(tripDateStart);
-  const [dateEnd, setDateEnd] = useState(tripDateEnd);
+  const [dateStart, setDateStart] = useState(new Date(tripDateStart));
+  const [dateEnd, setDateEnd] = useState(new Date(tripDateEnd));
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const [dateStartOpen, setDateStartOpen] = useState(false);
@@ -43,8 +43,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
     setDateStart(tripDateStart);
     setDateEnd(tripDateEnd);
   }, [tripDateStart, tripDateEnd]);
-  console.log("dans addVisitModal tripDateStart ", tripDateStart);
-  console.log("dans addVisitModal tripDateEnd", tripDateEnd);
+  // console.log("dans addVisitModal tripDateStart ", tripDateStart);
+  // console.log("dans addVisitModal tripDateEnd", tripDateEnd);
 
   const resetForm = () => {
     setTitle("");
@@ -54,8 +54,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
     setError(null);
     setIsSubmitting(false);
     setRating(3);
-    setDateStart(tripDateStart);
-    setDateEnd(tripDateEnd);
+    setDateStart(new Date(tripDateStart));
+    setDateEnd(new Date(tripDateEnd));
   };
 
   const handlePhotoUpload = (e) => {
@@ -91,11 +91,14 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
       return;
     }
 
-    // Vérifier si les dates de la visite sont dans les dates du voyage
-    if (dateStart < new Date(tripDateStart) || dateEnd > new Date(tripDateEnd)) {
-      setError("Les dates de la visite doivent être comprises dans les dates du voyage.");
-      return;
-    }
+   // Vérifier les dates dans les limites du voyage
+   const tripStartDate = new Date(tripDateStart);
+   const tripEndDate = new Date(tripDateEnd);
+
+   if (dateStart < tripStartDate || dateEnd > tripEndDate) {
+     setError("Les dates de la visite doivent être comprises dans les dates du voyage.");
+     return;
+   }
 
     // Marquer comme soumis
     setIsSubmitting(true);
@@ -105,13 +108,13 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
       const newVisit = {
         title,
         photo: imageData.secure_url,
-        dateStart: dateStart.toLocaleDateString("fr-FR"),
-        dateEnd: dateEnd.toLocaleDateString("fr-FR"),
+        dateStart: new Date(dateStart).toISOString().split('T')[0],
+        dateEnd: new Date(dateEnd).toISOString().split('T')[0],
         rating: parseFloat(rating.toFixed(1)),
         comment,
         tripId // Ajout direct de tripId depuis l'URL
       };
-
+console.log("newVisit", newVisit);
       const addedVisit = await addVisit(newVisit);
       onAddVisit(addedVisit);
       onClose();
