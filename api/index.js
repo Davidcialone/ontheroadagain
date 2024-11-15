@@ -16,8 +16,10 @@ const PORT = process.env.PORT || 5000;
 
 // Configuration CORS
 const corsOptions = {
-  origin: "http://localhost:3000", // autorise les requêtes depuis le frontend en développement
-
+  origin: [
+    "https://ontheroadagain-client-6kao2pbjj-davidcialones-projects.vercel.app",
+    "http://localhost:3000",
+  ],
   credentials: true,
 };
 app.use(cors(corsOptions));
