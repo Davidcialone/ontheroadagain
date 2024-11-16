@@ -129,7 +129,7 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
           <Typography>Photo actuelle</Typography>
           {photo && <img src={photo} alt="Voyage actuel" style={{ width: "100%", marginBottom: "1em" }} />}
           <input type="file" onChange={handlePhotoUpload} />
-          <FormHelperText>Importer une nouvelle image (JPEG, PNG, GIF)</FormHelperText>
+          <FormHelperText>Importer une nouvelle image (JPEG, PNG, GIF, WEBP)</FormHelperText>
         </FormControl>
 
         {/* Date de début avec icône */}
