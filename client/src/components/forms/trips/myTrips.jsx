@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Button, Typography, Snackbar } from '@mui/material';
-import Grid from '@mui/material/Grid2';
+import { Container, Button, Typography, Snackbar, Grid } from '@mui/material';
 import MuiAlert from '@mui/material/Alert';
 import { AuthContext } from '../auth/authContext';
 // import Cookies from 'js-cookie';

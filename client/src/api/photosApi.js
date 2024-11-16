@@ -16,25 +16,25 @@ function isTokenExpired(decodedToken) {
 export function getUserIdFromToken() {
   const yourJWTToken = Cookies.get("token");
   if (!yourJWTToken) {
-    console.error("Token non trouvé");
+    // console.error("Token non trouvé");
     throw new Error("Token non trouvé");
   }
 
   const decodedToken = jwt.decode(yourJWTToken);
-  console.log("Token décodé:", decodedToken);
+  // console.log("Token décodé:", decodedToken);
 
   if (!decodedToken || isTokenExpired(decodedToken)) {
-    console.error("Le token a expiré ou est invalide");
+    // console.error("Le token a expiré ou est invalide");
     throw new Error("Le token a expiré ou est invalide");
   }
 
   const userId = decodedToken.user_id || decodedToken.sub || decodedToken.id;
   if (!userId) {
-    console.error("ID d'utilisateur non trouvé dans le token");
+    // console.error("ID d'utilisateur non trouvé dans le token");
     throw new Error("ID d'utilisateur non trouvé dans le token");
   }
 
-  console.log("ID utilisateur récupéré:", userId);
+  // console.log("ID utilisateur récupéré:", userId);
   return userId;
 }
 
@@ -80,7 +80,7 @@ export async function uploadImageToCloudinary(imageFile) {
       size: compressedImage.size,
     });
   } catch (error) {
-    console.error("Erreur lors de la compression:", error);
+    // console.error("Erreur lors de la compression:", error);
     throw new Error("Échec de la compression de l'image");
   }
 
@@ -89,10 +89,6 @@ export async function uploadImageToCloudinary(imageFile) {
   formData.append("file", compressedImage);
   formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
   formData.append("context", "keep_metadata");
-
-  // Log des données envoyées
-  console.log("Upload preset:", CLOUDINARY_UPLOAD_PRESET);
-  console.log("Cloud name:", CLOUDINARY_CLOUD_NAME);
 
   try {
     console.log("Début de l'upload vers Cloudinary...");
@@ -174,9 +170,9 @@ async function handleMultipleImageUploads(imageFiles) {
     }
   }
 
-  // Afficher les résultats finaux
-  console.log("Résultats des uploads réussis:", uploadResults);
-  console.log("Erreurs rencontrées lors des uploads:", errorResults);
+  // // Afficher les résultats finaux
+  // console.log("Résultats des uploads réussis:", uploadResults);
+  // console.log("Erreurs rencontrées lors des uploads:", errorResults);
 
   return {
     successfulUploads: uploadResults,
@@ -191,7 +187,7 @@ const imageFiles = [
 handleMultipleImageUploads(imageFiles)
   .then((results) => {
     // Traitement des résultats finaux
-    console.log("Tous les uploads traités:", results);
+    // console.log("Tous les uploads traités:", results);
   })
   .catch((error) => {
     console.error("Erreur générale lors du traitement des uploads:", error);
@@ -199,7 +195,7 @@ handleMultipleImageUploads(imageFiles)
 
 // Fonction pour récupérer les photos d'une visite
 export async function getPhotosForVisit(visitId) {
-  console.log(`Début de récupération des photos pour la visite: ${visitId}`);
+  // console.log(`Début de récupération des photos pour la visite: ${visitId}`);
 
   try {
     // Validation de l'ID de visite
@@ -208,7 +204,7 @@ export async function getPhotosForVisit(visitId) {
       throw new Error("ID de visite invalide");
     }
 
-    console.log("Envoi de la requête GET pour récupérer les photos...");
+    // console.log("Envoi de la requête GET pour récupérer les photos...");
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const response = await fetch(
       `${API_BASE_URL}/api/me/visits/${visitId}/photos`, // Ajustez l'URL selon votre API
@@ -237,7 +233,7 @@ export async function getPhotosForVisit(visitId) {
 
     // Vérifiez si des photos ont été retournées
     if (!Array.isArray(photosData) || photosData.length === 0) {
-      console.log("Aucune photo trouvée pour cette visite.");
+      // console.log("Aucune photo trouvée pour cette visite.");
       return []; // Retourner un tableau vide si aucune photo n'est trouvée
     }
 
@@ -253,8 +249,8 @@ export async function getPhotosForVisit(visitId) {
 // Fonction pour ajouter des photos à une visite
 export async function addPhotosToVisit(visitId, photos) {
   // Validation de l'ID de visite
-  console.log(`Début de l'ajout de photos pour la visite: ${visitId}`);
-  console.log("Photos à ajouter:", photos, "type", typeof photos);
+  // console.log(`Début de l'ajout de photos pour la visite: ${visitId}`);
+  // console.log("Photos à ajouter:", photos, "type", typeof photos);
   if (!visitId || isNaN(visitId) || !Number.isInteger(Number(visitId))) {
     console.error("Erreur: ID de visite invalide", { visitId });
     throw new Error("ID de visite invalide");

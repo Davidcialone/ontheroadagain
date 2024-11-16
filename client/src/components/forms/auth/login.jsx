@@ -14,7 +14,7 @@ export function Login() {
   const location = useLocation();
   const [snackbarOpen, setSnackbarOpen] = useState(false); // State to control snackbar
 
-  // Handle form submission for login
+   // Handle form submission for login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -48,7 +48,7 @@ export function Login() {
 
         console.log('Decoded token:', decodedToken);
 
-        // Update global auth state via context
+        // // Update global auth state via context
         login(data.token);
 
         // Redirect to intended page or /me/trips by default

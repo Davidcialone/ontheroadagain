@@ -15,19 +15,19 @@
   "license": "ISC",
   "dependencies": {
     "@vercel/node": "^2.10.3",
-    "buffer": "^6.0.3",
-    "cloudinary": "^1.41.3",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.21.1",
-    "inherits": "^2.0.4",
+    "email-validator": "^2.0.4",
+    "express": "^4.18.2",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",
     "path-to-regexp": "^6.2.2",
-    "process": "^0.11.10",
-    "sequelize": "^6.37.5",
-    "stream-browserify": "^3.0.0",
-    "util": "^0.12.5"
+    "pg": "^8.11.3",
+    "sequelize": "^6.37.5"
   },
   "description": "",
   "devDependencies": {

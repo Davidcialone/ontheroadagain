@@ -3,9 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { AuthContext } from '../auth/authContext';
 import { addVisit, getVisitsForTrip } from '../../../api/visitApi'; 
 import { fetchTrips } from '../../../api/tripApi';
-import { Button, Typography, CircularProgress, Snackbar, Alert as MuiAlert } from '@mui/material';
-import Grid from '@mui/material/Grid2';
-
+import { Button, Grid, Typography, CircularProgress, Snackbar, Alert as MuiAlert } from '@mui/material';
 import { AddVisitModal } from '../modals/addVisitModal';
 import { UpdateVisitModal } from '../modals/updateVisitModal';
 import { DeleteVisitModal } from '../modals/deleteVisitModal';
