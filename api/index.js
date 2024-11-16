@@ -14,15 +14,18 @@ const { v2: cloudinary } = cloudinaryPkg;
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Configuration CORS
-const corsOptions = {
-  origin: [
-    "https://ontheroadagain-client-6kao2pbjj-davidcialones-projects.vercel.app",
-    "http://localhost:3000",
-  ],
-  credentials: true,
-};
-app.use(cors(corsOptions));
+// CORS Configuration
+app.use(
+  cors({
+    origin: [
+      "https://ontheroadagain-client.vercel.app", // Allow main production client
+      "http://localhost:3000", // Allow local development
+    ],
+    methods: "GET,POST,PUT,DELETE", // Allowed HTTP methods
+    allowedHeaders: "Content-Type,Authorization", // Allowed headers
+    credentials: true, // Include credentials in cross-origin requests
+  })
+);
 
 // Middleware pour le parsing des JSON et des données encodées en URL
 app.use(express.json({ limit: "10mb" }));
