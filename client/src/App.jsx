@@ -13,7 +13,7 @@ import '../src/style/visit.css';
 import { AuthProvider } from './components/forms/auth/authContext';
 import { ProtectedRoute } from '../src/components/forms/auth/protectedRoute';
 import { TripVisits } from './components/forms/visits/tripVisits';
-import Cookies from 'js-cookie';
+
 
 export const App = () => {
   return (
