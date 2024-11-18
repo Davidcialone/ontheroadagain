@@ -61,13 +61,13 @@ export function NavbarSite() {
                 >
                   Mes voyages
                 </Button>
-                <Button 
+                {/* <Button 
                   sx={buttonStyles}  // Appliquer ici avec sx
                   component={Link} 
-                  to="/me/trips/projects"
+                  to="/me/projects"
                 >
                   Mes projets de voyages
-                </Button>
+                </Button> */}
               </>
             )}
           </div>

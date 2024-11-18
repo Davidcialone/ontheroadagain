@@ -56,7 +56,7 @@ export const App = () => {
               />
 
               <NavbarSite />
-              <Routes>
+              <Routes >
                 {/* Routes publiques */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />

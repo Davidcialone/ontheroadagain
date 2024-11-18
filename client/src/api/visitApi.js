@@ -185,7 +185,7 @@ export async function getVisitsForTrip(tripId) {
     );
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     const response = await fetch(
-      `${API_BASE_URL}api/me/trips/${tripId}/visits`,
+      `${API_BASE_URL}/api/me/trips/${tripId}/visits`,
       {
         method: "GET",
         headers: {
@@ -299,7 +299,7 @@ export async function addVisit(visitData, existingVisits = []) {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     // Envoi de la requête POST
     const response = await fetch(
-      `${API_BASE_URL}api/me/trips/${tripId}/visits`,
+      `${API_BASE_URL}/api/me/trips/${tripId}/visits`,
       {
         method: "POST",
         headers: {
@@ -347,7 +347,7 @@ export async function updateVisit(visitId, visitData, tripId) {
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
     console.log("Envoi de la requête pour mettre à jour la visite:", visitId);
     const response = await fetch(
-      `${API_BASE_URL}api/me/trips/${tripId}/visits/${visitId}`,
+      `${API_BASE_URL}/api/me/trips/${tripId}/visits/${visitId}`,
       {
         method: "PATCH",
         headers: {
@@ -388,7 +388,7 @@ export async function deleteVisit(visitId) {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   try {
     // Envoi de la requête pour supprimer la visite
-    const response = await fetch(`${API_BASE_URL}api/me/visits/${visitId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/me/visits/${visitId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

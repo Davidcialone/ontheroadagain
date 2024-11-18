@@ -250,7 +250,7 @@ console.log("newVisit", newVisit);
         >
           Enregistrer
         </Button>
-        <Button onClick={onClose} color="default">
+        <Button onClick={onClose} >
           Annuler
         </Button>
       </DialogActions>

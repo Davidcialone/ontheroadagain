@@ -30,7 +30,7 @@ export async function fetchUser() {
   try {
     const userId = getUserIdFromToken();
     const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-    const response = await fetch(`${API_BASE_URL}api/users/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
