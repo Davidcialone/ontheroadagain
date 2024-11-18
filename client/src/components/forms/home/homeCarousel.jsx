@@ -51,7 +51,7 @@ export const HomeCarousel = () => {
               width: `${100 / slidesToShow}%`,
               flexShrink: 0,
               height: height,
-              padding: 1
+              padding: 0.2
             }}
           >
             <Card sx={{ height: '100%', position: 'relative' }}>

@@ -23,3 +23,9 @@ export const getUserIdFromToken = () => {
     return null;
   }
 };
+
+// src/utils/apiUtils.js
+
+export function removeTrailingSlash(url) {
+  return url.replace(/\/+$/, "");
+}

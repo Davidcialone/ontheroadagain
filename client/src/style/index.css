@@ -58,7 +58,7 @@ button:focus-visible {
 .nav-link {
   color: #007bff; /* Couleur par défaut */
   transition: background-color 0.3s, color 0.3s; /* Transition pour le changement de couleur */
-  padding: 0.5rem 1rem; /* Ajustez le rembourrage selon vos besoins */
+  padding: 0.3rem 0.3rem; /* Ajustez le rembourrage selon vos besoins */
   border-radius: 0.25rem; /* Ajoutez un border-radius par défaut */
 }
 
@@ -91,7 +91,7 @@ html, body {
 }
 
 .navbar {
-  height: 60px; /* Ajustez la hauteur de la navbar selon vos besoins */
+  height: auto; /* Ajustez la hauteur de la navbar selon vos besoins */
 }
 
 

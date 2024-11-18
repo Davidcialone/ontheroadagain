@@ -1,9 +1,3 @@
-.carousel-container {
-    height: auto; /* Ajustez la hauteur selon vos besoins */
-    width: 70%; /* Ajustez la largeur selon vos besoins */
-    margin: 0 auto; /* Centre la div */
-    overflow: hidden; /* Masque le débordement */
-  }
   
   .image-wrapper {
     border-radius: 2rem; /* Appliquez le border-radius ici */
