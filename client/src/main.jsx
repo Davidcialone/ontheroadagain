@@ -7,9 +7,9 @@ import { CssBaseline } from '@mui/material';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ErrorBoundary>
+   
       <CssBaseline /> {/* Normalisation des styles avec MUI */}
       <App />
-    </ErrorBoundary>
+
   </StrictMode>,
 );

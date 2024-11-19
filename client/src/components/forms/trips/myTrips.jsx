@@ -10,9 +10,9 @@ import { Trip } from './trip';
 import { AddTripModal } from '../modals/addTripModal'; 
 
 
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+// const Alert = React.forwardRef(function Alert(props, ref) {
+//     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// });
 
 export function MyTrips() {
     const [trips, setTrips] = useState([]);
@@ -136,7 +136,7 @@ export function MyTrips() {
                 >
                     Ajouter un voyage
                 </Button>
-                    {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>}
+                    {/* {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>} */}
                     <AddTripModal
                         isOpen={isAddTripModalOpen}
                         onClose={onCloseAddTripModal}
@@ -150,7 +150,7 @@ export function MyTrips() {
                     ) : (
                         Array.isArray(trips) && trips.length > 0 ? (
                             trips.map(trip => (
-                                <Grid 
+                                <Grid item
                                 xs={12}          // 1 carte (plein écran sur mobile)
                                 sm={6}           // 2 cartes pour les écrans ≥ 1000px
                                 md={4}           // 3 cartes pour les écrans ≥ 1280px
@@ -177,11 +177,11 @@ export function MyTrips() {
             </div>
 
             {/* Snackbar pour afficher les messages d'erreur */}
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+            {/* <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} severity="error">
                     {error}
                 </Alert>
-            </Snackbar>
+            </Snackbar> */}
         </Container>
     );
 }

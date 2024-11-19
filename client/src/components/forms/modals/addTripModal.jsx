@@ -225,7 +225,8 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
       >
         Enregistrer
       </Button>
-        <Button onClick={onClose}>
+        <Button onClick={onClose} >
+
           Annuler
         </Button>
       </DialogActions>

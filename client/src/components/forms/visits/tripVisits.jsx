@@ -9,7 +9,7 @@ import { UpdateVisitModal } from '../modals/updateVisitModal';
 import { DeleteVisitModal } from '../modals/deleteVisitModal';
 import { Visit } from '../visits/visit';    
 
-const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
+// const Alert = React.forwardRef((props, ref) => <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />);
 
 export function TripVisits() {
     const { tripId } = useParams(); // Récupérer tripId
@@ -150,7 +150,7 @@ export function TripVisits() {
                     >
                         Ajouter une visite
                     </Button>
-                    {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>}
+                    {/* {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>} */}
                     
                     <AddVisitModal 
                         isOpen={openAddModal} 
@@ -208,11 +208,11 @@ export function TripVisits() {
                 </Grid>
             </div>
     
-            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+            {/* <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
                     {error}
                 </Alert>
-            </Snackbar>
+            </Snackbar> */}
         </div>
     );
 }
