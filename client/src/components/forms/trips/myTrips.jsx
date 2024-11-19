@@ -26,7 +26,9 @@ export function MyTrips() {
     const navigate = useNavigate();
     const tripsFetched = useRef(false);
     const { isAuthenticated, user } = useContext(AuthContext);
-    
+
+    console.log('isAuthenticated', isAuthenticated);
+       
     useEffect(() => {
         const loadTrips = async () => {
             if (tripsFetched.current) {
@@ -56,8 +58,12 @@ export function MyTrips() {
             }
         };
 
+      
+
         loadTrips();
     }, [isAuthenticated, navigate]);
+    console.log('isAuthenticated', isAuthenticated);
+
 
     const handleAddTrip = (tripData) => {
         // Ajout des données du voyage sans appel réseau
@@ -94,24 +100,10 @@ export function MyTrips() {
     // Modal control functions
     const onOpenAddTripModal = () => setIsAddTripModalOpen(true);
     const onCloseAddTripModal = () => setIsAddTripModalOpen(false);
-
-    // // Dans votre composant
-    // const token = Cookies.get('jwt');
-    // const decodedToken = jwtDecode(token);
-    // const userId = decodedToken.userId;
-
-    // // Assurez-vous que getUser est une fonction asynchrone qui récupère les informations utilisateur
-    // const fetchedUser = await getUser(userId);
-    // setUser(fetchedUser); // Met à jour l'état sans conflit
-
-
-
-    // const currentUser = user.find((user) => user.id === user.id);
-
   
     return (
         <Container>
-            <Typography variant="h4" gutterBottom>Les voyages de :   
+            <Typography variant="h5" gutterBottom>Les voyages de :   
                 <strong> {user ? user.pseudo : 'Pas de pseudo'}</strong>
                 </Typography>
             <div className='roadbook'>

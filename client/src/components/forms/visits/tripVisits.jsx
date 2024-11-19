@@ -202,7 +202,7 @@ export function TripVisits() {
                                     </Grid>
                             )})
                         ) : (
-                            <Typography variant="body1">Aucune visite trouvée pour ce voyage.</Typography>
+                            <Typography variant="body1" sx={{ margin: '2rem' }}>Aucune visite trouvée pour ce voyage.</Typography>
                         )
                     )}
                 </Grid>

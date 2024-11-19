@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -8,19 +8,30 @@ import {
   Container,
 } from '@mui/material';
 import { AuthContext } from '../auth/authContext';
+import { useState } from 'react';
+
 
 export function NavbarSite() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(user);
 
-  // État pour gérer le menu déroulant
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  console.log('nav bar isAuthenticated', isAuthenticated);
 
   // Fonction de déconnexion
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
+  useEffect(() => {
+    // Dès que l'état de l'authentification ou de l'utilisateur change, mettre à jour l'état local
+    if (isAuthenticated) {
+      setCurrentUser(user);
+    } else {
+      setCurrentUser(null);
+    }
+  }, [isAuthenticated, user]);  // Déclenche ce useEffect lorsque isAuthenticated ou user changent
 
 
   // Styles des boutons
@@ -79,9 +90,9 @@ export function NavbarSite() {
                 {/* Affichage du message de bienvenue avec le pseudo de l'utilisateur */}
                 <p style={{
                   color: "black", // Couleur noire
-                  fontSize: "1.2rem", // Taille de la police
-                  fontWeight: "bold", // Texte en gras                      
-                }}>Bienvenue, {user?.pseudo || 'Utilisateur'}!</p> 
+                  fontSize: "1rem", // Taille de la police
+                                      
+                }}>Bienvenue, <strong>{currentUser?.pseudo || 'Utilisateur'}</strong></p> 
                 <Button 
                   sx={buttonStyles}  // Appliquer les styles du bouton
                   onClick={handleLogout}

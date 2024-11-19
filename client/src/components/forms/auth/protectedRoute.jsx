@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { AuthContext } from '../auth/authContext'; // Ensure this path is correct
+import { AuthContext } from '../auth/authContext'; 
 import { Box, CircularProgress } from '@mui/material';
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useContext(AuthContext); // Use useContext to access AuthContext
+  const { isAuthenticated, isLoading } = useContext(AuthContext); 
   const location = useLocation();
 
   if (isLoading) {
@@ -15,7 +15,7 @@ export const ProtectedRoute = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated) {
+   if (!isAuthenticated) {
     // Redirect to login if not authenticated
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
