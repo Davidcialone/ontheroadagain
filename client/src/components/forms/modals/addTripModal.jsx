@@ -53,9 +53,9 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const validTypes = ["image/jpeg", "image/png", "image/gif"];
+      const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
       if (!validTypes.includes(file.type)) {
-        setError("Veuillez télécharger une image (JPEG, PNG, GIF).");
+        setError("Veuillez télécharger une image (JPEG, PNG, GIF, WEBP).");
         return;
       }
       setPhoto(URL.createObjectURL(file));
@@ -72,7 +72,7 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         setError("Veuillez remplir tous les champs requis.");
         return;
     }
-    if (dateEnd <= dateStart) {
+    if (dateEnd < dateStart) {
         setError("La date de fin doit être après la date de début.");
         return;
     }

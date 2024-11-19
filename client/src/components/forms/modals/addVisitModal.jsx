@@ -81,7 +81,7 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
       return;
     }
 
-    if (dateEnd <= dateStart) {
+    if (dateEnd < dateStart) {
       setError("La date de fin doit être après la date de début.");
       return;
     }
