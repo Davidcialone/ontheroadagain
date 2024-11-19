@@ -217,8 +217,12 @@ export async function getVisitsForTrip(tripId) {
           id: visit.id,
           title: visit.title,
           photo: visit.photo || "default_image.png", // Utilisez une image par défaut si photo est nulle
-          dateStart: new Date(visit.dateStart).toLocaleDateString("fr-FR"), // Format de date en français
-          dateEnd: new Date(visit.dateEnd).toLocaleDateString("fr-FR"),
+          dateStart: new Intl.DateTimeFormat("fr-FR", {
+            dateStyle: "long",
+          }).format(new Date(visit.dateStart)), // Format de date en français (ex: 19 novembre 2024)
+          dateEnd: new Intl.DateTimeFormat("fr-FR", {
+            dateStyle: "long",
+          }).format(new Date(visit.dateEnd)),
           rating: Number(visit.rating) || 0, // Assurez-vous que la note est un nombre
           comment: visit.comment || "Aucun commentaire disponible", // Gérer les commentaires nuls
           place: visit.place || "Lieu non spécifié", // Gérer les lieux nuls

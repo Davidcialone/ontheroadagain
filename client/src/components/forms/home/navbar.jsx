@@ -16,7 +16,7 @@ export function NavbarSite() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(user);
 
-  console.log('nav bar isAuthenticated', isAuthenticated);
+  // console.log('nav bar isAuthenticated', isAuthenticated);
 
   // Fonction de déconnexion
   const handleLogout = () => {

@@ -18,7 +18,7 @@ export function getUserIdFromToken() {
   }
 
   const userId = decodedToken.user_id || decodedToken.sub || decodedToken.id;
-  console.log("Mon user id", userId);
+  // console.log("Mon user id", userId);
   if (!userId) {
     throw new Error("ID d'utilisateur non trouvé dans le token");
   }
@@ -37,8 +37,8 @@ export async function fetchUser() {
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
     });
-    console.log(response.status);
-    console.log("Réponse de l'API concernant l'user:", response);
+
+    // console.log("Réponse de l'API concernant l'user:", response);
     if (!response.ok) {
       throw new Error(`Erreur HTTP! statut: ${response.status}`);
     }

@@ -95,6 +95,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
    const tripStartDate = new Date(tripDateStart);
    const tripEndDate = new Date(tripDateEnd);
 
+   console.log("sans addVisitModale tripStartDate", tripStartDate, "tripEndDate", tripEndDate);
+
    if (dateStart < tripStartDate || dateEnd > tripEndDate) {
      setError("Les dates de la visite doivent être comprises dans les dates du voyage.");
      return;
@@ -192,7 +194,7 @@ console.log("newVisit", newVisit);
             label="Date de fin"
             variant="outlined"
             InputLabelProps={{ shrink: true }}
-            value={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd.toLocaleDateString("fr-FR") : ""}
+            value={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd.toLocaleDateString("fr-FR")  : ""}
             onClick={() => setDateEndOpen(true)}
             InputProps={{
               readOnly: true,
@@ -204,7 +206,7 @@ console.log("newVisit", newVisit);
             }}
           />
           <DatePicker
-            selected={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd : null}
+            selected={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd: null}
             onChange={(date) => {
               if (date && date instanceof Date && !isNaN(date)) {
                 setDateEnd(date);

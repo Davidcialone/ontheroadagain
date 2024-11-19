@@ -26,9 +26,7 @@ export function MyTrips() {
     const navigate = useNavigate();
     const tripsFetched = useRef(false);
     const { isAuthenticated, user } = useContext(AuthContext);
-
-    console.log('isAuthenticated', isAuthenticated);
-       
+      
     useEffect(() => {
         const loadTrips = async () => {
             if (tripsFetched.current) {
@@ -58,13 +56,9 @@ export function MyTrips() {
             }
         };
 
-      
-
         loadTrips();
     }, [isAuthenticated, navigate]);
-    console.log('isAuthenticated', isAuthenticated);
-
-
+  
     const handleAddTrip = (tripData) => {
         // Ajout des données du voyage sans appel réseau
         setTrips((prevTrips) => [...prevTrips, tripData]);
