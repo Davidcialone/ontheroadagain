@@ -210,7 +210,7 @@ export async function getVisitsForTrip(tripId) {
     }
 
     const tripData = JSON.parse(responseText);
-    console.log("Détails du voyage récupérés avec succès:", tripData); // Log des détails récupérés
+    // console.log("Détails du voyage récupérés avec succès:", tripData); // Log des détails récupérés
 
     const visits = Array.isArray(tripData)
       ? tripData.map((visit) => ({

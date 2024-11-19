@@ -51,6 +51,8 @@ export function Visit({
   visitId,
   latitude,
   longitude,
+  tripStart,
+  tripEnd,
 }) {
   const [isUpdateOpen, setIsUpdateOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -105,6 +107,39 @@ export function Visit({
   //   }
   // }, [photo]);
   
+  const handleUpdate = async () => {
+    // Créer un objet Date à partir des dates mises à jour
+    const visitStart = new Date(updatedDateStart);
+    const visitEnd = new Date(updatedDateEnd);
+  
+    // Validation des dates : les dates doivent être comprises dans celles du voyage
+    if (visitStart <= new Date(tripStart) || visitEnd >= new Date(tripEnd)) {
+      setErrorMessage(
+        `Les dates doivent être comprises entre ${new Date(tripStart).toLocaleDateString(
+          "fr-FR"
+        )} et ${new Date(tripEnd).toLocaleDateString("fr-FR")}.`
+      );
+      return;
+    }
+  
+    // Si les dates sont valides, on procède à la mise à jour de la visite
+    const updatedVisitData = {
+      ...visitData,
+      title: updatedTitle,
+      dateStart: updatedDateStart,
+      dateEnd: updatedDateEnd,
+      rating: updatedRating,
+      comment: updatedComment,
+    };
+    
+    // Appel de la fonction onUpdateVisit pour mettre à jour la visite dans le parent
+    handleUpdateVisit(updatedVisitData);
+  };
+  
+ 
+  
+  
+
 //  Fetch visit photos on mount
 
   const fetchVisitPhotos = async () => {
@@ -135,12 +170,12 @@ export function Visit({
     setIsUpdateOpen(false);
   };
 
-  const handleDeleteClick = () => {
+ const handleDeleteClick = () => {
     console.log("Open delete modal for visit:", visitId);
     setIsDeleteOpen(true);
-  };
+ };
   
-  const handleDeleteVisit = async (visitId) => {
+const handleDeleteVisit = async (visitId) => {
     console.log("Attempting to delete visit:", visitId);
     try {
       await deleteVisit( visitId); // Assurez-vous que `deleteVisit` est importé correctement
@@ -149,12 +184,12 @@ export function Visit({
     } catch (error) {
       console.error("Error deleting visit:", error);
     }
-  };
+};
 
-  const handleAddPhotosClick = () => {   
+const handleAddPhotosClick = () => {   
     console.log("Open photos moadal for visit:", visitId, "for trip:", tripId);
     setIsAddPhotosOpen(true);
-      };
+};
 
 const handlePhotosUpload = (event) => {
     console.log("handlePhotoUpload a été appelée"); // Log pour confirmer que la fonction est appelée

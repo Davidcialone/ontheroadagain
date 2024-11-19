@@ -19,12 +19,12 @@ import ReactStars from "react-stars";
 import { addVisit, uploadImageToCloudinary } from "../../../api/visitApi";
 import { useParams } from "react-router-dom";
 
-export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, tripDateEnd }) {
+export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd }) {
   const { tripId } = useParams(); // Récupérer tripId depuis l'URL
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [dateStart, setDateStart] = useState(new Date(tripDateStart));
-  const [dateEnd, setDateEnd] = useState(new Date(tripDateEnd));
+  const [dateStart, setDateStart] = useState(new Date(tripStart));
+  const [dateEnd, setDateEnd] = useState(new Date(tripEnd));
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const [dateStartOpen, setDateStartOpen] = useState(false);
@@ -33,6 +33,7 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rating, setRating] = useState(3);
 
+ 
   useEffect(() => {
     if (isOpen) {
       resetForm();
@@ -40,12 +41,14 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
   }, [isOpen]);
 
   useEffect(() => {
-    setDateStart(tripDateStart);
-    setDateEnd(tripDateEnd);
-  }, [tripDateStart, tripDateEnd]);
-  // console.log("dans addVisitModal tripDateStart ", tripDateStart);
-  // console.log("dans addVisitModal tripDateEnd", tripDateEnd);
+    if (tripStart && tripEnd) {
+      // Assurez-vous que tripStart et tripEnd sont des objets Date
+      setDateStart(new Date(tripStart));
+      setDateEnd(new Date(tripEnd));
+    }
+  }, [tripStart, tripEnd]);
 
+  
   const resetForm = () => {
     setTitle("");
     setPhoto(null);
@@ -54,8 +57,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
     setError(null);
     setIsSubmitting(false);
     setRating(3);
-    setDateStart(new Date(tripDateStart));
-    setDateEnd(new Date(tripDateEnd));
+    setDateStart(new Date(tripStart));
+    setDateEnd(new Date(tripEnd));
   };
 
   const handlePhotoUpload = (e) => {
@@ -81,8 +84,13 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
       return;
     }
 
-    if (dateEnd < dateStart) {
+    if (dateEnd <= dateStart) {
       setError("La date de fin doit être après la date de début.");
+      return;
+    }
+
+    if (dateStart <= tripStart || dateEnd >= tripEnd) {
+      setError("Les dates de la visite doivent être comprises dans les dates du voyage.");
       return;
     }
 
@@ -90,17 +98,6 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
     if (isSubmitting) {
       return;
     }
-
-   // Vérifier les dates dans les limites du voyage
-   const tripStartDate = new Date(tripDateStart);
-   const tripEndDate = new Date(tripDateEnd);
-
-   console.log("sans addVisitModale tripStartDate", tripStartDate, "tripEndDate", tripEndDate);
-
-   if (dateStart < tripStartDate || dateEnd > tripEndDate) {
-     setError("Les dates de la visite doivent être comprises dans les dates du voyage.");
-     return;
-   }
 
     // Marquer comme soumis
     setIsSubmitting(true);
@@ -116,7 +113,6 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripDateStart, trip
         comment,
         tripId // Ajout direct de tripId depuis l'URL
       };
-console.log("newVisit", newVisit);
       const addedVisit = await addVisit(newVisit);
       onAddVisit(addedVisit);
       onClose();
@@ -143,7 +139,7 @@ console.log("newVisit", newVisit);
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             label="Titre"
-            placeholder="Titre de la visite"
+            placeholder="Mettre le nom de la ville"
             variant="outlined"
             required
           />
@@ -264,8 +260,8 @@ AddVisitModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   onAddVisit: PropTypes.func.isRequired,
-  tripDateStart: PropTypes.instanceOf(Date),
-  tripDateEnd: PropTypes.instanceOf(Date),
+  tripStart: PropTypes.instanceOf(Date),
+  tripEnd: PropTypes.instanceOf(Date),
 };
 
 export default AddVisitModal;

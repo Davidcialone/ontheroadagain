@@ -25,7 +25,11 @@ export function TripVisits() {
     const visitsFetched = useRef(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
-        
+    const [dateStart, setDateStart] = useState(null);
+    const [dateEnd, setDateEnd] = useState(null);
+    const [tripStart, setTripStart] = useState(null);
+    const [tripEnd, setTripEnd] = useState(null);
+
     // State pour gérer les modaux
     const [openAddModal, setOpenAddModal] = useState(false); 
     const [openUpdateModal, setOpenUpdateModal] = useState(false); 
@@ -40,6 +44,8 @@ export function TripVisits() {
                 const tripsData = await fetchTrips(); // Assurez-vous que cette fonction est définie
                 setTrips(tripsData);
                 console.log("Trips Data:", tripsData); // Vérifiez ici les données des voyages
+                
+
             } catch (err) {
                 setError(`Erreur lors du chargement des voyages: ${err.message}`);
                 setSnackbarOpen(true);
@@ -49,42 +55,89 @@ export function TripVisits() {
         loadTrips();
     }, []);
    
-    // Chargez les visites pour le voyage correspondant
-    useEffect(() => {
+      // Chargez les visites pour le voyage correspondant
+      useEffect(() => {
         const loadVisits = async () => {
-            if (visitsFetched.current) return;
-            visitsFetched.current = true;
-
+            if (trips.length === 0) return;
+    
             try {
                 if (!isAuthenticated) {
                     navigate('/login');
                     return;
                 }
-
+    
+                // Debug logs
+                console.log("Current numericTripId:", numericTripId);
+                console.log("All trips:", trips);
+    
+                const foundTrip = trips.find((trip) => trip.id === numericTripId);
+                               
+                // More detailed debug logging
+                console.log("Found trip:", foundTrip);
+                console.log("Found trip dateStart:", foundTrip?.dateStart);
+                console.log("Found trip dateEnd:", foundTrip?.dateEnd);
+    
                 const visitsData = await getVisitsForTrip(numericTripId);
                 setVisits(Array.isArray(visitsData) ? visitsData : []);
-                
-                // Chargez le voyage correspondant
-                const trip = trips.find((trip) => trip.id === numericTripId);
-                setTrip(trip || {});
-                setTripTitle(trip ? trip.title : 'Nom du voyage inconnu');
-
+    
+                if (foundTrip) {
+                    setTrip(foundTrip);
+                    setTripTitle(foundTrip.title);
+    
+                    // Ensure dates are properly converted
+                    const startDate = new Date(foundTrip.dateStart);
+                    const endDate = new Date(foundTrip.dateEnd);    
+                    setTripStart(startDate);
+                    setTripEnd(endDate);
+                }
+    
             } catch (err) {
+                console.error("Error in loadVisits:", err);
                 setError(`Erreur lors du chargement des visites: ${err.message}`);
                 setSnackbarOpen(true); 
             } finally {
                 setLoading(false);
             }
         };
-
+    
         loadVisits();
     }, [numericTripId, isAuthenticated, navigate, trips]);
 
-    const handleAddVisit = async (visitData) => {
-        setVisits((prevVisits) => [...prevVisits, visitData]);
-        setSnackbarOpen(true);
-        setOpenAddModal(false);
-    };   
+    useEffect(() => {
+        if (tripStart && tripEnd) {
+            // Assurez-vous que tripStart et tripEnd sont des objets Date
+            setDateStart(new Date(tripStart));
+            setDateEnd(new Date(tripEnd));
+        }
+
+    }, [tripStart, tripEnd]);
+  
+    const handleAddVisit = async (newVisitData) => {
+        const visitStart = new Date(newVisitData.dateStart);
+        const visitEnd = new Date(newVisitData.dateEnd);
+        console.log("visitStart:", visitStart);
+        console.log("visitEnd:", visitEnd);
+      
+        // Validation des dates : elles doivent être comprises dans celles du voyage
+        if (visitStart <= new Date(tripStart) || visitEnd >= new Date(tripEnd)) {
+          setErrorMessage(
+            `Les dates doivent être comprises entre ${new Date(tripStart).toLocaleDateString(
+              "fr-FR"
+            )} et ${new Date(tripEnd).toLocaleDateString("fr-FR")}.`
+          );
+          return;
+        }
+      
+      
+        try {
+            await addVisit(newVisitData); // Appel à l'API pour ajouter la visite
+            setVisits((prevVisits) => [...prevVisits, newVisitData]);
+            setOpenAddModal(false); // Fermer le modal après ajout
+        } catch (err) {
+            setError(`Erreur lors de l'ajout de la visite: ${err.message}`);
+            setSnackbarOpen(true);
+        }
+    };
 
     const handleVisitUpdated = (updatedVisitData) => {
         setVisits((prevVisits) =>
@@ -156,8 +209,8 @@ export function TripVisits() {
                         isOpen={openAddModal} 
                         onClose={() => setOpenAddModal(false)} 
                         onAddVisit={handleAddVisit} 
-                        // tripDateStart={currentTrip?.dateStart ? new Date(currentTrip.dateStart) : null} 
-                        // tripDateEnd={currentTrip?.dateEnd ? new Date(currentTrip.dateEnd) : null} 
+                        tripStart={tripStart} 
+                        tripEnd={tripEnd} 
                     />
                     <UpdateVisitModal 
                         isOpen={openUpdateModal} 

@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as visitController from "../controllers/visitController.js";
 import { controllerWrapper as cw } from "./controllerWrapper.js";
 import { jwtService } from "../middlewares/jwt.service.js";
+import { validateVisitDates } from "../middlewares/validateDates.js";
 
 export const router = Router();
 
@@ -28,7 +29,11 @@ router.get("/trips/:tripId/visits", cw(visitController.getVisit));
  * @returns {Error} 400 - Bad request
  * @security JWT
  */
-router.post("/trips/:tripId/visits", cw(visitController.createVisit));
+router.post(
+  "/trips/:tripId/visits",
+  validateVisitDates,
+  cw(visitController.createVisit)
+);
 
 // Mettre à jour une visite spécifique
 /**
