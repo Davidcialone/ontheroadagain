@@ -23,8 +23,10 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd 
   const { tripId } = useParams(); // Récupérer tripId depuis l'URL
   const [title, setTitle] = useState("");
   const [photo, setPhoto] = useState(null);
-  const [dateStart, setDateStart] = useState(new Date(tripStart));
-  const [dateEnd, setDateEnd] = useState(new Date(tripEnd));
+  // const [dateStart, setDateStart] = useState(tripStart ? new Date(tripStart) : new Date());
+  // const [dateEnd, setDateEnd] = useState(tripEnd ? new Date(tripEnd) : new Date());
+  const [dateStart, setDateStart] = useState(null);
+  const [dateEnd, setDateEnd] = useState(null);
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
   const [dateStartOpen, setDateStartOpen] = useState(false);
@@ -33,22 +35,38 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rating, setRating] = useState(3);
 
- 
   useEffect(() => {
     if (isOpen) {
       resetForm();
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (tripStart && tripEnd) {
-      // Assurez-vous que tripStart et tripEnd sont des objets Date
-      setDateStart(new Date(tripStart));
-      setDateEnd(new Date(tripEnd));
-    }
-  }, [tripStart, tripEnd]);
+  // console.log("Before useEffect - tripStart:", tripStart);
+  // console.log("Before useEffect - tripEnd:", tripEnd);
 
-  
+
+// Utilisez useEffect pour synchroniser les dates avec tripStart et tripEnd en fonction de tripId
+useEffect(() => {
+  if (tripId && tripStart && tripEnd) {
+    // Créer les objets Date sans conversion vers les chaînes
+    const start = new Date(tripStart);
+    const end = new Date(tripEnd);
+
+    // Vérifier que les dates sont valides avant de les enregistrer
+    if (!isNaN(start.getTime())) {
+      setDateStart(start); // Conserver l'objet Date
+      console.log("Updated dateStart:", start);
+    }
+
+    if (!isNaN(end.getTime())) {
+      setDateEnd(end); // Conserver l'objet Date
+      console.log("Updated dateEnd:", end);
+    }
+  }
+}, [tripId, tripStart, tripEnd]);
+
+
+
   const resetForm = () => {
     setTitle("");
     setPhoto(null);
@@ -57,8 +75,8 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd 
     setError(null);
     setIsSubmitting(false);
     setRating(3);
-    setDateStart(new Date(tripStart));
-    setDateEnd(new Date(tripEnd));
+    setDateStart(new Date(tripStart || Date.now())); // Réinitialisation avec une date par défaut
+    setDateEnd(new Date(tripEnd || Date.now())); // Réinitialisation avec une date par défaut
   };
 
   const handlePhotoUpload = (e) => {
@@ -75,82 +93,93 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd 
     }
   };
 
+
   const handleSave = async () => {
     setError(null);
   
-    // Assurez-vous que dateStart et dateEnd sont des objets Date
-    const visitStart = new Date(dateStart);
-    const visitEnd = new Date(dateEnd);
-    console.log(visitStart, visitEnd);
+    // Utiliser directement les objets Date (pas de conversion en ISO)
+    const visitStart = dateStart;
+    const visitEnd = dateEnd;
   
-    // Validation des champs
+    console.log("visitStart (Local):", visitStart);
+    console.log("visitEnd (Local):", visitEnd);
+  
+    // Vérification des champs du formulaire
     if (!title || !visitStart || !visitEnd || !comment || !imageFile) {
       setError("Veuillez remplir tous les champs requis.");
       return;
     }
   
-    // Vérifier si la date de fin est après la date de début
-    if (visitEnd < visitStart) {
-      setError("La date de fin doit être après la date de début.");
+    // Vérification des dates du voyage
+    if (!tripStart || !tripEnd) {
+      setError("Les dates du voyage sont invalides.");
       return;
     }
   
-    if (visitStart < tripStart || visitEnd > tripEnd) {
-      setError(`Les dates de la visite doivent être comprises entre ${tripStart.toLocaleDateString()} et ${tripEnd.toLocaleDateString()}.`);
+    const parsedTripStart = new Date(tripStart);
+    const parsedTripEnd = new Date(tripEnd);
+  
+    // Vérification des dates de voyage
+    if (isNaN(parsedTripStart.getTime()) || isNaN(parsedTripEnd.getTime())) {
+      setError("Les dates du voyage sont invalides.");
       return;
     }
   
-    // Vérifier si la soumission est déjà en cours
+    // Assurez-vous que la date de fin n'est pas avant la date de début
+    if (visitEnd.toLocaleDateString("fr-FR") < visitStart.toLocaleDateString("fr-FR")) {
+      setError("La date de fin ne peut pas être avant la date de début.");
+      return;
+    }
+  
+    // Assurez-vous que les dates de la visite sont dans la période du voyage
+    if (visitStart.toLocaleDateString("fr-FR") < parsedTripStart.toLocaleDateString("fr-FR") || visitEnd.toLocaleDateString("fr-FR") > parsedTripEnd.toLocaleDateString("fr-FR")) {
+      setError(`Les dates de la visite doivent être comprises entre ${parsedTripStart.toLocaleDateString()} et ${parsedTripEnd.toLocaleDateString()}.`);
+      return;
+    }
+  
+    // Si tout est valide, procéder à l'enregistrement de la visite
     if (isSubmitting) {
       return;
     }
   
-    // Marquer comme soumis
     setIsSubmitting(true);
   
     try {
-      // Télécharger l'image et récupérer son URL
       const imageData = await uploadImageToCloudinary(imageFile);
   
-      // Créer un objet de la visite avec les données valides
       const newVisit = {
         title,
         photo: imageData.secure_url,
-        dateStart: visitStart.toISOString().split('T')[0],  // Formater la date en ISO (yyyy-mm-dd)
-        dateEnd: visitEnd.toISOString().split('T')[0],
-        rating: parseFloat(rating.toFixed(1)),  // Assurez-vous que la note est un nombre flottant
+        dateStart: visitStart,
+        dateEnd: visitEnd, 
+        rating: parseFloat(rating.toFixed(1)),
         comment,
-        tripId, // Ajout du tripId à partir de l'URL
+        tripId,
       };
   
-      // Ajouter la visite via l'API
       const addedVisit = await addVisit(newVisit);
-  
-      // Appeler la fonction pour mettre à jour la liste des visites
       onAddVisit(addedVisit);
-    
-      // Fermer le modal et réinitialiser le formulaire
       onClose();
       resetForm();
-  
     } catch (error) {
-      // Gérer l'erreur spécifique ou générique
       if (error.message.includes("Un voyage avec le même titre et les mêmes dates existe déjà")) {
         setError("Un voyage avec le même titre et les mêmes dates existe déjà.");
       } else {
         setError("Une erreur est survenue lors de l'ajout de la visite.");
       }
     } finally {
-      setIsSubmitting(false); // Remettre le statut de soumission à false
+      setIsSubmitting(false);
     }
   };
   
+  
+
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Ajouter une visite</DialogTitle>
       <DialogContent>
         {error && <FormHelperText error>{error}</FormHelperText>}
-        
+
         <FormControl fullWidth margin="normal">
           <TextField
             value={title}
@@ -207,7 +236,7 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd 
             label="Date de fin"
             variant="outlined"
             InputLabelProps={{ shrink: true }}
-            value={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd.toLocaleDateString("fr-FR")  : ""}
+            value={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd.toLocaleDateString("fr-FR") : ""}
             onClick={() => setDateEndOpen(true)}
             InputProps={{
               readOnly: true,
@@ -219,7 +248,7 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd 
             }}
           />
           <DatePicker
-            selected={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd: null}
+            selected={dateEnd instanceof Date && !isNaN(dateEnd) ? dateEnd : null}
             onChange={(date) => {
               if (date && date instanceof Date && !isNaN(date)) {
                 setDateEnd(date);

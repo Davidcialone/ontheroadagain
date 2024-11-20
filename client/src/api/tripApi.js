@@ -160,7 +160,7 @@ export async function addTrip(newTrip, existingTrips = []) {
     user_id: userId,
   };
 
-  console.log("Appel de l'API pour ajouter un nouveau voyage.");
+  console.log("Appel de l'API pour ajouter un nouveau voyage", tripData);
 
   // Déterminer l'URL de base en fonction de l'environnement
   let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API

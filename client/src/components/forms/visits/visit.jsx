@@ -64,7 +64,7 @@ export function Visit({
   const [visitPhotos, setVisitPhotos] = useState([]);
   const [exifData, setExifData] = useState({}); // State to hold EXIF data
   
-
+console.log("visitId", visitId);
   //  useEffect(() => {
   //   if (photo) {
   //     const img = new Image();

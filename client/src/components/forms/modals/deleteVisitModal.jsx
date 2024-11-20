@@ -8,10 +8,13 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 
-export function DeleteVisitModal({ isOpen, onClose, onDelete, visitId }) {
-  const handleDelete = () => {
+
+
+export function DeleteVisitModal({ isOpen, onClose, onDelete,visitId}) {
+   const handleDelete = () => {
     if (visitId ) {
         console.log(`Deleting visit with ID: ${visitId}`);
         onDelete(visitId);
