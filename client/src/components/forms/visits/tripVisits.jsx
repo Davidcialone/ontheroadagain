@@ -22,13 +22,14 @@ export function TripVisits() {
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const visitsFetched = useRef(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
     const [dateStart, setDateStart] = useState(null);
     const [dateEnd, setDateEnd] = useState(null);
     const [tripStart, setTripStart] = useState(null);
     const [tripEnd, setTripEnd] = useState(null);
+    
+    
 
     // State pour gérer les modaux
     const [openAddModal, setOpenAddModal] = useState(false); 
@@ -119,25 +120,35 @@ export function TripVisits() {
         console.log("visitEnd:", visitEnd);
       
         // Validation des dates : elles doivent être comprises dans celles du voyage
-        if (visitStart <= new Date(tripStart) || visitEnd >= new Date(tripEnd)) {
-          setErrorMessage(
-            `Les dates doivent être comprises entre ${new Date(tripStart).toLocaleDateString(
-              "fr-FR"
-            )} et ${new Date(tripEnd).toLocaleDateString("fr-FR")}.`
-          );
-          return;
-        }
+        if (visitStart < tripStart || visitEnd > tripEnd) {
+            setError(
+              `Les dates doivent être comprises entre ${tripStart.toLocaleDateString(
+                "fr-FR"
+              )} et ${tripEnd.toLocaleDateString("fr-FR")}.`
+            );
+            return;
+          }
       
       
-        try {
-            await addVisit(newVisitData); // Appel à l'API pour ajouter la visite
-            setVisits((prevVisits) => [...prevVisits, newVisitData]);
-            setOpenAddModal(false); // Fermer le modal après ajout
-        } catch (err) {
+          try {
+            // Ajouter la visite via l'API
+            const addedVisit = await addVisit(visitData); // Assurez-vous que visitData est passé correctement à l'API
+        
+            // Mettre à jour l'état local avec la nouvelle visite
+            setVisits((prevVisits) => [...prevVisits, addedVisit]);
+
+            const updatedVisits = await fetchVisits();
+            setVisits(updatedVisits);
+
+               
+            // Fermer le modal après ajout de la visite
+            setOpenAddModal(false);
+                  
+          } catch (err) {
             setError(`Erreur lors de l'ajout de la visite: ${err.message}`);
             setSnackbarOpen(true);
-        }
-    };
+          }
+        };
 
     const handleVisitUpdated = (updatedVisitData) => {
         setVisits((prevVisits) =>
@@ -170,7 +181,7 @@ export function TripVisits() {
     };
 
     // Vous pouvez maintenant utiliser `trips` ici ou dans le rendu
-    console.log("Liste des voyages:", trips);
+    // console.log("Liste des voyages:", trips);
     const currentTrip = trips.find((trip) => trip.id === numericTripId);
 
     return (

@@ -197,7 +197,7 @@ export async function getVisitsForTrip(tripId) {
 
     // Log de la réponse brute pour le débogage
     const responseText = await response.text(); // Lire la réponse comme texte pour le log
-    console.log("Réponse brute du serveur:", responseText);
+    // console.log("Réponse brute du serveur:", responseText);
 
     if (!response.ok) {
       console.error(

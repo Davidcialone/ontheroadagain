@@ -77,57 +77,74 @@ export function AddVisitModal({ isOpen, onClose, onAddVisit, tripStart, tripEnd 
 
   const handleSave = async () => {
     setError(null);
-
+  
+    // Assurez-vous que dateStart et dateEnd sont des objets Date
+    const visitStart = new Date(dateStart);
+    const visitEnd = new Date(dateEnd);
+    console.log(visitStart, visitEnd);
+  
     // Validation des champs
-    if (!title || !dateStart || !dateEnd || !comment || !imageFile) {
+    if (!title || !visitStart || !visitEnd || !comment || !imageFile) {
       setError("Veuillez remplir tous les champs requis.");
       return;
     }
-
-    if (dateEnd <= dateStart) {
+  
+    // Vérifier si la date de fin est après la date de début
+    if (visitEnd < visitStart) {
       setError("La date de fin doit être après la date de début.");
       return;
     }
-
-    if (dateStart <= tripStart || dateEnd >= tripEnd) {
-      setError("Les dates de la visite doivent être comprises dans les dates du voyage.");
+  
+    if (visitStart < tripStart || visitEnd > tripEnd) {
+      setError(`Les dates de la visite doivent être comprises entre ${tripStart.toLocaleDateString()} et ${tripEnd.toLocaleDateString()}.`);
       return;
     }
-
-    // Vérifier si la soumission a déjà eu lieu
+  
+    // Vérifier si la soumission est déjà en cours
     if (isSubmitting) {
       return;
     }
-
+  
     // Marquer comme soumis
     setIsSubmitting(true);
-
+  
     try {
+      // Télécharger l'image et récupérer son URL
       const imageData = await uploadImageToCloudinary(imageFile);
+  
+      // Créer un objet de la visite avec les données valides
       const newVisit = {
         title,
         photo: imageData.secure_url,
-        dateStart: new Date(dateStart).toISOString().split('T')[0],
-        dateEnd: new Date(dateEnd).toISOString().split('T')[0],
-        rating: parseFloat(rating.toFixed(1)),
+        dateStart: visitStart.toISOString().split('T')[0],  // Formater la date en ISO (yyyy-mm-dd)
+        dateEnd: visitEnd.toISOString().split('T')[0],
+        rating: parseFloat(rating.toFixed(1)),  // Assurez-vous que la note est un nombre flottant
         comment,
-        tripId // Ajout direct de tripId depuis l'URL
+        tripId, // Ajout du tripId à partir de l'URL
       };
+  
+      // Ajouter la visite via l'API
       const addedVisit = await addVisit(newVisit);
+  
+      // Appeler la fonction pour mettre à jour la liste des visites
       onAddVisit(addedVisit);
+    
+      // Fermer le modal et réinitialiser le formulaire
       onClose();
       resetForm();
+  
     } catch (error) {
+      // Gérer l'erreur spécifique ou générique
       if (error.message.includes("Un voyage avec le même titre et les mêmes dates existe déjà")) {
         setError("Un voyage avec le même titre et les mêmes dates existe déjà.");
       } else {
         setError("Une erreur est survenue lors de l'ajout de la visite.");
       }
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // Remettre le statut de soumission à false
     }
   };
-
+  
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Ajouter une visite</DialogTitle>

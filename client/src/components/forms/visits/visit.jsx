@@ -154,7 +154,7 @@ export function Visit({
   };
 
   useEffect(() => {
-    console.log("visitId a changé:", visitId); // Log l'ID de visite
+    // console.log("visitId a changé:", visitId); // Log l'ID de visite
     fetchVisitPhotos();
   }, [visitId]);
   
