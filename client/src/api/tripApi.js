@@ -1,4 +1,4 @@
-import jwt from "jsonwebtoken";
+import { jwtDecode } from "jwt-decode";
 import Compressor from "compressorjs";
 import Cookies from "js-cookie";
 
@@ -16,7 +16,7 @@ export function getUserIdFromToken() {
     throw new Error("Token non trouvé");
   }
 
-  const decodedToken = jwt.decode(token);
+  const decodedToken = jwtDecode(token);
   if (!decodedToken || isTokenExpired(decodedToken)) {
     throw new Error("Le token a expiré ou est invalide");
   }
@@ -87,7 +87,12 @@ export async function fetchTrips() {
     const userId = getUserIdFromToken();
     console.log(`User ID récupéré pour fetchTrips: ${userId}`);
 
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+    // Déterminer l'URL de base en fonction de l'environnement
+    let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+    if (import.meta.env.MODE === "production") {
+      // Supprimer le slash initial en production si nécessaire
+      API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime le slash final éventuel
+    }
     const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
       method: "GET",
       headers: {
@@ -157,7 +162,12 @@ export async function addTrip(newTrip, existingTrips = []) {
 
   console.log("Appel de l'API pour ajouter un nouveau voyage.");
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
+  // Déterminer l'URL de base en fonction de l'environnement
+  let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+  if (import.meta.env.MODE === "production") {
+    // Supprimer le slash initial en production si nécessaire
+    API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime le slash final éventuel
+  }
   const response = await fetch(`${API_BASE_URL}/api/me/trips`, {
     method: "POST",
     headers: {
@@ -184,7 +194,12 @@ export async function deleteTrip(tripId) {
     const userId = getUserIdFromToken();
     console.log(`User ID récupéré pour deleteTrip: ${userId}`);
 
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
+    // Déterminer l'URL de base en fonction de l'environnement
+    let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+    if (import.meta.env.MODE === "production") {
+      // Supprimer le slash initial en production si nécessaire
+      API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime le slash final éventuel
+    }
     const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
       method: "DELETE",
       headers: {
@@ -225,7 +240,12 @@ export async function updateTrip(tripId, updatedTrip) {
 
     console.log("Appel de l'API pour mettre à jour le voyage.");
 
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Utilisation de l'URL de base
+    // Déterminer l'URL de base en fonction de l'environnement
+    let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+    if (import.meta.env.MODE === "production") {
+      // Supprimer le slash initial en production si nécessaire
+      API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime le slash final éventuel
+    }
     const response = await fetch(`${API_BASE_URL}/api/me/trips/${tripId}`, {
       method: "PATCH",
       headers: {

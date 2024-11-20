@@ -29,3 +29,6 @@ export const getUserIdFromToken = () => {
 export function removeTrailingSlash(url) {
   return url.replace(/\/+$/, "");
 }
+
+const test = removeTrailingSlash("${API_BASE_URL}/api/me/trips");
+console.log(test); // "${API_BASE_URL}/api/me/trips"

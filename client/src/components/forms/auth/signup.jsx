@@ -23,7 +23,12 @@ export function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+       // Déterminer l'URL de base en fonction de l'environnement
+       let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+       if (import.meta.env.MODE === "production") {
+         // Supprimer le slash initial en production si nécessaire
+         API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime le slash final éventuel
+       }
   
     try {
       const response = await fetch(`${API_BASE_URL}/api/users/signup`, {
