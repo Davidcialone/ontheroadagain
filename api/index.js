@@ -14,16 +14,28 @@ const { v2: cloudinary } = cloudinaryPkg;
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// CORS Configuration
+const allowedOrigins = [
+  "https://ontheroadagain-client.vercel.app",
+  "http://localhost:3000",
+];
+
 app.use(
   cors({
-    origin: [
-      "https://ontheroadagain-client.vercel.app", // Allow main production client
-      "http://localhost:3000", // Allow local development
-    ],
-    methods: "GET,POST,PUT,DELETE, PATCH", // Allowed HTTP methods
-    allowedHeaders: "Content-Type,Authorization", // Allowed headers
-    credentials: true, // Include credentials in cross-origin requests
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app")
+      ) {
+        // Autorise les origines null (requêtes sans origine), vos domaines, et les sous-domaines Vercel
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: "GET,POST,PUT,DELETE,PATCH",
+    allowedHeaders: "Content-Type,Authorization",
+    credentials: true,
   })
 );
 
