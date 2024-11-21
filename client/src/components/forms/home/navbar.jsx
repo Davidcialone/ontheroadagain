@@ -10,7 +10,7 @@ export function NavbarSite() {
   const [currentUser, setCurrentUser] = useState(user);
   const [showNavbar, setShowNavbar] = useState(true); // Navbar visible or not
   const [isCollapsed, setIsCollapsed] = useState(false); // Menu collapsed or not
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm')); // Check if the screen size is mobile
+  // const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm')); // Check if the screen size is mobile
 
   const buttonStyles = {
     color: '#333',
@@ -68,8 +68,8 @@ export function NavbarSite() {
           <div
             style={{
               display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row', // Change layout on mobile
-              gap: isMobile ? '0.2rem' : '1rem', // Space between buttons
+              flexDirection:  'row', // Change layout on mobile
+              gap:'1rem', // Space between buttons
               flexWrap: 'nowrap', // Prevent wrapping
               width: 'auto',
               justifyContent: 'center',
