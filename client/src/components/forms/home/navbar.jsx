@@ -43,7 +43,7 @@ export function NavbarSite() {
 
     // Fonction qui gère l'affichage de la navbar en fonction du scroll
     const handleScroll = () => {
-      if (window.scrollY > 80) {
+      if (window.scrollY > 40) {
         setShowNavbar(false); // Masquer la navbar quand on descend
       } else {
         setShowNavbar(true); // Réafficher la navbar quand on remonte
@@ -59,16 +59,17 @@ export function NavbarSite() {
 
   return (
     <AppBar
-      position="relative"
+      position="sticky"
       sx={{
         backgroundColor: '#f5deb3',
         borderRadius: '8px',
-        top: showNavbar ? 0 : '-100px',
+        top: showNavbar ? 0 : '-140px',
         transition: 'top 0.3s',
       }}
     >
+      
       <Container>
-        <Toolbar sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Toolbar sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           {/* Boutons à gauche */}
           <div
             style={{
@@ -76,7 +77,7 @@ export function NavbarSite() {
               flexDirection: isMobile? "column": "row",
               gap: isMobile?'0.2rem':"1rem", // Espace entre les boutons
               flexWrap: 'nowrap', // Permet aux boutons de se réorganiser si nécessaire
-              width: '100%',
+              width: 'auto',
               justifyContent: 'center' 
             }}
           >
@@ -123,7 +124,7 @@ export function NavbarSite() {
             top: 0,
             left: 0,
             width: '100%',
-            height: '100vh',
+            height: '200vh',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             color: 'white',
             display: 'flex',

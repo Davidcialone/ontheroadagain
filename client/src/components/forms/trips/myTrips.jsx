@@ -97,7 +97,7 @@ export function MyTrips() {
   
     return (
         <Container>
-            <Typography variant="h5" gutterBottom>Les voyages de :   
+            <Typography >Les voyages de
                 <strong> {user ? user.pseudo : 'Pas de pseudo'}</strong>
                 </Typography>
             <div className='roadbook'>
