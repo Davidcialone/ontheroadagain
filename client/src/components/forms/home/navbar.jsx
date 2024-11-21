@@ -1,22 +1,29 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  AppBar,
-  Box,
-  Toolbar,
-  Button,
-  Container,
-} from '@mui/material';
+import { AppBar, Box, Toolbar, Button, Container, IconButton } from '@mui/material';
 import { AuthContext } from '../auth/authContext';
-import { useState } from 'react';
-
+import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 
 export function NavbarSite() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(user);
+  const [showNavbar, setShowNavbar] = useState(true); // État de la navbar visible
+  const [isCollapsed, setIsCollapsed] = useState(false); // État du menu (collapsed ou non)
 
-  // console.log('nav bar isAuthenticated', isAuthenticated);
+  const buttonStyles = {
+    color: '#333',
+    backgroundColor: '#87CEEB',
+    margin: '1rem',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.4)',
+    borderRadius: '4px',
+    transition: 'background-color 0.3s, box-shadow 0.3s',
+    '&:hover': {
+      color: 'black',
+      backgroundColor: '#bdbdbd',
+      boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)',
+    },
+  };
 
   // Fonction de déconnexion
   const handleLogout = () => {
@@ -25,119 +32,106 @@ export function NavbarSite() {
   };
 
   useEffect(() => {
-    // Dès que l'état de l'authentification ou de l'utilisateur change, mettre à jour l'état local
     if (isAuthenticated) {
       setCurrentUser(user);
     } else {
       setCurrentUser(null);
     }
-  }, [isAuthenticated, user]);  // Déclenche ce useEffect lorsque isAuthenticated ou user changent
 
+    // Fonction qui gère l'affichage de la navbar en fonction du scroll
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setShowNavbar(false); // Masquer la navbar quand on descend
+      } else {
+        setShowNavbar(true); // Réafficher la navbar quand on remonte
+      }
+    };
 
-  // Styles des boutons
- const buttonStyles = {
-    color: '#333',                      // Couleur du texte (gris foncé)
-    backgroundColor: '#87CEEB',        // Couleur de fond (gris clair)
-    margin: '1rem',                    // Marges
-    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.4)', // Ombre portée
-    borderRadius: '4px',               // Bords arrondis (optionnel)
-    transition: 'background-color 0.3s, box-shadow 0.3s', // Transition pour l'effet hover
-    '&:hover': {
-      color:'black',
-      backgroundColor: '#bdbdbd',      // Couleur de fond au survol (gris plus foncé)
-      boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)', // Ombre plus forte au survol
-    },
-  };
-  
-    return (
-      <AppBar position="static" sx={{ backgroundColor: '#f5deb3', borderRadius: '8px' }}>
-        <Container>
-          <Toolbar
-            sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' }, // Colonne si écran petit, sinon rangée
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            {/* Boutons à gauche */}
-            <Box
+    // Écouter l'événement scroll
+    window.addEventListener('scroll', handleScroll);
+
+    // Nettoyage de l'événement lors du démontage du composant
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isAuthenticated, user]);
+
+  return (
+    <AppBar
+      position="relative"
+      sx={{
+        backgroundColor: '#f5deb3',
+        borderRadius: '8px',
+        top: showNavbar ? 0 : '-100px', // Masquer ou afficher la navbar
+        transition: 'top 0.3s',
+      }}
+    >
+      <Container>
+        <Toolbar sx={{ display: 'flex',flexDirection:"column", justifyContent: 'space-between' }}>
+          {/* Boutons à gauche */}
+          <div>
+            {isAuthenticated && (
+              <>
+                <Button sx={buttonStyles} component={Link} to="/">
+                  Accueil
+                </Button>
+                <Button sx={buttonStyles} component={Link} to="/me/trips">
+                  Mes voyages
+                </Button>
+                <Button sx={buttonStyles} onClick={handleLogout}>
+                  Déconnexion
+                </Button>
+             
+              </>
+            )}
+          </div>
+
+            <Box>
+            <p style={{ color: 'black', fontSize: '1rem' }}>
+                  Bienvenue, <strong>{currentUser?.pseudo || 'Utilisateur'}</strong>
+            </p>
+          </Box>
+
+          {/* Bouton d'icône pour afficher/masquer le menu */}
+          {!showNavbar && (
+            <IconButton
               sx={{
-                display: 'flex',
-                flexDirection: 'row', // Disposition en colonne sous 724px
-                alignItems: 'center',
-                gap: 1, // Espacement entre les boutons
-                mb: { xs: 1, sm: 0 }, // Marge inférieure uniquement pour petit écran
+                position: 'fixed',
+                top: 10,
+                left: 10,
+                backgroundColor: 'primary.main',
+                color: 'white',
+                zIndex: 1300,
               }}
+              onClick={() => setShowNavbar(true)}
             >
-              {isAuthenticated && (
-                <>
-                  <Button 
-                    sx={buttonStyles}
-                    component={Link} 
-                    to="/"
-                  >
-                    Accueil
-                  </Button>
-                  <Button 
-                    sx={buttonStyles}
-                    component={Link} 
-                    to="/me/trips"
-                  >
-                    Mes voyages
-                  </Button>
-                </>
-              )}
-            </Box>
-    
-            {/* Bouton de déconnexion à droite */}
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'row', // Toujours rangée pour ce groupe
-                alignItems: 'center',
-                gap: 1,
-              }}
-            >
-              {isAuthenticated ? (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <p
-                    style={{
-                      color: 'black',
-                      fontSize: '1rem',
-                    }}
-                  >
-                    Bienvenue, <strong>{currentUser?.pseudo || 'Utilisateur'}</strong>
-                  </p>
-                  <Button 
-                    sx={buttonStyles}
-                    onClick={handleLogout}
-                  >
-                    Déconnexion
-                  </Button>
-                </Box>
-              ) : (
-                <>
-                  <Button 
-                    sx={buttonStyles}
-                    component={Link} 
-                    to="/login"
-                  >
-                    Connexion
-                  </Button>
-                  <Button 
-                    sx={buttonStyles}
-                    component={Link} 
-                    to="/signup"
-                  >
-                    Inscription
-                  </Button>
-                </>
-              )}
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-    );
-    
+              <MenuIcon />
+            </IconButton>
+          )}
+        </Toolbar>
+      </Container>
+
+      {/* Menu déroulant (collapsed) */}
+      {isCollapsed && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1200,
+          }}
+        >
+          <Typography variant="h4" gutterBottom>
+            Menu
+          </Typography>
+          </Box>
+      )}
+    </AppBar>
+  );
 }

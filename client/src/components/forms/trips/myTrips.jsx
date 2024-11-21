@@ -96,14 +96,7 @@ export function MyTrips() {
     const onCloseAddTripModal = () => setIsAddTripModalOpen(false);
   
     return (
-        <Container
-        sx={{
-            height: '100vh', // La hauteur du conteneur parent correspond à la hauteur de l'écran
-            overflowY: 'scroll', // Permet le scroll vertical
-            scrollSnapType: 'y mandatory', // Activation du snap scroll vertical
-            scrollBehavior: 'smooth', // Scroll fluide
-            padding: 0, // Supprimer les marges internes pour un alignement parfait
-          }}>
+        <Container>
             <Typography variant="h5" gutterBottom>Les voyages de :   
                 <strong> {user ? user.pseudo : 'Pas de pseudo'}</strong>
                 </Typography>
