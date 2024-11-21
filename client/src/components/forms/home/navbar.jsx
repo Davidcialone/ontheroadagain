@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AppBar, Box, Toolbar, Button, Container, IconButton, useMediaQuery, Typography } from '@mui/material';
+import { AppBar, Box, Toolbar, Button, Container, IconButton, Typography } from '@mui/material';
 import { AuthContext } from '../auth/authContext';
 import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 
@@ -10,7 +10,6 @@ export function NavbarSite() {
   const [currentUser, setCurrentUser] = useState(user);
   const [showNavbar, setShowNavbar] = useState(true); // Navbar visible or not
   const [isCollapsed, setIsCollapsed] = useState(false); // Menu collapsed or not
-  // const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm')); // Check if the screen size is mobile
 
   const buttonStyles = {
     color: '#333',
@@ -64,15 +63,19 @@ export function NavbarSite() {
     >
       <Container>
         <Toolbar sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          {/* Navbar Buttons (will be visible on larger screens) */}
+          {/* Menu Buttons */}
           <div
             style={{
               display: 'flex',
-              flexDirection:  'row', // Change layout on mobile
-              gap:'1rem', // Space between buttons
+              flexDirection: 'row', // Default layout for desktop
+              gap: '1rem', // Spacing for buttons
               flexWrap: 'nowrap', // Prevent wrapping
               width: 'auto',
               justifyContent: 'center',
+              '@media (max-width: 600px)': {
+                flexDirection: 'column', // Switch to column on smaller screens
+                gap: '0.2rem', // Smaller gap on mobile
+              },
             }}
           >
             {isAuthenticated && (
@@ -91,21 +94,20 @@ export function NavbarSite() {
           </div>
 
           {/* Mobile Menu Icon */}
-          {isMobile && (
-            <IconButton
-              sx={{
-                position: 'fixed',
-                top: 10,
-                right: 10,
-                backgroundColor: 'primary.main',
-                color: 'white',
-                zIndex: 1300,
-              }}
-              onClick={() => setIsCollapsed(!isCollapsed)} // Toggle collapsed menu
-            >
-              {isCollapsed ? <CloseIcon /> : <MenuIcon />} {/* Change icon when collapsed */}
-            </IconButton>
-          )}
+          <IconButton
+            sx={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              backgroundColor: 'primary.main',
+              color: 'white',
+              zIndex: 1300,
+              display: { xs: 'block', sm: 'none' }, // Only show on mobile (xs screens)
+            }}
+            onClick={() => setIsCollapsed(!isCollapsed)} // Toggle collapsed menu
+          >
+            {isCollapsed ? <CloseIcon /> : <MenuIcon />} {/* Change icon when collapsed */}
+          </IconButton>
         </Toolbar>
       </Container>
 
