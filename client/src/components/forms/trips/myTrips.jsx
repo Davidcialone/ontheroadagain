@@ -97,15 +97,18 @@ export function MyTrips() {
   
     return (
         <Container>
-            <Typography >Les voyages de
+            {/* <Typography >Les voyages de
                 <strong> {user ? user.pseudo : 'Pas de pseudo'}</strong>
-                </Typography>
+                </Typography> */}
             <div className='roadbook'>
+                <div>
+                    liste des voyages
+                </div>
                 <div className='add-trip-button-layout'>
                 <Button 
                     variant="contained" 
                     sx={{ 
-                        width: '100%',                      // Largeur à 100%
+                        width: 'auto',                      // Largeur à 100%
                         color: '#333',                      // Couleur du texte (gris foncé)
                         backgroundColor: '#87CEEB',        // Couleur de fond (bleu clair)
                         margin: '1rem',                    // Marges
@@ -120,8 +123,7 @@ export function MyTrips() {
                     }}
                     onClick={onOpenAddTripModal} 
                     disabled={isAdding}
-                >
-                    Ajouter un voyage
+                >   Ajouter un voyage
                 </Button>
                     {/* {error && <Alert severity="error" onClose={handleSnackbarClose}>{error}</Alert>} */}
                     <AddTripModal
