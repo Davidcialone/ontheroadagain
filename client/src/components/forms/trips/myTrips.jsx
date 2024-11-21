@@ -96,7 +96,14 @@ export function MyTrips() {
     const onCloseAddTripModal = () => setIsAddTripModalOpen(false);
   
     return (
-        <Container>
+        <Container
+        sx={{
+            height: '100vh', // La hauteur du conteneur parent correspond à la hauteur de l'écran
+            overflowY: 'scroll', // Permet le scroll vertical
+            scrollSnapType: 'y mandatory', // Activation du snap scroll vertical
+            scrollBehavior: 'smooth', // Scroll fluide
+            padding: 0, // Supprimer les marges internes pour un alignement parfait
+          }}>
             <Typography variant="h5" gutterBottom>Les voyages de :   
                 <strong> {user ? user.pseudo : 'Pas de pseudo'}</strong>
                 </Typography>
@@ -105,6 +112,7 @@ export function MyTrips() {
                 <Button 
                     variant="contained" 
                     sx={{ 
+                        width: '100%',                      // Largeur à 100%
                         color: '#333',                      // Couleur du texte (gris foncé)
                         backgroundColor: '#87CEEB',        // Couleur de fond (bleu clair)
                         margin: '1rem',                    // Marges
@@ -140,7 +148,12 @@ export function MyTrips() {
                                 xs={12}          // 1 carte (plein écran sur mobile)
                                 sm={6}           // 2 cartes pour les écrans ≥ 1000px
                                 md={4}           // 3 cartes pour les écrans ≥ 1280px
-                                key={trip.id}>
+                                key={trip.id}
+                                sx={{
+                                    width: '100%', // S'assurer qu'elle occupe toute la largeur disponible
+                                    maxWidth: '100%', // Pas de dépassement de l'écran
+                                    margin: 'auto', // Centre la carte si elle a une marge
+                                  }}>
                                     <Trip
                                         id={trip.id}
                                         photo={trip.photo}

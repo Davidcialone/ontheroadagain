@@ -49,78 +49,95 @@ export function NavbarSite() {
     },
   };
   
-  return (
-    <AppBar position="static" sx={{ backgroundColor: '#f5deb3', borderRadius: '8px' }}>
-      <Container>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          {/* Boutons à gauche */}
-          <div>
-            {isAuthenticated && (
-              <>
-                <Button 
-                  sx={buttonStyles}  // Appliquer ici avec sx
-                  component={Link} 
-                  to="/"
-                >
-                 Accueil
-                </Button>
-               
-                <Button 
-                  sx={buttonStyles}  // Appliquer ici avec sx
-                  component={Link} 
-                  to="/me/trips"
-                >
-                  Mes voyages
-                </Button>
-                {/* <Button 
-                  sx={buttonStyles}  // Appliquer ici avec sx
-                  component={Link} 
-                  to="/me/projects"
-                >
-                  Mes projets de voyages
-                </Button> */}
-              </>
-            )}
-          </div>
-          
-          {/* Bouton de déconnexion à droite */}
-          <div>
-            {isAuthenticated ? (
-              <Box sx={{display:"flex", alignItems:"center"}}>
-                {/* Affichage du message de bienvenue avec le pseudo de l'utilisateur */}
-                <p style={{
-                  color: "black", // Couleur noire
-                  fontSize: "1rem", // Taille de la police
-                                      
-                }}>Bienvenue, <strong>{currentUser?.pseudo || 'Utilisateur'}</strong></p> 
-                <Button 
-                  sx={buttonStyles}  // Appliquer les styles du bouton
-                  onClick={handleLogout}
-                >
-                  Déconnexion
-                </Button>
-              </Box>
-            ) : (
-              <>
-                <Button 
-                  sx={buttonStyles}  // Appliquer ici avec sx
-                  component={Link} 
-                  to="/login"
-                >
-                  Connexion
-                </Button>
-                <Button 
-                  sx={buttonStyles}  // Appliquer ici avec sx
-                  component={Link} 
-                  to="/signup"
-                >
-                  Inscription
-                </Button>
-              </>
-            )}
-          </div>
-        </Toolbar>
-      </Container>
-    </AppBar>
-  );
+    return (
+      <AppBar position="static" sx={{ backgroundColor: '#f5deb3', borderRadius: '8px' }}>
+        <Container>
+          <Toolbar
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' }, // Colonne si écran petit, sinon rangée
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            {/* Boutons à gauche */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row', // Disposition en colonne sous 724px
+                alignItems: 'center',
+                gap: 1, // Espacement entre les boutons
+                mb: { xs: 1, sm: 0 }, // Marge inférieure uniquement pour petit écran
+              }}
+            >
+              {isAuthenticated && (
+                <>
+                  <Button 
+                    sx={buttonStyles}
+                    component={Link} 
+                    to="/"
+                  >
+                    Accueil
+                  </Button>
+                  <Button 
+                    sx={buttonStyles}
+                    component={Link} 
+                    to="/me/trips"
+                  >
+                    Mes voyages
+                  </Button>
+                </>
+              )}
+            </Box>
+    
+            {/* Bouton de déconnexion à droite */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'row', // Toujours rangée pour ce groupe
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              {isAuthenticated ? (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <p
+                    style={{
+                      color: 'black',
+                      fontSize: '1rem',
+                    }}
+                  >
+                    Bienvenue, <strong>{currentUser?.pseudo || 'Utilisateur'}</strong>
+                  </p>
+                  <Button 
+                    sx={buttonStyles}
+                    onClick={handleLogout}
+                  >
+                    Déconnexion
+                  </Button>
+                </Box>
+              ) : (
+                <>
+                  <Button 
+                    sx={buttonStyles}
+                    component={Link} 
+                    to="/login"
+                  >
+                    Connexion
+                  </Button>
+                  <Button 
+                    sx={buttonStyles}
+                    component={Link} 
+                    to="/signup"
+                  >
+                    Inscription
+                  </Button>
+                </>
+              )}
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+    );
+    
 }
