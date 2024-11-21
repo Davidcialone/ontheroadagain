@@ -101,9 +101,7 @@ export function MyTrips() {
                 <strong> {user ? user.pseudo : 'Pas de pseudo'}</strong>
                 </Typography> */}
             <div className='roadbook'>
-                <div>
-                    liste des voyages
-                </div>
+              
                 <div className='add-trip-button-layout'>
                 <Button 
                     variant="contained" 

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { AppBar, Box, Toolbar, Button, Container, IconButton, useMediaQuery  } from '@mui/material';
+import { AppBar, Box, Toolbar, Button, Container, IconButton, useMediaQuery, Typography } from '@mui/material';
 import { AuthContext } from '../auth/authContext';
 import { Menu as MenuIcon, Close as CloseIcon } from '@mui/icons-material';
 
@@ -8,8 +8,9 @@ export function NavbarSite() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(user);
-  const [showNavbar, setShowNavbar] = useState(true); // État de la navbar visible
-  const [isCollapsed, setIsCollapsed] = useState(false); // État du menu (collapsed ou non)
+  const [showNavbar, setShowNavbar] = useState(true); // Navbar visible or not
+  const [isCollapsed, setIsCollapsed] = useState(false); // Menu collapsed or not
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm')); // Check if the screen size is mobile
 
   const buttonStyles = {
     color: '#333',
@@ -25,10 +26,7 @@ export function NavbarSite() {
     },
   };
 
-    // Media query pour détecter si l'écran est plus petit que 600px (Mobile)
-    const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
-
-  // Fonction de déconnexion
+  // Function for logout
   const handleLogout = () => {
     logout();
     navigate('/login');
@@ -41,19 +39,16 @@ export function NavbarSite() {
       setCurrentUser(null);
     }
 
-    // Fonction qui gère l'affichage de la navbar en fonction du scroll
+    // Scroll event listener to hide/show navbar on scroll
     const handleScroll = () => {
       if (window.scrollY > 40) {
-        setShowNavbar(false); // Masquer la navbar quand on descend
+        setShowNavbar(false); // Hide navbar when scrolling down
       } else {
-        setShowNavbar(true); // Réafficher la navbar quand on remonte
+        setShowNavbar(true); // Show navbar when scrolling up
       }
     };
 
-    // Écouter l'événement scroll
     window.addEventListener('scroll', handleScroll);
-
-    // Nettoyage de l'événement lors du démontage du composant
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isAuthenticated, user]);
 
@@ -67,20 +62,19 @@ export function NavbarSite() {
         transition: 'top 0.3s',
       }}
     >
-      
       <Container>
         <Toolbar sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          {/* Boutons à gauche */}
+          {/* Menu Buttons */}
           <div
             style={{
               display: 'flex',
-              flexDirection: isMobile? "column": "row",
-              gap: isMobile?'0.2rem':"1rem", // Espace entre les boutons
-              flexWrap: 'nowrap', // Permet aux boutons de se réorganiser si nécessaire
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: isMobile ? '0.2rem' : '1rem',
+              flexWrap: 'nowrap',
               width: 'auto',
-              justifyContent: 'center' 
+              justifyContent: 'center',
             }}
-           > 
+          >
             {isAuthenticated && (
               <>
                 <Button sx={buttonStyles} component={Link} to="/">
@@ -96,35 +90,34 @@ export function NavbarSite() {
             )}
           </div>
 
-        
-          {/* Bouton d'icône pour afficher/masquer le menu */}
-          {!showNavbar && (
+          {/* Mobile Menu Icon */}
+          {isMobile && (
             <IconButton
               sx={{
                 position: 'fixed',
                 top: 10,
-                left: 10,
+                right: 10,
                 backgroundColor: 'primary.main',
                 color: 'white',
                 zIndex: 1300,
               }}
-              onClick={() => setShowNavbar(true)}
+              onClick={() => setIsCollapsed(!isCollapsed)} // Toggle collapsed menu
             >
-              <MenuIcon />
+              {isCollapsed ? <CloseIcon /> : <MenuIcon />} {/* Change icon when collapsed */}
             </IconButton>
           )}
         </Toolbar>
       </Container>
 
-      {/* Menu déroulant (collapsed) */}
-      {isCollapsed && (
+      {/* Collapsed Menu (Mobile) */}
+      {isCollapsed && isMobile && (
         <Box
           sx={{
             position: 'fixed',
             top: 0,
             left: 0,
             width: '100%',
-            height: '200vh',
+            height: '100vh',
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             color: 'white',
             display: 'flex',
@@ -137,6 +130,19 @@ export function NavbarSite() {
           <Typography variant="h4" gutterBottom>
             Menu
           </Typography>
+          {isAuthenticated && (
+            <>
+              <Button sx={buttonStyles} component={Link} to="/">
+                Accueil
+              </Button>
+              <Button sx={buttonStyles} component={Link} to="/me/trips">
+                Mes voyages
+              </Button>
+              <Button sx={buttonStyles} onClick={handleLogout}>
+                Déconnexion
+              </Button>
+            </>
+          )}
         </Box>
       )}
     </AppBar>
