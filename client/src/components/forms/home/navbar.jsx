@@ -64,13 +64,13 @@ export function NavbarSite() {
     >
       <Container>
         <Toolbar sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-          {/* Menu Buttons */}
+          {/* Navbar Buttons (will be visible on larger screens) */}
           <div
             style={{
               display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: isMobile ? '0.2rem' : '1rem',
-              flexWrap: 'nowrap',
+              flexDirection: isMobile ? 'column' : 'row', // Change layout on mobile
+              gap: isMobile ? '0.2rem' : '1rem', // Space between buttons
+              flexWrap: 'nowrap', // Prevent wrapping
               width: 'auto',
               justifyContent: 'center',
             }}
