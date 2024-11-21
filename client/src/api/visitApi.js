@@ -252,19 +252,15 @@ export async function getVisitsForTrip(tripId) {
 export async function addVisit(visitData, existingVisits = []) {
   console.log("Ajout d'une nouvelle visite avec les données:", visitData);
 
-  const tripId = visitData.tripId; // Vérification et extraction du tripId
-  console.log("tripId extrait de visitData:", tripId); // Log pour vérifier tripId
-
   try {
-    if (!tripId) {
+    // Validation des données de la visite
+    if (!visitData || !visitData.tripId) {
       console.error("tripId est manquant dans visitData.");
-      throw new Error("tripId est manquant.");
+      throw new Error("tripId est requis dans visitData.");
     }
 
-    console.log("Données de visite avant transformation:", visitData);
-
-    // Créer un objet pour envoyer les données
-    const { title, photo, dateStart, dateEnd, rating, comment } = visitData;
+    const { tripId, title, photo, dateStart, dateEnd, rating, comment } =
+      visitData;
 
     if (!title || !dateStart || !dateEnd) {
       console.error("Données de visite incomplètes :", {
@@ -273,78 +269,81 @@ export async function addVisit(visitData, existingVisits = []) {
         dateEnd,
       });
       throw new Error(
-        "Les données de visite doivent contenir title, dateStart et dateEnd."
+        "Les données de visite doivent inclure title, dateStart et dateEnd."
       );
     }
 
     // Vérification des doublons
-    const visitExists =
-      Array.isArray(existingVisits) &&
-      existingVisits.some(
-        (visit) =>
-          visit.title === title &&
-          visit.dateStart === dateStart &&
-          visit.dateEnd === dateEnd &&
-          visit.rating === rating && // Inclure le rating si c'est pertinent
-          visit.comment === comment // Inclure le commentaire si c'est pertinent
-      );
+    const isDuplicate = existingVisits.some(
+      (visit) =>
+        visit.title === title &&
+        visit.dateStart === dateStart &&
+        visit.dateEnd === dateEnd &&
+        visit.rating === rating &&
+        visit.comment === comment
+    );
 
-    if (visitExists) {
-      throw new Error("Une visite avec les mêmes détails existe déjà.");
+    if (isDuplicate) {
+      console.error("Une visite avec les mêmes détails existe déjà.");
+      throw new Error("Une visite similaire existe déjà.");
     }
 
-    // Préparez l'objet de données de visite
+    // Création de l'objet à envoyer
     const visitDataToSend = {
       title: title.trim(),
       photo: photo || null,
       dateStart,
       dateEnd,
-      rating: isNaN(Number(rating)) ? 3 : Number(rating),
+      rating: isNaN(Number(rating)) ? 3 : Number(rating), // Par défaut, une note de 3
       comment: comment || null,
-      trip_id: tripId,
+      trip_id: tripId, // Utilisation de l'identifiant de voyage
     };
 
-    console.log("Données de visite à envoyer:", visitDataToSend); // Log des données de visite
-    // Déterminer l'URL de base en fonction de l'environnement
-    let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+    console.log("Données de visite préparées pour l'envoi:", visitDataToSend);
+
+    // Construction de l'URL de base
+    let API_BASE_URL =
+      import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
     if (import.meta.env.MODE === "production") {
-      // Supprimer le slash initial en production si nécessaire
-      API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime le slash final éventuel
+      API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime un slash final éventuel
     }
+
+    const url = `${API_BASE_URL}/api/me/trips/${tripId}/visits`;
+    console.log("URL de l'API :", url);
+
     // Envoi de la requête POST
-    const response = await fetch(
-      `${API_BASE_URL}/api/me/trips/${tripId}/visits`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${Cookies.get("token")}`,
-        },
-        body: JSON.stringify(visitDataToSend),
-      }
-    );
-    console.log("Réponse de la requête POST:", response); // Log de la réponse brute
-    const responseText = await response.text(); // Lire la réponse comme texte pour le log
-    console.log("Réponse brute du serveur:", responseText);
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Cookies.get("token")}`,
+      },
+      body: JSON.stringify(visitDataToSend),
+    });
+
+    console.log("Réponse brute de la requête POST:", response);
+
+    // Vérifie si la réponse est en JSON
+    const responseText = await response.text();
+    const result = responseText ? JSON.parse(responseText) : null;
 
     if (!response.ok) {
       console.error(
         "Erreur lors de l'ajout de la visite:",
         response.statusText,
         "Code de statut:",
-        response.status
+        response.status,
+        "Détails:",
+        result
       );
-      throw new Error(
-        `Erreur lors de l'ajout de la visite: ${response.statusText}`
-      );
+      throw new Error(`Erreur API : ${result?.message || response.statusText}`);
     }
 
-    const result = JSON.parse(responseText); // Parsez la réponse JSON
     console.log("Visite ajoutée avec succès:", result);
     return result;
   } catch (error) {
     console.error("Erreur lors de l'ajout de la visite:", error);
-    throw new Error("Échec de l'ajout de la visite");
+    throw new Error("Échec de l'ajout de la visite : " + error.message);
   }
 }
 

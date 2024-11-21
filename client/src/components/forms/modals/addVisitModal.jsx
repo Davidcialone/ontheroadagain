@@ -156,6 +156,7 @@ useEffect(() => {
         comment,
         tripId,
       };
+      console.log(" dans addvisitmadal new visit", newVisit);
   
       const addedVisit = await addVisit(newVisit);
       onAddVisit(addedVisit);
@@ -172,7 +173,7 @@ useEffect(() => {
     }
   };
   
-  
+
 
   return (
     <Dialog open={isOpen} onClose={onClose}>

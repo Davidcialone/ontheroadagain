@@ -142,13 +142,16 @@ export function TripVisits() {
                 onAddVisit={handleAddVisit} 
                 tripStart={tripStart} 
                 tripEnd={tripEnd} 
+              
             />
             {loading ? (
                 <CircularProgress />
             ) : (
                 visits.length > 0 ? (
                     visits.map((visit) => (
-                        <Visit key={visit.id} {...visit} onVisitUpdated={handleVisitUpdated} onVisitDeleted={handleVisitDeleted} />
+                        <Visit key={visit.id}
+                        visitId={visit.id} // Assurez-vous de passer `visit.id`
+                         {...visit} onVisitUpdated={handleVisitUpdated} onVisitDeleted={handleVisitDeleted} />
                     ))
                 ) : (
                     <Typography>Aucune visite trouvée.</Typography>
