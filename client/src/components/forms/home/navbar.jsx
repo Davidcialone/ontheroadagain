@@ -71,7 +71,7 @@ export function NavbarSite() {
       <Container>
         <Toolbar sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
           {/* Boutons à gauche */}
-          <div
+          {/* <div
             style={{
               display: 'flex',
               flexDirection: isMobile? "column": "row",
@@ -79,8 +79,8 @@ export function NavbarSite() {
               flexWrap: 'nowrap', // Permet aux boutons de se réorganiser si nécessaire
               width: 'auto',
               justifyContent: 'center' 
-            }}
-          >
+            }} */}
+          {/* > */}
             {isAuthenticated && (
               <>
                 <Button sx={buttonStyles} component={Link} to="/">
@@ -94,7 +94,7 @@ export function NavbarSite() {
                 </Button>
               </>
             )}
-          </div>
+          {/* </div> */}
 
         
           {/* Bouton d'icône pour afficher/masquer le menu */}
