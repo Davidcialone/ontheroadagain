@@ -266,7 +266,12 @@ export async function addPhotosToVisit(visitId, photos) {
     throw new Error("photos doit être un tableau non vide.");
   }
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  // Déterminer l'URL de base en fonction de l'environnement
+  let API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // Récupération de l'URL de base de l'API
+  if (import.meta.env.MODE === "production") {
+    // Supprimer le slash initial en production si nécessaire
+    API_BASE_URL = API_BASE_URL.replace(/\/$/, ""); // Supprime le slash final éventuel
+  }
   try {
     console.log("Envoi de la requête POST pour ajouter plusieurs photos...");
 
