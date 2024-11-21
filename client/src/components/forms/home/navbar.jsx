@@ -110,7 +110,7 @@ export function NavbarSite() {
       </Container>
 
       {/* Collapsed Menu (Mobile) */}
-      {isCollapsed && isMobile && (
+      {isCollapsed && (
         <Box
           sx={{
             position: 'fixed',
