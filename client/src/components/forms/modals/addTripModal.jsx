@@ -72,7 +72,7 @@ export function AddTripModal({ isOpen, onClose, onAddTrip }) {
         setError("Veuillez remplir tous les champs requis.");
         return;
     }
-    if (dateEnd <= dateStart) {
+    if (dateEnd.toLocaleDateString("fr-FR") < dateStart.toLocaleDateString("fr-FR")) {
         setError("La date de fin doit être après la date de début.");
         return;
     }
